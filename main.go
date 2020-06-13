@@ -19,6 +19,7 @@ const WIN_Y = 768
 const GRID_X = 15
 const GRID_Y = 10
 const CHAR_PIXELS = 64
+const SPRITE_SIZE = 16
 
 func loadPicture(path string) (pixel.Picture, error) {
 	file, err := os.Open(path)
@@ -62,10 +63,19 @@ func drawMainBorder(win *pixelgl.Window) {
 	imd.Draw(win)
 }
 
-func drawMainWindow(win *pixelgl.Window, grid *GameGrid) {
+func drawMainWindow(win *pixelgl.Window, grid *GameGrid, ss pixel.Picture) {
 	win.Clear(colornames.Black)
 	drawMainBorder(win)
-	grid.Draw(win)
+	grid.Draw(win, ss)
+}
+
+func drawHydra(ss pixel.Picture, win *pixelgl.Window) {
+	rect := pixel.R(0, 16, 16, 32)
+	sprite := pixel.NewSprite(ss, rect)
+	mat := pixel.IM
+	mat = mat.Moved(win.Bounds().Center())
+	mat = mat.ScaledXY(win.Bounds().Center(), pixel.V(4, 4))
+	sprite.Draw(win, mat)
 }
 
 func run() {
@@ -79,6 +89,7 @@ func run() {
 
 	grid.PlaceCharacter(2, 2, ct.NewCharacter("Wall"))
 	grid.PlaceCharacter(11, 9, ct.NewCharacter("Hydra"))
+	grid.PlaceCharacter(3, 3, ct.NewCharacter("King Cobra"))
 
 	cfg := pixelgl.WindowConfig{
 		Title:  "Mayhem!",
@@ -89,15 +100,7 @@ func run() {
 	if err != nil {
 		panic(err)
 	}
-	//	drawMainWindow(win, grid)
-
-	rect := pixel.R(0, 16, 16, 32)
-	sprite := pixel.NewSprite(nil, pixel.Rect{})
-	sprite.Set(ss, rect)
-	mat := pixel.IM
-	mat = mat.Moved(win.Bounds().Center())
-	mat = mat.ScaledXY(win.Bounds().Center(), pixel.V(4, 4))
-	sprite.Draw(win, mat)
+	drawMainWindow(win, grid, ss)
 
 	for !win.Closed() {
 		win.Update()

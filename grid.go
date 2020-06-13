@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
@@ -24,26 +26,38 @@ func (grid *GameGrid) GetCharacter(x, y int) *Character {
 	return (*grid)[y][x]
 }
 
-func drawCharacter(char *Character, x, y int, win *pixelgl.Window) {
+func drawCharacter(char *Character, x, y int, win *pixelgl.Window, ss pixel.Picture) {
 	imd := imdraw.New(nil)
-	width := 1
 	if char == nil {
-		width = 0
+		//  return
 		imd.Color = pixel.RGB(0, 0, 0)
-	} else {
-		imd.Color = pickColour()
+		imd.Push(pixel.V(float64(x), float64(y)))
+		imd.Push(pixel.V(float64(x+CHAR_PIXELS), float64(y+CHAR_PIXELS)))
+		imd.Rectangle(0)
+		imd.Draw(win)
+		return
 	}
-	imd.Push(pixel.V(float64(x), float64(y)))
-	imd.Push(pixel.V(float64(x+CHAR_PIXELS), float64(y+CHAR_PIXELS)))
-	imd.Rectangle(float64(width))
-	imd.Draw(win)
-
-	if char != nil {
+	sprite := char.GetSprite(ss)
+	if sprite == nil {
+		imd.Color = pickColour()
+		imd.Push(pixel.V(float64(x), float64(y)))
+		imd.Push(pixel.V(float64(x+CHAR_PIXELS), float64(y+CHAR_PIXELS)))
+		imd.Rectangle(1)
+		imd.Draw(win)
 		char.GetText(x, y).Draw(win, pixel.IM)
+	} else {
+		fmt.Printf("Drawing sprite x %d y %d\n", float64(x), float64(y))
+		mat := pixel.IM
+		fmt.Printf("Center is x %d y %d\n", win.Bounds().Center().X, win.Bounds().Center().Y)
+		v := pixel.V(float64(x), float64(y))
+		mat = mat.Moved(v)
+		mat = mat.ScaledXY(v, pixel.V(4, 4))
+		mat = mat.Moved(pixel.V(31, 31))
+		sprite.Draw(win, mat)
 	}
 }
 
-func (grid *GameGrid) Draw(win *pixelgl.Window) {
+func (grid *GameGrid) Draw(win *pixelgl.Window, ss pixel.Picture) {
 	xof := CHAR_PIXELS / 2
 	yof := WIN_Y - (CHAR_PIXELS*GRID_Y + CHAR_PIXELS/2)
 	maxy := len(*grid)
@@ -51,7 +65,7 @@ func (grid *GameGrid) Draw(win *pixelgl.Window) {
 	for x := 0; x < maxx; x++ {
 		for y := 0; y < maxy; y++ {
 			char := grid.GetCharacter(x, y)
-			drawCharacter(char, x*CHAR_PIXELS+xof, y*CHAR_PIXELS+yof, win)
+			drawCharacter(char, x*CHAR_PIXELS+xof, y*CHAR_PIXELS+yof, win, ss)
 		}
 	}
 }
