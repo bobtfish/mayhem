@@ -1,0 +1,482 @@
+---
+# From https://chaosremakes.fandom.com/wiki/Comments_on_Chaos
+# combat, ranged combat, range, defence, movement allowance, magical resistance, manoeuvre, ???, law/chaos rating, overall strength (?)
+#0  Nothing
+#1  Nothing
+#2  King Cobra      4 0 0 1 1 6 1 8  1 30
+#3  Dire Wolf       3 0 0 2 3 7 2 8 -1 12
+#4  Goblin          2 0 0 4 1 4 4 8 -1 12
+#5  Crocodile       5 0 0 6 1 2 2 7  0 34
+#6  Faun            3 0 0 2 1 7 8 7 -1 20
+#7  Lion            6 0 0 4 4 8 3 5  1 38
+#8  Elf             1 2 6 2 1 5 7 6  2 26
+#9  Orc             2 0 0 1 1 4 4 9 -1 21
+#10 Bear            6 0 0 7 2 6 2 5  1 23
+#11 Gorilla         6 0 0 5 1 4 2 6  0 18
+#12 Ogre            4 0 0 7 1 3 6 6 -1 23
+#13 Hydra           7 0 0 8 1 4 6 4 -1 36
+#14 Giant Rat       1 0 0 1 3 8 2 9  0 13
+#15 Giant           9 0 0 7 2 6 5 3  1 23
+#16 Horse           1 0 0 3 4 8 1 8  1 21
+#17 Unicorn         5 0 0 4 4 9 7 5  2 16
+#18 Centaur         1 2 4 3 4 5 5 6  1 23
+#19 Pegasus         2 0 0 4 5 6 7 5  2 16
+#20 Gryphon         3 0 0 5 5 5 6 5  1 10
+#21 Manticore       3 1 3 6 5 6 8 3 -1 13
+#22 Bat             1 0 0 1 5 9 4 7 -1  8
+#23 Green Dragon    5 4 6 8 3 4 4 0 -1 32
+#24 Red Dragon      7 3 5 9 3 4 5 0 -2 34
+#25 Golden Dragon   9 5 4 9 3 5 5 0  2 27
+#26 Harpy           4 0 0 2 5 8 5 5 -1 13
+#27 Eagle           3 0 0 3 6 8 2 6  1 14
+#28 Vampire         6 0 0 8 4 6 5 1 -2 40
+#29 Ghost           1 0 0 3 2 9 6 4 -1 15
+#30 Spectre         4 0 0 2 1 6 4 5 -1 15
+#31 Wraith          5 0 0 5 2 4 5 4 -1 10
+#32 Skeleton        3 0 0 2 1 3 4 6 -1 17
+#33 Zombie          1 0 0 1 1 2 3 4 -1 25
+#34 Blob            1 0 0 0 0 0 0 0  0 40
+#35 Fire            0 0 0 0 0 0 0 0  0 12
+#36 Magic Wood      0 0 0 5 0 0 9 6  2 250
+#37 Shadow Wood     2 0 0 4 0 0 9 4 -2 30
+#38 Magic Castle    0 0 0 0 0 0 0 0  0 50
+#39 Dark Citadel    0 0 0 0 0 0 0 0  0 50
+#40 Wall            0 0 0 0 0 0 0 0  0 30
+#41 Wizard1
+#42 Wizard2
+#43 Wizard3
+#44 Wizard4
+#45 Wizard5
+#46 Wizard6
+#47 Wizard7
+#48 Wizard8
+
+ - name: King Cobra
+   combat: 4
+   ranged_combat: 0
+   range: 0
+   defence: 1
+   movement: 1
+   magical_resistance: 6
+   manoeuvre: 1
+   unknown: 8
+   law_chaos: 1
+   strength: 30
+ - name: Dire Wolf
+   combat: 3
+   ranged_combat: 0
+   range: 0
+   defence: 2
+   movement: 3
+   magical_resistance: 7
+   manoeuvre: 2
+   unknown: 8
+   law_chaos: -1
+   strength: 12
+ - name: Goblin
+   combat: 2
+   ranged_combat: 0
+   range: 0
+   defence: 4
+   movement: 1
+   magical_resistance: 4
+   manoeuvre: 4
+   unknown: 8
+   law_chaos: -1
+   strength: 12
+ - name: Crocodile
+   combat: 5
+   ranged_combat: 0
+   range: 0
+   defence: 6
+   movement: 1
+   magical_resistance: 2
+   manoeuvre: 2
+   unknown: 7
+   law_chaos: 0
+   strength: 34
+ - name: Faun
+   combat: 3
+   ranged_combat: 0
+   range: 0
+   defence: 2
+   movement: 1
+   magical_resistance: 7
+   manoeuvre: 8
+   unknown: 7
+   law_chaos: -1
+   strength: 20
+ - name: Lion
+   combat: 6
+   ranged_combat: 0
+   range: 0
+   defence: 4
+   movement: 4
+   magical_resistance: 8
+   manoeuvre: 3
+   unknown: 5
+   law_chaos: 1
+   strength: 38
+ - name: Elf
+   combat: 1
+   ranged_combat: 2
+   range: 6
+   defence: 2
+   movement: 1
+   magical_resistance: 5
+   manoeuvre: 7
+   unknown: 6
+   law_chaos: 2
+   strength: 26
+ - name: Orc
+   combat: 2
+   ranged_combat: 0
+   range: 0
+   defence: 1
+   movement: 1
+   magical_resistance: 4
+   manoeuvre: 4
+   unknown: 9
+   law_chaos: -1
+   strength: 21
+ - name: Bear
+   combat: 6
+   ranged_combat: 0
+   range: 0
+   defence: 7
+   movement: 2
+   magical_resistance: 6
+   manoeuvre: 2
+   unknown: 5
+   law_chaos: 1
+   strength: 23
+ - name: Gorilla
+   combat: 6
+   ranged_combat: 0
+   range: 0
+   defence: 5
+   movement: 1
+   magical_resistance: 4
+   manoeuvre: 2
+   unknown: 6
+   law_chaos: 0
+   strength: 18
+ - name: Ogre
+   combat: 4
+   ranged_combat: 0
+   range: 0
+   defence: 7
+   movement: 1
+   magical_resistance: 3
+   manoeuvre: 6
+   unknown: 6
+   law_chaos: -1
+   strength: 23
+ - name: Hydra
+   combat: 7
+   ranged_combat: 0
+   range: 0
+   defence: 8
+   movement: 1
+   magical_resistance: 4
+   manoeuvre: 6
+   unknown: 4
+   law_chaos: -1
+   strength: 36
+ - name: Giant Rat
+   combat: 1
+   ranged_combat: 0
+   range: 0
+   defence: 1
+   movement: 3
+   magical_resistance: 8
+   manoeuvre: 2
+   unknown: 9
+   law_chaos: 0
+   strength: 12
+ - name: Giant
+   combat: 9
+   ranged_combat: 0
+   range: 0
+   defence: 7
+   movement: 2
+   magical_resistance: 6
+   manoeuvre: 5
+   unknown: 3
+   law_chaos: 1
+   strength: 23
+ - name: Horse
+   combat: 1
+   ranged_combat: 0
+   range: 0
+   defence: 3
+   movement: 4
+   magical_resistance: 8
+   manoeuvre: 1
+   unknown: 8
+   law_chaos: 1
+   strength: 21
+ - name: Unicorn
+   combat: 5
+   ranged_combat: 0
+   range: 0
+   defence: 4
+   movement: 4
+   magical_resistance: 9
+   manoeuvre: 7
+   unknown: 5
+   law_chaos: 2
+   strength: 16
+ - name: Centaur
+   combat: 1
+   ranged_combat: 2
+   range: 4
+   defence: 3
+   movement: 4
+   magical_resistance: 5
+   manoeuvre: 5
+   unknown: 6
+   law_chaos: 1
+   strength: 23
+ - name: Pegasus
+   combat: 2
+   ranged_combat: 0
+   range: 0
+   defence: 4
+   movement: 5
+   magical_resistance: 6
+   manoeuvre: 7
+   unknown: 5
+   law_chaos: 2
+   strength: 16
+ - name: Gryphon
+   combat: 3
+   ranged_combat: 0
+   range: 0
+   defence: 5
+   movement: 5
+   magical_resistance: 5
+   manoeuvre: 6
+   unknown: 5
+   law_chaos: 1
+   strength: 10
+ - name: Manticore
+   combat: 3
+   ranged_combat: 1
+   range: 3
+   defence: 6
+   movement: 5
+   magical_resistance: 6
+   manoeuvre: 8
+   unknown: 3
+   law_chaos: -1
+   strength: 13
+ - name: Bat
+   combat: 1
+   ranged_combat: 0
+   range: 0
+   defence: 1
+   movement: 5
+   magical_resistance: 9
+   manoeuvre: 4
+   unknown: 7
+   law_chaos: -1
+   strength: 8
+ - name: Green Dragon
+   combat: 5
+   ranged_combat: 4
+   range: 6
+   defence: 8
+   movement: 3
+   magical_resistance: 4
+   manoeuvre: 4
+   unknown: 0
+   law_chaos: -1
+   strength: 32
+ - name: Red Dragon
+   combat: 7
+   ranged_combat: 3
+   range: 5
+   defence: 9
+   movement: 3
+   magical_resistance: 4
+   manoeuvre: 5
+   unknown: 0
+   law_chaos: -2
+   strength: 34
+ - name: Golden Dragon
+   combat: 9
+   ranged_combat: 5
+   range: 4
+   defence: 9
+   movement: 3
+   magical_resistance: 5
+   manoeuvre: 5
+   unknown: 0
+   law_chaos: 2
+   strength: 27
+ - name: Harpy
+   combat: 4
+   ranged_combat: 0
+   range: 0
+   defence: 2
+   movement: 5
+   magical_resistance: 8
+   manoeuvre: 5
+   unknown: 5
+   law_chaos: -1
+   strength: 13
+ - name: Eagle
+   combat: 3
+   ranged_combat: 0
+   range: 0
+   defence: 3
+   movement: 6
+   magical_resistance: 8
+   manoeuvre: 2
+   unknown: 6
+   law_chaos: 1
+   strength: 14
+ - name: Vampire
+   combat: 6
+   ranged_combat: 0
+   range: 0
+   defence: 8
+   movement: 4
+   magical_resistance: 6
+   manoeuvre: 5
+   unknown: 1
+   law_chaos: -2
+   strength: 40
+ - name: Ghost
+   combat: 1
+   ranged_combat: 0
+   range: 0
+   defence: 3
+   movement: 2
+   magical_resistance: 9
+   manoeuvre: 6
+   unknown: 4
+   law_chaos: -1
+   strength: 15
+ - name: Spectre
+   combat: 4
+   ranged_combat: 0
+   range: 0
+   defence: 2
+   movement: 1
+   magical_resistance: 6
+   manoeuvre: 4
+   unknown: 5
+   law_chaos: -1
+   strength: 15
+ - name: Wraith
+   combat: 5
+   ranged_combat: 0
+   range: 0
+   defence: 5
+   movement: 2
+   magical_resistance: 4
+   manoeuvre: 5
+   unknown: 4
+   law_chaos: -1
+   strength: 10
+ - name: Skeleton
+   combat: 3
+   ranged_combat: 0
+   range: 0
+   defence: 2
+   movement: 1
+   magical_resistance: 3
+   manoeuvre: 4
+   unknown: 6
+   law_chaos: -1
+   strength: 17
+ - name: Zombie
+   combat: 1
+   ranged_combat: 0
+   range: 0
+   defence: 1
+   movement: 1
+   magical_resistance: 2
+   manoeuvre: 3
+   unknown: 4
+   law_chaos: -1
+   strength: 25
+ - name: Blob
+   combat: 1
+   ranged_combat: 0
+   range: 0
+   defence: 0
+   movement: 0
+   magical_resistance: 0
+   manoeuvre: 0
+   unknown: 0
+   law_chaos: 0
+   strength: 40
+ - name: Fire
+   combat: 0
+   ranged_combat: 0
+   range: 0
+   defence: 0
+   movement: 0
+   magical_resistance: 0
+   manoeuvre: 0
+   unknown: 0
+   law_chaos: 0
+   strength: 12
+ - name: Magic Wood
+   combat: 0
+   ranged_combat: 0
+   range: 0
+   defence: 5
+   movement: 0
+   magical_resistance: 0
+   manoeuvre: 9
+   unknown: 6
+   law_chaos: 2
+   strength: 250
+ - name: Shadow Wood
+   combat: 2
+   ranged_combat: 0
+   range: 0
+   defence: 4
+   movement: 0
+   magical_resistance: 0
+   manoeuvre: 9
+   unknown: 4
+   law_chaos: -2
+   strength: 30
+ - name: Magic Castle
+   combat: 0
+   ranged_combat: 0
+   range: 0
+   defence: 0
+   movement: 0
+   magical_resistance: 0
+   manoeuvre: 0
+   unknown: 0
+   law_chaos: 0
+   strength: 50
+ - name: Dark Citadel
+   combat: 0
+   ranged_combat: 0
+   range: 0
+   defence: 0
+   movement: 0
+   magical_resistance: 0
+   manoeuvre: 0
+   unknown: 0
+   law_chaos: 0
+   strength: 50
+ - name: Wall
+   combat: 0
+   ranged_combat: 0
+   range: 0
+   defence: 0
+   movement: 0
+   magical_resistance: 0
+   manoeuvre: 0
+   unknown: 0
+   law_chaos: 0
+   strength: 30
