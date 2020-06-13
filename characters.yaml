@@ -73,6 +73,7 @@
    deadsprite:
     - 4
     - 0
+
  - name: Dire Wolf
    combat: 3
    ranged_combat: 0
@@ -84,6 +85,19 @@
    unknown: 8
    law_chaos: -1
    strength: 12
+   sprites:
+    - - 0
+      - 15
+    - - 1
+      - 15
+    - - 2
+      - 15
+    - - 3
+      - 15
+   deadsprite:
+    - 4
+    - 15
+
  - name: Goblin
    combat: 2
    ranged_combat: 0
@@ -95,6 +109,19 @@
    unknown: 8
    law_chaos: -1
    strength: 12
+   sprites:
+    - - 0
+      - 8
+    - - 1
+      - 8
+    - - 2
+      - 8
+    - - 3
+      - 8
+   deadsprite:
+    - 4
+    - 8
+
  - name: Crocodile
    combat: 5
    ranged_combat: 0
@@ -106,6 +133,19 @@
    unknown: 7
    law_chaos: 0
    strength: 34
+   sprites:
+    - - 0
+      - 16
+    - - 1
+      - 16
+    - - 2
+      - 16
+    - - 3
+      - 16
+   deadsprite:
+    - 4
+    - 16
+
  - name: Faun
    combat: 3
    ranged_combat: 0
@@ -117,6 +157,19 @@
    unknown: 7
    law_chaos: -1
    strength: 20
+   sprites:
+    - - 0
+      - 12
+    - - 1
+      - 12
+    - - 2
+      - 12
+    - - 3
+      - 12
+   deadsprite:
+    - 4
+    - 12
+
  - name: Lion
    combat: 6
    ranged_combat: 0
@@ -128,6 +181,19 @@
    unknown: 5
    law_chaos: 1
    strength: 38
+   sprites:
+    - - 5
+      - 19
+    - - 6
+      - 19
+    - - 7
+      - 19
+    - - 8
+      - 19
+   deadsprite:
+    - 9
+    - 19
+
  - name: Elf
    combat: 1
    ranged_combat: 2
@@ -139,6 +205,19 @@
    unknown: 6
    law_chaos: 2
    strength: 26
+   sprites:
+    - - 0
+      - 13
+    - - 1
+      - 13
+    - - 2
+      - 13
+    - - 3
+      - 13
+   deadsprite:
+    - 4
+    - 13
+
  - name: Orc
    combat: 2
    ranged_combat: 0
@@ -150,6 +229,19 @@
    unknown: 9
    law_chaos: -1
    strength: 21
+   sprites:
+    - - 5
+      - 16
+    - - 6
+      - 16
+    - - 7
+      - 16
+    - - 8
+      - 16
+   deadsprite:
+    - 9
+    - 16
+
  - name: Bear
    combat: 6
    ranged_combat: 0
@@ -161,6 +253,19 @@
    unknown: 5
    law_chaos: 1
    strength: 23
+   sprites:
+    - - 0
+      - 18
+    - - 1
+      - 18
+    - - 2
+      - 18
+    - - 3
+      - 18
+   deadsprite:
+    - 4
+    - 18
+
  - name: Gorilla
    combat: 6
    ranged_combat: 0
@@ -172,6 +277,20 @@
    unknown: 6
    law_chaos: 0
    strength: 18
+   sprites:
+    - - 0
+      - 6
+    - - 1
+      - 6
+    - - 2
+      - 6
+    - - 3
+      - 6
+   deadsprite:
+    - 4
+    - 6
+
+# FIXME - vs goblin
  - name: Ogre
    combat: 4
    ranged_combat: 0
@@ -183,6 +302,19 @@
    unknown: 6
    law_chaos: -1
    strength: 23
+   sprites:
+    - - 0
+      - 8
+    - - 1
+      - 8
+    - - 2
+      - 8
+    - - 3
+      - 8
+   deadsprite:
+    - 4
+    - 8
+
  - name: Hydra
    combat: 7
    ranged_combat: 0
@@ -194,6 +326,19 @@
    unknown: 4
    law_chaos: -1
    strength: 36
+   sprites:
+    - - 0
+      - 1
+    - - 1
+      - 1
+    - - 2
+      - 1
+    - - 3
+      - 1
+   deadsprite:
+    - 4
+    - 1
+
  - name: Giant Rat
    combat: 1
    ranged_combat: 0
@@ -205,6 +350,19 @@
    unknown: 9
    law_chaos: 0
    strength: 12
+   sprites:
+    - - 0
+      - 9
+    - - 1
+      - 9
+    - - 2
+      - 9
+    - - 3
+      - 9
+   deadsprite:
+    - 4
+    - 9
+
  - name: Giant
    combat: 9
    ranged_combat: 0
@@ -216,6 +374,19 @@
    unknown: 3
    law_chaos: 1
    strength: 23
+   sprites:
+    - - 0
+      - 10
+    - - 1
+      - 10
+    - - 2
+      - 10
+    - - 3
+      - 10
+   deadsprite:
+    - 4
+    - 10
+
  - name: Horse
    combat: 1
    ranged_combat: 0
@@ -227,6 +398,19 @@
    unknown: 8
    law_chaos: 1
    strength: 21
+   sprites:
+    - - 0
+      - 2
+    - - 1
+      - 2
+    - - 2
+      - 2
+    - - 3
+      - 2
+   deadsprite:
+    - 4
+    - 2
+
  - name: Unicorn
    combat: 5
    ranged_combat: 0
@@ -238,6 +422,19 @@
    unknown: 5
    law_chaos: 2
    strength: 16
+   sprites:
+    - - 0
+      - 10
+    - - 1
+      - 10
+    - - 2
+      - 10
+    - - 3
+      - 10
+   deadsprite:
+    - 4
+    - 10
+
  - name: Centaur
    combat: 1
    ranged_combat: 2
@@ -249,6 +446,19 @@
    unknown: 6
    law_chaos: 1
    strength: 23
+   sprites:
+    - - 0
+      - 17
+    - - 1
+      - 17
+    - - 2
+      - 17
+    - - 3
+      - 17
+   deadsprite:
+    - 4
+    - 17
+
  - name: Pegasus
    combat: 2
    ranged_combat: 0
@@ -260,6 +470,19 @@
    unknown: 5
    law_chaos: 2
    strength: 16
+   sprites:
+    - - 5
+      - 15
+    - - 6
+      - 15
+    - - 7
+      - 15
+    - - 8
+      - 15
+   deadsprite:
+    - 9
+    - 15
+
  - name: Gryphon
    combat: 3
    ranged_combat: 0
@@ -271,6 +494,19 @@
    unknown: 5
    law_chaos: 1
    strength: 10
+   sprites:
+    - - 0
+      - 5
+    - - 1
+      - 5
+    - - 2
+      - 5
+    - - 3
+      - 5
+   deadsprite:
+    - 4
+    - 5
+
  - name: Manticore
    combat: 3
    ranged_combat: 1
@@ -282,6 +518,19 @@
    unknown: 3
    law_chaos: -1
    strength: 13
+   sprites:
+    - - 5
+      - 18
+    - - 6
+      - 18
+    - - 7
+      - 18
+    - - 8
+      - 18
+   deadsprite:
+    - 9
+    - 18
+
  - name: Bat
    combat: 1
    ranged_combat: 0
@@ -293,6 +542,19 @@
    unknown: 7
    law_chaos: -1
    strength: 8
+   sprites:
+    - - 0
+      - 19
+    - - 1
+      - 19
+    - - 2
+      - 19
+    - - 3
+      - 19
+   deadsprite:
+    - 4
+    - 19
+
  - name: Green Dragon
    combat: 5
    ranged_combat: 4
@@ -304,6 +566,19 @@
    unknown: 0
    law_chaos: -1
    strength: 32
+   sprites:
+    - - 0
+      - 7
+    - - 1
+      - 7
+    - - 2
+      - 7
+    - - 3
+      - 7
+   deadsprite:
+    - 4
+    - 7
+
  - name: Red Dragon
    combat: 7
    ranged_combat: 3
@@ -315,6 +590,19 @@
    unknown: 0
    law_chaos: -2
    strength: 34
+   sprites:
+    - - 0
+      - 5
+    - - 1
+      - 5
+    - - 2
+      - 5
+    - - 3
+      - 5
+   deadsprite:
+    - 4
+    - 5
+
  - name: Golden Dragon
    combat: 9
    ranged_combat: 5
@@ -326,6 +614,19 @@
    unknown: 0
    law_chaos: 2
    strength: 27
+   sprites:
+    - - 5
+      - 15
+    - - 6
+      - 15
+    - - 7
+      - 15
+    - - 8
+      - 15
+   deadsprite:
+    - 9
+    - 15
+
  - name: Harpy
    combat: 4
    ranged_combat: 0
@@ -337,6 +638,19 @@
    unknown: 5
    law_chaos: -1
    strength: 13
+   sprites:
+    - - 0
+      - 3
+    - - 1
+      - 3
+    - - 2
+      - 3
+    - - 3
+      - 3
+   deadsprite:
+    - 4
+    - 3
+
  - name: Eagle
    combat: 3
    ranged_combat: 0
@@ -348,6 +662,19 @@
    unknown: 6
    law_chaos: 1
    strength: 14
+   sprites:
+    - - 0
+      - 14
+    - - 1
+      - 14
+    - - 2
+      - 14
+    - - 3
+      - 14
+   deadsprite:
+    - 4
+    - 14
+
  - name: Vampire
    combat: 6
    ranged_combat: 0
@@ -359,6 +686,19 @@
    unknown: 1
    law_chaos: -2
    strength: 40
+   sprites:
+    - - 5
+      - 9
+    - - 6
+      - 9
+    - - 7
+      - 9
+    - - 8
+      - 9
+   deadsprite:
+    - 9
+    - 9
+
  - name: Ghost
    combat: 1
    ranged_combat: 0
@@ -370,6 +710,19 @@
    unknown: 4
    law_chaos: -1
    strength: 15
+   sprites:
+    - - 0
+      - 11
+    - - 1
+      - 11
+    - - 2
+      - 11
+    - - 3
+      - 11
+   deadsprite:
+    - 4
+    - 11
+
  - name: Spectre
    combat: 4
    ranged_combat: 0
@@ -381,6 +734,19 @@
    unknown: 5
    law_chaos: -1
    strength: 15
+   sprites:
+    - - 5
+      - 12
+    - - 6
+      - 12
+    - - 7
+      - 12
+    - - 8
+      - 12
+   deadsprite:
+    - 9
+    - 12
+
  - name: Wraith
    combat: 5
    ranged_combat: 0
@@ -392,6 +758,19 @@
    unknown: 4
    law_chaos: -1
    strength: 10
+   sprites:
+    - - 5
+      - 8
+    - - 6
+      - 8
+    - - 7
+      - 8
+    - - 8
+      - 8
+   deadsprite:
+    - 9
+    - 8
+
  - name: Skeleton
    combat: 3
    ranged_combat: 0
@@ -403,6 +782,19 @@
    unknown: 6
    law_chaos: -1
    strength: 17
+   sprites:
+    - - 5
+      - 13
+    - - 6
+      - 13
+    - - 7
+      - 13
+    - - 8
+      - 13
+   deadsprite:
+    - 9
+    - 13
+
  - name: Zombie
    combat: 1
    ranged_combat: 0
@@ -414,6 +806,19 @@
    unknown: 4
    law_chaos: -1
    strength: 25
+   sprites:
+    - - 5
+      - 7
+    - - 6
+      - 7
+    - - 7
+      - 7
+    - - 8
+      - 7
+   deadsprite:
+    - 9
+    - 7
+
  - name: Blob
    combat: 1
    ranged_combat: 0
@@ -425,6 +830,19 @@
    unknown: 0
    law_chaos: 0
    strength: 40
+   sprites:
+    - - 5
+      - 6
+    - - 6
+      - 6
+    - - 7
+      - 6
+    - - 8
+      - 6
+   deadsprite:
+    - 9
+    - 6
+
  - name: Fire
    combat: 0
    ranged_combat: 0
@@ -436,6 +854,19 @@
    unknown: 0
    law_chaos: 0
    strength: 12
+   sprites:
+    - - 5
+      - 5
+    - - 6
+      - 5
+    - - 7
+      - 5
+    - - 8
+      - 5
+   deadsprite:
+    - 9
+    - 5
+
  - name: Magic Wood
    combat: 0
    ranged_combat: 0
@@ -447,6 +878,10 @@
    unknown: 6
    law_chaos: 2
    strength: 250
+   sprites:
+    - - 5
+      - 4
+
  - name: Shadow Wood
    combat: 2
    ranged_combat: 0
@@ -458,6 +893,10 @@
    unknown: 4
    law_chaos: -2
    strength: 30
+   sprites:
+    - - 5
+      - 3
+
  - name: Magic Castle
    combat: 0
    ranged_combat: 0
@@ -469,6 +908,10 @@
    unknown: 0
    law_chaos: 0
    strength: 50
+   sprites:
+    - - 5
+      - 0
+
  - name: Dark Citadel
    combat: 0
    ranged_combat: 0
@@ -480,6 +923,10 @@
    unknown: 0
    law_chaos: 0
    strength: 50
+   sprites:
+    - - 5
+      - 1
+
  - name: Wall
    combat: 0
    ranged_combat: 0
@@ -491,3 +938,7 @@
    unknown: 0
    law_chaos: 0
    strength: 30
+   sprites:
+    - - 5
+      - 2
+
