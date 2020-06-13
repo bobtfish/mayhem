@@ -1,12 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
-	"golang.org/x/image/font/basicfont"
 )
 
 type GameGrid [][]*Character
@@ -42,14 +39,13 @@ func drawCharacter(char *Character, x, y int, win *pixelgl.Window) {
 	imd.Draw(win)
 
 	if char != nil {
-		atlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
-		basicTxt := text.New(pixel.V(float64(x+2), float64(y+2)), atlas)
-		fmt.Fprintln(basicTxt, char.Name)
-		basicTxt.Draw(win, pixel.IM)
+		char.GetText(x, y).Draw(win, pixel.IM)
 	}
 }
 
-func (grid *GameGrid) Draw(xof, yof int, win *pixelgl.Window) {
+func (grid *GameGrid) Draw(win *pixelgl.Window) {
+	xof := CHAR_PIXELS / 2
+	yof := WIN_Y - (CHAR_PIXELS*GRID_Y + CHAR_PIXELS/2)
 	maxy := len(*grid)
 	maxx := len((*grid)[0])
 	for x := 0; x < maxx; x++ {

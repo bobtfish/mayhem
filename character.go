@@ -1,9 +1,13 @@
 package main
 
 import (
-	"github.com/faiface/pixel/pixelgl"
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/text"
+	"golang.org/x/image/font/basicfont"
 )
 
 type CharacterType struct {
@@ -24,7 +28,14 @@ type Character struct {
 	CharacterType
 }
 
-func (c *Character) DrawCharacter(win *pixelgl.Window) {
+func (c *Character) GetText(x, y int) *text.Text {
+	atlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
+	basicTxt := text.New(pixel.V(float64(x+2), float64(y+2+CHAR_PIXELS-16)), atlas)
+	fmt.Fprintln(basicTxt, c.Name)
+	fmt.Fprintf(basicTxt, "R%d C%d RC%d D%d\n", c.Range, c.Combat, c.RangedCombat, c.Defence)
+	fmt.Fprintf(basicTxt, "M%d MR%d\n", c.Movement, c.MagicalResistance)
+	fmt.Fprintf(basicTxt, "LC%d ST%d\n", c.LawChaos, c.Strength)
+	return basicTxt
 }
 
 type CharacterTypes map[string]CharacterType
