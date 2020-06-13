@@ -78,6 +78,19 @@ func drawHydra(ss pixel.Picture, win *pixelgl.Window) {
 	sprite.Draw(win, mat)
 }
 
+func placeCharactersTest(grid *GameGrid, ct CharacterTypes) {
+	x := 0
+	y := 0
+	for k := range ct {
+		grid.PlaceCharacter(x, y, ct.NewCharacter(k))
+		x++
+		if x == 15 {
+			x = 0
+			y++
+		}
+	}
+}
+
 func run() {
 	ss, err := loadPicture("sprite_sheet.png")
 	if err != nil {
@@ -86,10 +99,6 @@ func run() {
 
 	ct := LoadCharacterTemplates("characters.yaml")
 	grid := MakeGameGrid(GRID_X, GRID_Y)
-
-	grid.PlaceCharacter(2, 2, ct.NewCharacter("Wall"))
-	grid.PlaceCharacter(11, 9, ct.NewCharacter("Hydra"))
-	grid.PlaceCharacter(3, 3, ct.NewCharacter("King Cobra"))
 
 	cfg := pixelgl.WindowConfig{
 		Title:  "Mayhem!",
@@ -100,6 +109,8 @@ func run() {
 	if err != nil {
 		panic(err)
 	}
+
+	placeCharactersTest(grid, ct)
 	drawMainWindow(win, grid, ss)
 
 	for !win.Closed() {
