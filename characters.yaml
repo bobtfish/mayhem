@@ -61,6 +61,18 @@
    unknown: 8
    law_chaos: 1
    strength: 30
+   sprites:
+    - - 0
+      - 0
+    - - 1
+      - 0
+    - - 2
+      - 0
+    - - 3
+      - 0
+   deadsprite:
+    - 4
+    - 0
  - name: Dire Wolf
    combat: 3
    ranged_combat: 0

@@ -11,17 +11,19 @@ import (
 )
 
 type CharacterType struct {
-	Name              string `yaml:"name"`
-	Combat            int    `yaml:"combat"`
-	RangedCombat      int    `yaml:"ranged_combat"`
-	Range             int    `yaml:"range"`
-	Defence           int    `yaml:"defence"`
-	Movement          int    `yaml:"movement"`
-	MagicalResistance int    `yaml:"magical_resistance"`
-	Manoeuvre         int    `yaml:"manoeuvre"`
-	Unknown           int    `yaml:"unknown"`
-	LawChaos          int    `yaml:"law_chaos"`
-	Strength          int    `yaml:"strength"`
+	Name              string  `yaml:"name"`
+	Combat            int     `yaml:"combat"`
+	RangedCombat      int     `yaml:"ranged_combat"`
+	Range             int     `yaml:"range"`
+	Defence           int     `yaml:"defence"`
+	Movement          int     `yaml:"movement"`
+	MagicalResistance int     `yaml:"magical_resistance"`
+	Manoeuvre         int     `yaml:"manoeuvre"`
+	Unknown           int     `yaml:"unknown"`
+	LawChaos          int     `yaml:"law_chaos"`
+	Strength          int     `yaml:"strength"`
+	Sprites           [][]int `yaml:"sprites"`
+	DeadSprite        []int   `yaml:"deadsprite"`
 }
 
 type Character struct {

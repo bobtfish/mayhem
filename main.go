@@ -69,6 +69,11 @@ func drawMainWindow(win *pixelgl.Window, grid *GameGrid) {
 }
 
 func run() {
+	ss, err := loadPicture("sprite_sheet.png")
+	if err != nil {
+		panic(err)
+	}
+
 	ct := LoadCharacterTemplates("characters.yaml")
 	grid := MakeGameGrid(GRID_X, GRID_Y)
 
@@ -76,7 +81,7 @@ func run() {
 	grid.PlaceCharacter(11, 9, ct.NewCharacter("Hydra"))
 
 	cfg := pixelgl.WindowConfig{
-		Title:  "Pixel Rocks!",
+		Title:  "Mayhem!",
 		Bounds: pixel.R(0, 0, WIN_X, WIN_Y),
 		VSync:  true,
 	}
@@ -84,7 +89,16 @@ func run() {
 	if err != nil {
 		panic(err)
 	}
-	drawMainWindow(win, grid)
+	//	drawMainWindow(win, grid)
+
+	rect := pixel.R(0, 16, 16, 32)
+	sprite := pixel.NewSprite(nil, pixel.Rect{})
+	sprite.Set(ss, rect)
+	mat := pixel.IM
+	mat = mat.Moved(win.Bounds().Center())
+	mat = mat.ScaledXY(win.Bounds().Center(), pixel.V(4, 4))
+	sprite.Draw(win, mat)
+
 	for !win.Closed() {
 		win.Update()
 	}
