@@ -85,6 +85,9 @@
    unknown: 8
    law_chaos: -1
    strength: 12
+   color_r: 243
+   color_g: 241
+   color_b: 130
    sprites:
     - - 0
       - 15
@@ -133,6 +136,9 @@
    unknown: 7
    law_chaos: 0
    strength: 34
+   color_r: 94
+   color_g: 179
+   color_b: 72
    sprites:
     - - 0
       - 16
@@ -181,6 +187,9 @@
    unknown: 5
    law_chaos: 1
    strength: 38
+   color_r: 246
+   color_g: 248
+   color_b: 83
    sprites:
     - - 5
       - 19
@@ -205,6 +214,9 @@
    unknown: 6
    law_chaos: 2
    strength: 26
+   color_r: 107
+   color_g: 226
+   color_b: 70
    sprites:
     - - 0
       - 13
@@ -253,6 +265,9 @@
    unknown: 5
    law_chaos: 1
    strength: 23
+   color_r: 232
+   color_g: 49
+   color_b: 35
    sprites:
     - - 0
       - 18
@@ -277,6 +292,9 @@
    unknown: 6
    law_chaos: 0
    strength: 18
+   color_r: 154
+   color_g: 156
+   color_b: 53
    sprites:
     - - 0
       - 6
@@ -352,6 +370,9 @@
    unknown: 9
    law_chaos: 0
    strength: 12
+   color_r: 203
+   color_g: 203
+   color_b: 203
    sprites:
     - - 0
       - 9
@@ -376,6 +397,9 @@
    unknown: 3
    law_chaos: 1
    strength: 23
+   color_r: 88
+   color_g: 192
+   color_b: 193
    sprites:
     - - 0
       - 10
@@ -431,16 +455,16 @@
    color_g: 186
    color_b: 185
    sprites:
-    - - 0
+    - - 5
       - 10
-    - - 1
+    - - 6
       - 10
-    - - 2
+    - - 7
       - 10
-    - - 3
+    - - 8
       - 10
    deadsprite:
-    - 4
+    - 9
     - 10
 
  - name: Centaur
@@ -478,6 +502,9 @@
    unknown: 5
    law_chaos: 2
    strength: 16
+   color_r: 248
+   color_g: 248
+   color_b: 248
    sprites:
     - - 5
       - 15
@@ -502,6 +529,9 @@
    unknown: 5
    law_chaos: 1
    strength: 10
+   color_r: 165
+   color_g: 165
+   color_b: 165
    sprites:
     - - 0
       - 4
@@ -574,19 +604,21 @@
    unknown: 0
    law_chaos: -1
    strength: 32
-#   color_g: 200
+   color_r: 101
+   color_g: 214
+   color_b: 64
    sprites:
-    - - 0
-      - 7
-    - - 1
-      - 7
-    - - 2
-      - 7
-    - - 3
-      - 7
+    - - 5
+      - 14
+    - - 6
+      - 14
+    - - 7
+      - 14
+    - - 8
+      - 14
    deadsprite:
-    - 4
-    - 7
+    - 9
+    - 14
 
  - name: Red Dragon
    combat: 7
@@ -624,18 +656,21 @@
    unknown: 0
    law_chaos: 2
    strength: 27
+   color_r: 233
+   color_g: 244
+   color_b: 84
    sprites:
-    - - 5
-      - 14
-    - - 6
-      - 14
-    - - 7
-      - 14
-    - - 8
-      - 14
+    - - 0
+      - 7
+    - - 1
+      - 7
+    - - 2
+      - 7
+    - - 3
+      - 7
    deadsprite:
-    - 9
-    - 14
+    - 4
+    - 7
 
  - name: Harpy
    combat: 4
@@ -648,6 +683,9 @@
    unknown: 5
    law_chaos: -1
    strength: 13
+   color_r: 114
+   color_g: 236
+   color_b: 231
    sprites:
     - - 0
       - 3
@@ -672,6 +710,9 @@
    unknown: 6
    law_chaos: 1
    strength: 14
+   color_r: 230
+   color_g: 240
+   color_b: 89
    sprites:
     - - 0
       - 14
@@ -720,6 +761,9 @@
    unknown: 4
    law_chaos: -1
    strength: 15
+   color_r: 103
+   color_g: 216
+   color_b: 216
    sprites:
     - - 0
       - 11
@@ -768,6 +812,9 @@
    unknown: 4
    law_chaos: -1
    strength: 10
+   color_r: 100
+   color_g: 176
+   color_b: 179
    sprites:
     - - 5
       - 8
@@ -816,6 +863,9 @@
    unknown: 4
    law_chaos: -1
    strength: 25
+   color_r: 114
+   color_g: 203
+   color_b: 193
    sprites:
     - - 5
       - 7
@@ -868,6 +918,9 @@
    unknown: 0
    law_chaos: 0
    strength: 12
+   color_r: 215
+   color_g: 211
+   color_b: 86
    sprites:
     - - 5
       - 5
