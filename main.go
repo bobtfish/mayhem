@@ -41,15 +41,6 @@ func pickColour() pixel.RGBA {
 	return pixel.RGB(rand.Float64(), rand.Float64(), rand.Float64())
 }
 
-func getRectangle(x float64, y float64, size float64) *imdraw.IMDraw {
-	imd := imdraw.New(nil)
-	imd.Color = pickColour()
-	imd.Push(pixel.V(x, y))
-	imd.Push(pixel.V(x+size, y+size))
-	imd.Rectangle(1)
-	return imd
-}
-
 func drawMainBorderOne(inset, width int, win *pixelgl.Window) {
 	imd := imdraw.New(nil)
 	imd.Color = pickColour()
@@ -76,8 +67,11 @@ func drawBorder(win *pixelgl.Window) {
 }
 
 func run() {
-	ct = LoadCharacters("characters.yaml")
+	ct = LoadCharacterTemplates("characters.yaml")
 	grid = MakeGameGrid(GRID_X, GRID_Y)
+
+	grid.PlaceCharacter(2, 2, ct.NewCharacter("Wall"))
+	grid.PlaceCharacter(11, 9, ct.NewCharacter("Hydra"))
 
 	cfg := pixelgl.WindowConfig{
 		Title:  "Pixel Rocks!",
