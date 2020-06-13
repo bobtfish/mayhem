@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"gopkg.in/yaml.v2"
+	"image/color"
 	"io/ioutil"
+	"math/rand"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/text"
@@ -24,11 +26,29 @@ type CharacterType struct {
 	Strength          int     `yaml:"strength"`
 	Sprites           [][]int `yaml:"sprites"`
 	DeadSprite        []int   `yaml:"deadsprite"`
+	ColorR            int     `yaml:"color_r"`
+	ColorG            int     `yaml:"color_g"`
+	ColorB            int     `yaml:"color_b"`
 }
 
 type Character struct {
 	CharacterType
 	SpriteIdx int
+}
+
+func (c *Character) AnimationTick() {
+	if c.Sprites == nil {
+		return
+	}
+	spriteCount := len(c.Sprites)
+	if spriteCount == 0 {
+		return
+	}
+	c.SpriteIdx++
+	if c.SpriteIdx == spriteCount {
+		c.SpriteIdx = 0
+	}
+	return
 }
 
 func (c *Character) GetSprite(ss pixel.Picture) *pixel.Sprite {
@@ -40,6 +60,13 @@ func (c *Character) GetSprite(ss pixel.Picture) *pixel.Sprite {
 	y := spriteLocation[1]
 	fmt.Printf("Character %s has %d sprites, in sprite sheet sprite 0 is x %d, y %d topx %d topy %d\n", c.Name, len(c.Sprites), x*SPRITE_SIZE, y*SPRITE_SIZE, x*SPRITE_SIZE+SPRITE_SIZE, y*SPRITE_SIZE+SPRITE_SIZE)
 	return pixel.NewSprite(ss, pixel.R(float64(x*SPRITE_SIZE), float64(y*SPRITE_SIZE), float64(x*SPRITE_SIZE+SPRITE_SIZE), float64(y*SPRITE_SIZE+SPRITE_SIZE)))
+}
+
+func (c *Character) GetColorMask() color.Color {
+	if c.ColorR == 0 && c.ColorG == 0 && c.ColorB == 0 {
+		return pixel.RGB(255, 255, 255)
+	}
+	return pixel.RGB(float64(c.ColorR), float64(c.ColorG), float64(c.ColorB))
 }
 
 func (c *Character) GetText(x, y int) *text.Text {
@@ -79,5 +106,12 @@ func LoadCharacterTemplates(fn string) CharacterTypes {
 
 func (ct CharacterTypes) NewCharacter(typeName string) *Character {
 	c := ct[typeName]
-	return &Character{CharacterType: c}
+	ch := &Character{CharacterType: c}
+
+	spriteCount := len(ch.Sprites)
+	if spriteCount > 1 {
+		ch.SpriteIdx = rand.Intn(spriteCount - 1)
+	}
+
+	return ch
 }

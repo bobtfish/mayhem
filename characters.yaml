@@ -301,6 +301,9 @@
    unknown: 6
    law_chaos: -1
    strength: 23
+   color_r: 220
+   color_g: 47
+   color_b: 32
    sprites:
     - - 5
       - 17
@@ -397,6 +400,9 @@
    unknown: 8
    law_chaos: 1
    strength: 21
+   color_r: 190
+   color_g: 200
+   color_b: 67
    sprites:
     - - 0
       - 2
@@ -421,6 +427,9 @@
    unknown: 5
    law_chaos: 2
    strength: 16
+   color_r: 87
+   color_g: 186
+   color_b: 185
    sprites:
     - - 0
       - 10
@@ -565,6 +574,7 @@
    unknown: 0
    law_chaos: -1
    strength: 32
+#   color_g: 200
    sprites:
     - - 0
       - 7
@@ -589,6 +599,7 @@
    unknown: 0
    law_chaos: -2
    strength: 34
+#   color_r: 255
    sprites:
     - - 0
       - 5
@@ -829,6 +840,10 @@
    unknown: 0
    law_chaos: 0
    strength: 40
+   color_r: 112
+   color_g: 255
+   color_b: 74
+
    sprites:
     - - 5
       - 6

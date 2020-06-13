@@ -53,7 +53,7 @@ func drawCharacter(char *Character, x, y int, win *pixelgl.Window, ss pixel.Pict
 		mat = mat.Moved(v)
 		mat = mat.ScaledXY(v, pixel.V(4, 4))
 		mat = mat.Moved(pixel.V(31, 31))
-		sprite.Draw(win, mat)
+		sprite.DrawColorMask(win, mat, char.GetColorMask())
 	}
 }
 
@@ -66,6 +66,19 @@ func (grid *GameGrid) Draw(win *pixelgl.Window, ss pixel.Picture) {
 		for y := 0; y < maxy; y++ {
 			char := grid.GetCharacter(x, y)
 			drawCharacter(char, x*CHAR_PIXELS+xof, y*CHAR_PIXELS+yof, win, ss)
+		}
+	}
+}
+
+func (grid *GameGrid) AnimationTick() {
+	maxy := len(*grid)
+	maxx := len((*grid)[0])
+	for x := 0; x < maxx; x++ {
+		for y := 0; y < maxy; y++ {
+			c := grid.GetCharacter(x, y)
+			if c != nil {
+				c.AnimationTick()
+			}
 		}
 	}
 }

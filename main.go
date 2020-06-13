@@ -115,6 +115,8 @@ func run() {
 
 	for !win.Closed() {
 		win.Update()
+		grid.AnimationTick()
+		drawMainWindow(win, grid, ss)
 	}
 }
 
