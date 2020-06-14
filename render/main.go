@@ -51,6 +51,12 @@ func (sd *SpriteDrawer) DrawSprite(ssLX, ssLY, winLX, winLY int, target pixel.Ta
 	sd.GetSprite(ssLX, ssLY).Draw(target, sd.GetSpriteMatrix(winLX, winLY))
 }
 
+func (sd *SpriteDrawer) GetNewBatch() *pixel.Batch {
+	batch := pixel.NewBatch(&pixel.TrianglesData{}, sd.SpriteSheet)
+	batch.Clear()
+	return batch
+}
+
 func NewGameWindow(ss pixel.Picture) *GameWindow {
 	title := "Mayhem!"
 
@@ -88,27 +94,29 @@ func (screen *MainScreen) Draw(win *pixelgl.Window, sd *SpriteDrawer) {
 }
 
 func drawMainBorder(win *pixelgl.Window, sd *SpriteDrawer) {
+	batch := sd.GetNewBatch()
 	// Bottom left
-	sd.DrawSprite(6, 20, 0, 1, win)
+	sd.DrawSprite(6, 20, 0, 1, batch)
 	// Bottom row
 	for i := 1; i < 15; i++ {
-		sd.DrawSprite(7, 20, i, 1, win)
+		sd.DrawSprite(7, 20, i, 1, batch)
 	}
 	// Bottom right
-	sd.DrawSprite(8, 20, 15, 1, win)
+	sd.DrawSprite(8, 20, 15, 1, batch)
 	// LHS and RHS
 	for i := 2; i <= 10; i++ {
-		sd.DrawSprite(5, 20, 0, i, win)
-		sd.DrawSprite(9, 20, 15, i, win)
+		sd.DrawSprite(5, 20, 0, i, batch)
+		sd.DrawSprite(9, 20, 15, i, batch)
 	}
 	// Top Left
-	sd.DrawSprite(2, 20, 0, 11, win)
+	sd.DrawSprite(2, 20, 0, 11, batch)
 	// Top row
 	for i := 1; i < 15; i++ {
-		sd.DrawSprite(3, 20, i, 11, win)
+		sd.DrawSprite(3, 20, i, 11, batch)
 	}
 	// Top right
-	sd.DrawSprite(4, 20, 15, 11, win)
+	sd.DrawSprite(4, 20, 15, 11, batch)
+	batch.Draw(win)
 
 	imd := imdraw.New(nil)
 	imd.Color = colornames.Blue
