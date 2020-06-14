@@ -45,7 +45,7 @@ func placeCharactersTest(grid *GameGrid, ct CharacterTypes) {
 }
 
 func run() {
-	sd := render.NewSpriteDrawer("sprite_sheet.png")
+	sd := render.NewSpriteDrawer()
 
 	ct := LoadCharacterTemplates()
 	grid := MakeGameGrid(GRID_X, GRID_Y)

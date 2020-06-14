@@ -21,7 +21,7 @@ func loadPicture(path string) (pixel.Picture, error) {
 	return pixel.PictureDataFromImage(img), nil
 }
 
-func NewSpriteDrawer(fn string) SpriteDrawer {
+func NewSpriteDrawer() SpriteDrawer {
 	ss, err := loadPicture("sprite_sheet.png")
 	if err != nil {
 		panic(err)
