@@ -52,14 +52,12 @@ func run() {
 	}
 	r := bytes.NewReader(data)
 
-	sd := render.NewSpriteDrawer(r)
-
 	ct := LoadCharacterTemplates()
 	grid := MakeGameGrid(logical.V(GRID_X, GRID_Y))
 
 	title := "Mayhem!"
 
-	gw := render.NewGameWindow(sd)
+	gw := render.NewGameWindow(r)
 	placeCharactersTest(grid, ct)
 
 	QsecondTicks := 0
@@ -67,7 +65,7 @@ func run() {
 	Qsecond := time.Tick(time.Second / 4)
 
 	for !gw.Closed() {
-		batch := grid.DrawBatch(&sd)
+		batch := grid.DrawBatch(&gw.SpriteDrawer)
 		batch.Draw(gw.Window)
 
 		gw.Update()

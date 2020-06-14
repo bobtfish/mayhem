@@ -2,6 +2,7 @@ package render
 
 import (
 	_ "image/png"
+	"io"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
@@ -33,7 +34,7 @@ func (gw *GameWindow) Update() {
 	gw.Window.Update()
 }
 
-func NewGameWindow(sd SpriteDrawer) *GameWindow {
+func NewGameWindow(sd io.Reader) *GameWindow {
 	title := "Mayhem!"
 
 	cfg := pixelgl.WindowConfig{
@@ -49,7 +50,7 @@ func NewGameWindow(sd SpriteDrawer) *GameWindow {
 	return &GameWindow{
 		Window:       win,
 		Screen:       &MainScreen{},
-		SpriteDrawer: sd,
+		SpriteDrawer: NewSpriteDrawer(sd),
 	}
 }
 
