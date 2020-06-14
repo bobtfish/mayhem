@@ -117,20 +117,25 @@ func run() {
 	placeCharactersTest(grid, ct)
 	drawMainWindow(win, grid, ss)
 
+	QsecondTicks := 0
 	frames := 0
-	second := time.Tick(time.Second)
+	Qsecond := time.Tick(time.Second / 4)
 
 	for !win.Closed() {
-		grid.AnimationTick()
 		drawMainWindow(win, grid, ss)
 
 		win.Update()
 
 		frames++
 		select {
-		case <-second:
-			win.SetTitle(fmt.Sprintf("%s | FPS: %d", title, frames))
-			frames = 0
+		case <-Qsecond:
+			grid.AnimationTick()
+			QsecondTicks++
+			if QsecondTicks == 4 {
+				win.SetTitle(fmt.Sprintf("%s | FPS: %d", title, frames*4))
+				frames = 0
+				QsecondTicks = 0
+			}
 		default:
 		}
 	}
