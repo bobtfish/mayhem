@@ -70,8 +70,7 @@ func run() {
 
 	title := "Mayhem!"
 
-	gw := render.NewGameWindow()
-
+	gw := render.NewGameWindow(ss)
 	placeCharactersTest(grid, ct)
 	grid.Draw(gw.Window, ss)
 

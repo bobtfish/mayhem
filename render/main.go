@@ -17,8 +17,9 @@ const CHAR_PIXELS = 64
 const SPRITE_SIZE = 16
 
 type GameWindow struct {
-	Window *pixelgl.Window
-	Screen GameScreen
+	Window       *pixelgl.Window
+	Screen       GameScreen
+	SpriteDrawer SpriteDrawer
 }
 
 func (gw *GameWindow) Closed() bool {
@@ -26,52 +27,31 @@ func (gw *GameWindow) Closed() bool {
 }
 
 func (gw *GameWindow) Update() {
-	gw.Screen.Draw(gw.Window)
+	gw.Screen.Draw(gw.Window, &gw.SpriteDrawer)
 	gw.Window.Update()
 }
 
-type GameScreen interface {
-	Draw(*pixelgl.Window)
+type SpriteDrawer struct {
+	SpriteSheet pixel.Picture
 }
 
-type MainScreen struct {
-	Drawn bool
+func (sd *SpriteDrawer) GetSprite(ssLX, ssLY int) *pixel.Sprite {
+	return pixel.NewSprite(sd.SpriteSheet, pixel.R(float64(ssLX*SPRITE_SIZE), float64(ssLY*SPRITE_SIZE), float64(ssLX*SPRITE_SIZE+SPRITE_SIZE), float64(ssLY*SPRITE_SIZE+SPRITE_SIZE)))
 }
 
-func (screen *MainScreen) Draw(win *pixelgl.Window) {
-	if !screen.Drawn {
-		win.Clear(colornames.Black)
-		drawMainBorder(win)
-	}
-	screen.Drawn = true
+func (sd *SpriteDrawer) GetSpriteMatrix(winLX, winLY int) pixel.Matrix {
+	mat := pixel.IM
+	v := pixel.V(float64(winLX*CHAR_PIXELS), float64(winLY*CHAR_PIXELS))
+	mat = mat.Moved(v)
+	mat = mat.ScaledXY(v, pixel.V(CHAR_PIXELS/SPRITE_SIZE, CHAR_PIXELS/SPRITE_SIZE))
+	return mat.Moved(pixel.V(CHAR_PIXELS/2-1, CHAR_PIXELS/2-1))
 }
 
-func drawMainBorderOne(inset, width int, win *pixelgl.Window) {
-	imd := imdraw.New(nil)
-	imd.Color = colornames.Blue
-	// Bottom left
-	imd.Push(pixel.V(float64(inset), float64(WIN_Y-(CHAR_PIXELS*(GRID_Y+1))+inset)))
-	// Top right
-	imd.Push(pixel.V(float64(WIN_X-inset), float64(WIN_Y-inset)))
-	imd.Rectangle(float64(width))
-	imd.Draw(win)
+func (sd *SpriteDrawer) DrawSprite(ssLX, ssLY, winLX, winLY int, target pixel.Target) {
+	sd.GetSprite(ssLX, ssLY).Draw(target, sd.GetSpriteMatrix(winLX, winLY))
 }
 
-func drawMainBorder(win *pixelgl.Window) {
-	drawMainBorderOne(2, 1, win)
-	drawMainBorderOne(8, 2, win)
-	drawMainBorderOne(16, 4, win)
-	drawMainBorderOne(24, 6, win)
-
-	imd := imdraw.New(nil)
-	imd.Color = colornames.Blue
-	imd.Push(pixel.V(2, 2))
-	imd.Push(pixel.V(WIN_X-2, WIN_Y-(CHAR_PIXELS*(GRID_Y+1))-2))
-	imd.Rectangle(1)
-	imd.Draw(win)
-}
-
-func NewGameWindow() *GameWindow {
+func NewGameWindow(ss pixel.Picture) *GameWindow {
 	title := "Mayhem!"
 
 	cfg := pixelgl.WindowConfig{
@@ -85,7 +65,55 @@ func NewGameWindow() *GameWindow {
 	}
 
 	return &GameWindow{
-		Window: win,
-		Screen: &MainScreen{},
+		Window:       win,
+		Screen:       &MainScreen{},
+		SpriteDrawer: SpriteDrawer{SpriteSheet: ss},
 	}
+}
+
+type GameScreen interface {
+	Draw(*pixelgl.Window, *SpriteDrawer)
+}
+
+type MainScreen struct {
+	Drawn bool
+}
+
+func (screen *MainScreen) Draw(win *pixelgl.Window, sd *SpriteDrawer) {
+	if !screen.Drawn {
+		win.Clear(colornames.Black)
+		drawMainBorder(win, sd)
+	}
+	screen.Drawn = true
+}
+
+func drawMainBorder(win *pixelgl.Window, sd *SpriteDrawer) {
+	// Bottom left
+	sd.DrawSprite(6, 20, 0, 1, win)
+	// Bottom row
+	for i := 1; i < 15; i++ {
+		sd.DrawSprite(7, 20, i, 1, win)
+	}
+	// Bottom right
+	sd.DrawSprite(8, 20, 15, 1, win)
+	// LHS and RHS
+	for i := 2; i <= 10; i++ {
+		sd.DrawSprite(5, 20, 0, i, win)
+		sd.DrawSprite(9, 20, 15, i, win)
+	}
+	// Top Left
+	sd.DrawSprite(2, 20, 0, 11, win)
+	// Top row
+	for i := 1; i < 15; i++ {
+		sd.DrawSprite(3, 20, i, 11, win)
+	}
+	// Top right
+	sd.DrawSprite(4, 20, 15, 11, win)
+
+	imd := imdraw.New(nil)
+	imd.Color = colornames.Blue
+	imd.Push(pixel.V(2, 2))
+	imd.Push(pixel.V(WIN_X-2, WIN_Y-(CHAR_PIXELS*(GRID_Y+1))-2))
+	imd.Rectangle(1)
+	imd.Draw(win)
 }
