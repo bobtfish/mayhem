@@ -40,7 +40,7 @@ func NewGameWindow(sd io.Reader) *GameWindow {
 	cfg := pixelgl.WindowConfig{
 		Title:  title,
 		Bounds: pixel.R(0, 0, WIN_X, WIN_Y),
-		//  VSync:  true,
+		VSync:  true,
 	}
 	win, err := pixelgl.NewWindow(cfg)
 	if err != nil {
@@ -65,7 +65,12 @@ type MainScreen struct {
 func (screen *MainScreen) Draw(win *pixelgl.Window, sd *SpriteDrawer) {
 	if !screen.Drawn {
 		win.Clear(colornames.Black)
+		// Explicitly set this as it may have been reset (see below)
+		sd.WinConverter.Offset = logical.V(0, 0)
 		drawMainBorder(win, sd)
+		// Change the offset so that all future sprites
+		// are drawn inside the border
+		sd.WinConverter.Offset = logical.V(CHAR_PIXELS/2, CHAR_PIXELS/2)
 	}
 	screen.Drawn = true
 }

@@ -17,7 +17,6 @@ import (
 
 const GRID_X = 15
 const GRID_Y = 10
-const SPRITE_SIZE = 16
 
 func pickColour() pixel.RGBA {
 	return pixel.RGB(rand.Float64(), rand.Float64(), rand.Float64())

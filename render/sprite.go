@@ -25,36 +25,39 @@ func NewSpriteDrawer(io io.Reader) SpriteDrawer {
 	}
 	return SpriteDrawer{
 		SpriteSheet: ss,
-		ConverterMin: logical.VecConverter{
-			Offset:     logical.V(0, 0),
+		SSConverterMin: logical.VecConverter{
 			Multiplier: SPRITE_SIZE,
 		},
-		ConverterMax: logical.VecConverter{
+		SSConverterMax: logical.VecConverter{
 			Offset:     logical.V(SPRITE_SIZE, SPRITE_SIZE),
 			Multiplier: SPRITE_SIZE,
+		},
+		WinConverter: logical.VecConverter{
+			Multiplier: CHAR_PIXELS,
 		},
 	}
 }
 
 type SpriteDrawer struct {
-	SpriteSheet  pixel.Picture
-	ConverterMin logical.VecConverter
-	ConverterMax logical.VecConverter
+	SpriteSheet    pixel.Picture
+	SSConverterMin logical.VecConverter
+	SSConverterMax logical.VecConverter
+	WinConverter   logical.VecConverter
 }
 
 func (sd *SpriteDrawer) GetSprite(v logical.Vec) *pixel.Sprite {
 	return pixel.NewSprite(
 		sd.SpriteSheet,
 		pixel.Rect{
-			Min: sd.ConverterMin.ToPixelVec(v),
-			Max: sd.ConverterMax.ToPixelVec(v),
+			Min: sd.SSConverterMin.ToPixelVec(v),
+			Max: sd.SSConverterMax.ToPixelVec(v),
 		},
 	)
 }
 
 func (sd *SpriteDrawer) GetSpriteMatrix(win logical.Vec) pixel.Matrix {
 	mat := pixel.IM
-	v := pixel.V(float64(win.X*CHAR_PIXELS), float64(win.Y*CHAR_PIXELS))
+	v := sd.WinConverter.ToPixelVec(win)
 	mat = mat.Moved(v)
 	mat = mat.ScaledXY(v, pixel.V(CHAR_PIXELS/SPRITE_SIZE, CHAR_PIXELS/SPRITE_SIZE))
 	return mat.Moved(pixel.V(CHAR_PIXELS/2-1, CHAR_PIXELS/2-1))
