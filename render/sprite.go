@@ -23,15 +23,33 @@ func NewSpriteDrawer(io io.Reader) SpriteDrawer {
 	if err != nil {
 		panic(err)
 	}
-	return SpriteDrawer{SpriteSheet: ss}
+	return SpriteDrawer{
+		SpriteSheet: ss,
+		ConverterMin: logical.VecConverter{
+			Offset:     logical.V(0, 0),
+			Multiplier: SPRITE_SIZE,
+		},
+		ConverterMax: logical.VecConverter{
+			Offset:     logical.V(SPRITE_SIZE, SPRITE_SIZE),
+			Multiplier: SPRITE_SIZE,
+		},
+	}
 }
 
 type SpriteDrawer struct {
-	SpriteSheet pixel.Picture
+	SpriteSheet  pixel.Picture
+	ConverterMin logical.VecConverter
+	ConverterMax logical.VecConverter
 }
 
 func (sd *SpriteDrawer) GetSprite(v logical.Vec) *pixel.Sprite {
-	return pixel.NewSprite(sd.SpriteSheet, pixel.R(float64(v.X*SPRITE_SIZE), float64(v.Y*SPRITE_SIZE), float64(v.X*SPRITE_SIZE+SPRITE_SIZE), float64(v.Y*SPRITE_SIZE+SPRITE_SIZE)))
+	return pixel.NewSprite(
+		sd.SpriteSheet,
+		pixel.Rect{
+			Min: sd.ConverterMin.ToPixelVec(v),
+			Max: sd.ConverterMax.ToPixelVec(v),
+		},
+	)
 }
 
 func (sd *SpriteDrawer) GetSpriteMatrix(win logical.Vec) pixel.Matrix {
