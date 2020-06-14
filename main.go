@@ -107,7 +107,7 @@ func run() {
 	cfg := pixelgl.WindowConfig{
 		Title:  title,
 		Bounds: pixel.R(0, 0, WIN_X, WIN_Y),
-		VSync:  true,
+		//	VSync:  true,
 	}
 	win, err := pixelgl.NewWindow(cfg)
 	if err != nil {
@@ -117,16 +117,22 @@ func run() {
 	placeCharactersTest(grid, ct)
 	drawMainWindow(win, grid, ss)
 
-	last := time.Now()
+	frames := 0
+	second := time.Tick(time.Second)
+
 	for !win.Closed() {
-		dt := time.Since(last).Seconds()
-		last = time.Now()
-
-		win.SetTitle(title + " " + fmt.Sprintf("(%.0f fps)", 1/dt))
-
-		win.Update()
 		grid.AnimationTick()
 		drawMainWindow(win, grid, ss)
+
+		win.Update()
+
+		frames++
+		select {
+		case <-second:
+			win.SetTitle(fmt.Sprintf("%s | FPS: %d", title, frames))
+			frames = 0
+		default:
+		}
 	}
 }
 
