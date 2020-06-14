@@ -5,6 +5,6 @@ type Vec struct {
 	Y int
 }
 
-func Vec(x, y int) Vec {
+func V(x, y int) Vec {
 	return Vec{X: x, Y: y}
 }

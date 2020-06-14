@@ -4,8 +4,8 @@ type Rect struct {
 	Vec
 }
 
-func Rect(x, y int) Rect {
-	return Rect{Vec: Vec(x, y)}
+func R(x, y int) Rect {
+	return Rect{Vec: V(x, y)}
 }
 
 func (r Rect) Contains(v Vec) bool {
@@ -15,6 +15,7 @@ func (r Rect) Contains(v Vec) bool {
 	if v.X > r.Vec.X || v.Y > r.Vec.Y {
 		return false
 	}
+    return true
 }
 
 func (r Rect) Adjacents(v Vec) []Vec {
@@ -24,11 +25,11 @@ func (r Rect) Adjacents(v Vec) []Vec {
 			if x == 0 && y == 0 {
 				continue
 			}
-			newV := Vec(v.X+x, v.Y+y)
+			newV := V(v.X+x, v.Y+y)
 			if r.Contains(newV) {
 				vecs = append(vecs, newV)
 			}
 		}
 	}
-	return adjacents
+	return vecs
 }
