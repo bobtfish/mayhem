@@ -37,10 +37,6 @@ func pickColour() pixel.RGBA {
 	return pixel.RGB(rand.Float64(), rand.Float64(), rand.Float64())
 }
 
-func drawMainWindow(win *pixelgl.Window, grid *GameGrid, ss pixel.Picture) {
-	grid.Draw(win, ss)
-}
-
 func drawHydra(ss pixel.Picture, win *pixelgl.Window) {
 	rect := pixel.R(0, 16, 16, 32)
 	sprite := pixel.NewSprite(ss, rect)
@@ -77,14 +73,14 @@ func run() {
 	gw := render.NewGameWindow()
 
 	placeCharactersTest(grid, ct)
-	drawMainWindow(gw.Window, grid, ss)
+	grid.Draw(gw.Window, ss)
 
 	QsecondTicks := 0
 	frames := 0
 	Qsecond := time.Tick(time.Second / 4)
 
 	for !gw.Closed() {
-		drawMainWindow(gw.Window, grid, ss)
+		grid.Draw(gw.Window, ss)
 
 		gw.Update()
 
