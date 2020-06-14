@@ -54,14 +54,14 @@ func run() {
 
 	gw := render.NewGameWindow(sd)
 	placeCharactersTest(grid, ct)
-	//grid.Draw(gw.Window, ss)
 
 	QsecondTicks := 0
 	frames := 0
 	Qsecond := time.Tick(time.Second / 4)
 
 	for !gw.Closed() {
-		//grid.Draw(gw.Window, ss)
+		batch := grid.DrawBatch(&sd)
+		batch.Draw(gw.Window)
 
 		gw.Update()
 
