@@ -3,7 +3,6 @@ package main
 import (
 	"gopkg.in/yaml.v2"
 	"image/color"
-	"io/ioutil"
 	"math/rand"
 
 	"github.com/faiface/pixel"
@@ -61,13 +60,9 @@ func (c *Character) GetColorMask() color.Color {
 
 type CharacterTypes map[string]CharacterType
 
-func LoadCharacterTemplates(fn string) CharacterTypes {
-	yamlFile, err := ioutil.ReadFile(fn)
-	if err != nil {
-		panic(err)
-	}
+func LoadCharacterTemplates() CharacterTypes {
 	cl := make([]CharacterType, 0)
-	err = yaml.Unmarshal(yamlFile, &cl)
+	err := yaml.Unmarshal([]byte(character_yaml), &cl)
 	if err != nil {
 		panic(err)
 	}
