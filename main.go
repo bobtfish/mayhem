@@ -1,10 +1,10 @@
 package main
 
 import (
+	"bytes"
+	"encoding/base64"
 	"fmt"
 	"time"
-
-	_ "image/png"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -45,7 +45,13 @@ func placeCharactersTest(grid *GameGrid, ct CharacterTypes) {
 }
 
 func run() {
-	sd := render.NewSpriteDrawer()
+	data, err := base64.StdEncoding.DecodeString(sprite_sheet_base64)
+	if err != nil {
+		panic(err)
+	}
+	r := bytes.NewReader(data)
+
+	sd := render.NewSpriteDrawer(r)
 
 	ct := LoadCharacterTemplates()
 	grid := MakeGameGrid(GRID_X, GRID_Y)

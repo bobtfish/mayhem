@@ -3,26 +3,21 @@ package render
 import (
 	"image"
 	_ "image/png"
-	"os"
+	"io"
 
 	"github.com/faiface/pixel"
 )
 
-func loadPicture(path string) (pixel.Picture, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	img, _, err := image.Decode(file)
+func loadPicture(io io.Reader) (pixel.Picture, error) {
+	img, _, err := image.Decode(io)
 	if err != nil {
 		return nil, err
 	}
 	return pixel.PictureDataFromImage(img), nil
 }
 
-func NewSpriteDrawer() SpriteDrawer {
-	ss, err := loadPicture("sprite_sheet.png")
+func NewSpriteDrawer(io io.Reader) SpriteDrawer {
+	ss, err := loadPicture(io)
 	if err != nil {
 		panic(err)
 	}
