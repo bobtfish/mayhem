@@ -6,6 +6,9 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 )
 
+const CHAR_PIXELS = 64
+const WIN_Y = 768
+
 type GameGrid [][]*Character
 
 func MakeGameGrid(x int, y int) *GameGrid {
