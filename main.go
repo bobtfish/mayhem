@@ -11,6 +11,7 @@ import (
 
 	"math/rand"
 
+	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/render"
 )
 
@@ -35,7 +36,7 @@ func placeCharactersTest(grid *GameGrid, ct CharacterTypes) {
 	x := 0
 	y := 0
 	for k := range ct {
-		grid.PlaceCharacter(x, y, ct.NewCharacter(k))
+		grid.PlaceCharacter(logical.V(x, y), ct.NewCharacter(k))
 		x++
 		if x == 15 {
 			x = 0
@@ -54,7 +55,7 @@ func run() {
 	sd := render.NewSpriteDrawer(r)
 
 	ct := LoadCharacterTemplates()
-	grid := MakeGameGrid(GRID_X, GRID_Y)
+	grid := MakeGameGrid(logical.V(GRID_X, GRID_Y))
 
 	title := "Mayhem!"
 

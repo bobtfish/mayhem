@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/faiface/pixel"
 
+	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/render"
 )
 
@@ -11,20 +12,20 @@ const BLANK_SPRITE_Y = 26
 
 type GameGrid [][]*Character
 
-func MakeGameGrid(x int, y int) *GameGrid {
-	gg := make(GameGrid, y)
-	for i := 0; i < y; i++ {
-		gg[i] = make([]*Character, x)
+func MakeGameGrid(v logical.Vec) *GameGrid {
+	gg := make(GameGrid, v.Y)
+	for i := 0; i < v.Y; i++ {
+		gg[i] = make([]*Character, v.X)
 	}
 	return &gg
 }
 
-func (grid *GameGrid) PlaceCharacter(x, y int, c *Character) {
-	(*grid)[y][x] = c
+func (grid *GameGrid) PlaceCharacter(v logical.Vec, c *Character) {
+	(*grid)[v.Y][v.X] = c
 }
 
-func (grid *GameGrid) GetCharacter(x, y int) *Character {
-	return (*grid)[y][x]
+func (grid *GameGrid) GetCharacter(v logical.Vec) *Character {
+	return (*grid)[v.Y][v.X]
 }
 
 func (grid *GameGrid) DrawBatch(sd *render.SpriteDrawer) *pixel.Batch {
@@ -33,13 +34,13 @@ func (grid *GameGrid) DrawBatch(sd *render.SpriteDrawer) *pixel.Batch {
 	maxx := len((*grid)[0])
 	for x := 0; x < maxx; x++ {
 		for y := 0; y < maxy; y++ {
-			c := grid.GetCharacter(x, y)
+			c := grid.GetCharacter(logical.V(x, y))
 			ssX := BLANK_SPRITE_X
 			ssY := BLANK_SPRITE_Y
 			if c != nil {
 				ssX, ssY = c.GetSpriteSheetCoordinates()
 			}
-			sd.DrawSprite(ssX, ssY, x, y+1, batch)
+			sd.DrawSprite(logical.V(ssX, ssY), logical.V(x, y+1), batch)
 		}
 	}
 	return batch
@@ -50,7 +51,7 @@ func (grid *GameGrid) AnimationTick() {
 	maxx := len((*grid)[0])
 	for x := 0; x < maxx; x++ {
 		for y := 0; y < maxy; y++ {
-			c := grid.GetCharacter(x, y)
+			c := grid.GetCharacter(logical.V(x, y))
 			if c != nil {
 				c.AnimationTick()
 			}

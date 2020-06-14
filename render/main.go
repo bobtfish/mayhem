@@ -7,6 +7,8 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
+
+	"github.com/bobtfish/mayhem/logical"
 )
 
 const WIN_X = 1024
@@ -70,26 +72,26 @@ func (screen *MainScreen) Draw(win *pixelgl.Window, sd *SpriteDrawer) {
 func drawMainBorder(win *pixelgl.Window, sd *SpriteDrawer) {
 	batch := sd.GetNewBatch()
 	// Bottom left
-	sd.DrawSprite(6, 20, 0, 1, batch)
+	sd.DrawSprite(logical.V(6, 20), logical.V(0, 1), batch)
 	// Bottom row
 	for i := 1; i < 15; i++ {
-		sd.DrawSprite(7, 20, i, 1, batch)
+		sd.DrawSprite(logical.V(7, 20), logical.V(i, 1), batch)
 	}
 	// Bottom right
-	sd.DrawSprite(8, 20, 15, 1, batch)
+	sd.DrawSprite(logical.V(8, 20), logical.V(15, 1), batch)
 	// LHS and RHS
 	for i := 2; i <= 10; i++ {
-		sd.DrawSprite(5, 20, 0, i, batch)
-		sd.DrawSprite(9, 20, 15, i, batch)
+		sd.DrawSprite(logical.V(5, 20), logical.V(0, i), batch)
+		sd.DrawSprite(logical.V(9, 20), logical.V(15, i), batch)
 	}
 	// Top Left
-	sd.DrawSprite(2, 20, 0, 11, batch)
+	sd.DrawSprite(logical.V(2, 20), logical.V(0, 11), batch)
 	// Top row
 	for i := 1; i < 15; i++ {
-		sd.DrawSprite(3, 20, i, 11, batch)
+		sd.DrawSprite(logical.V(3, 20), logical.V(i, 11), batch)
 	}
 	// Top right
-	sd.DrawSprite(4, 20, 15, 11, batch)
+	sd.DrawSprite(logical.V(4, 20), logical.V(15, 11), batch)
 	batch.Draw(win)
 
 	imd := imdraw.New(nil)

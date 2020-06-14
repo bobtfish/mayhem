@@ -6,6 +6,8 @@ import (
 	"io"
 
 	"github.com/faiface/pixel"
+
+	"github.com/bobtfish/mayhem/logical"
 )
 
 func loadPicture(io io.Reader) (pixel.Picture, error) {
@@ -28,20 +30,20 @@ type SpriteDrawer struct {
 	SpriteSheet pixel.Picture
 }
 
-func (sd *SpriteDrawer) GetSprite(ssLX, ssLY int) *pixel.Sprite {
-	return pixel.NewSprite(sd.SpriteSheet, pixel.R(float64(ssLX*SPRITE_SIZE), float64(ssLY*SPRITE_SIZE), float64(ssLX*SPRITE_SIZE+SPRITE_SIZE), float64(ssLY*SPRITE_SIZE+SPRITE_SIZE)))
+func (sd *SpriteDrawer) GetSprite(v logical.Vec) *pixel.Sprite {
+	return pixel.NewSprite(sd.SpriteSheet, pixel.R(float64(v.X*SPRITE_SIZE), float64(v.Y*SPRITE_SIZE), float64(v.X*SPRITE_SIZE+SPRITE_SIZE), float64(v.Y*SPRITE_SIZE+SPRITE_SIZE)))
 }
 
-func (sd *SpriteDrawer) GetSpriteMatrix(winLX, winLY int) pixel.Matrix {
+func (sd *SpriteDrawer) GetSpriteMatrix(win logical.Vec) pixel.Matrix {
 	mat := pixel.IM
-	v := pixel.V(float64(winLX*CHAR_PIXELS), float64(winLY*CHAR_PIXELS))
+	v := pixel.V(float64(win.X*CHAR_PIXELS), float64(win.Y*CHAR_PIXELS))
 	mat = mat.Moved(v)
 	mat = mat.ScaledXY(v, pixel.V(CHAR_PIXELS/SPRITE_SIZE, CHAR_PIXELS/SPRITE_SIZE))
 	return mat.Moved(pixel.V(CHAR_PIXELS/2-1, CHAR_PIXELS/2-1))
 }
 
-func (sd *SpriteDrawer) DrawSprite(ssLX, ssLY, winLX, winLY int, target pixel.Target) {
-	sd.GetSprite(ssLX, ssLY).Draw(target, sd.GetSpriteMatrix(winLX, winLY))
+func (sd *SpriteDrawer) DrawSprite(ss, win logical.Vec, target pixel.Target) {
+	sd.GetSprite(ss).Draw(target, sd.GetSpriteMatrix(win))
 }
 
 func (sd *SpriteDrawer) GetNewBatch() *pixel.Batch {
