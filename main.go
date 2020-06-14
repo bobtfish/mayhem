@@ -14,6 +14,8 @@ import (
 	"golang.org/x/image/colornames"
 
 	"math/rand"
+
+	"github.com/bobtfish/mayhem/render"
 )
 
 const WIN_X = 1024
@@ -104,27 +106,19 @@ func run() {
 
 	title := "Mayhem!"
 
-	cfg := pixelgl.WindowConfig{
-		Title:  title,
-		Bounds: pixel.R(0, 0, WIN_X, WIN_Y),
-		//	VSync:  true,
-	}
-	win, err := pixelgl.NewWindow(cfg)
-	if err != nil {
-		panic(err)
-	}
+	gw := render.NewGameWindow()
 
 	placeCharactersTest(grid, ct)
-	drawMainWindow(win, grid, ss)
+	drawMainWindow(gw.Window, grid, ss)
 
 	QsecondTicks := 0
 	frames := 0
 	Qsecond := time.Tick(time.Second / 4)
 
-	for !win.Closed() {
-		drawMainWindow(win, grid, ss)
+	for !gw.Closed() {
+		drawMainWindow(gw.Window, grid, ss)
 
-		win.Update()
+		gw.Update()
 
 		frames++
 		select {
@@ -132,7 +126,7 @@ func run() {
 			grid.AnimationTick()
 			QsecondTicks++
 			if QsecondTicks == 4 {
-				win.SetTitle(fmt.Sprintf("%s | FPS: %d", title, frames*4))
+				gw.Window.SetTitle(fmt.Sprintf("%s | FPS: %d", title, frames*4))
 				frames = 0
 				QsecondTicks = 0
 			}
