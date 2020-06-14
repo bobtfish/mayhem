@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"image"
-	"os"
 	"time"
 
 	_ "image/png"
@@ -19,19 +17,6 @@ import (
 const GRID_X = 15
 const GRID_Y = 10
 const SPRITE_SIZE = 16
-
-func loadPicture(path string) (pixel.Picture, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	img, _, err := image.Decode(file)
-	if err != nil {
-		return nil, err
-	}
-	return pixel.PictureDataFromImage(img), nil
-}
 
 func pickColour() pixel.RGBA {
 	return pixel.RGB(rand.Float64(), rand.Float64(), rand.Float64())
@@ -60,26 +45,23 @@ func placeCharactersTest(grid *GameGrid, ct CharacterTypes) {
 }
 
 func run() {
-	ss, err := loadPicture("sprite_sheet.png")
-	if err != nil {
-		panic(err)
-	}
+	sd := render.NewSpriteDrawer("sprite_sheet.png")
 
 	ct := LoadCharacterTemplates("characters.yaml")
 	grid := MakeGameGrid(GRID_X, GRID_Y)
 
 	title := "Mayhem!"
 
-	gw := render.NewGameWindow(ss)
+	gw := render.NewGameWindow(sd)
 	placeCharactersTest(grid, ct)
-	grid.Draw(gw.Window, ss)
+	//grid.Draw(gw.Window, ss)
 
 	QsecondTicks := 0
 	frames := 0
 	Qsecond := time.Tick(time.Second / 4)
 
 	for !gw.Closed() {
-		grid.Draw(gw.Window, ss)
+		//grid.Draw(gw.Window, ss)
 
 		gw.Update()
 
