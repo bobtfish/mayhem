@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"os"
+	"time"
 
 	_ "image/png"
 
@@ -100,8 +102,10 @@ func run() {
 	ct := LoadCharacterTemplates("characters.yaml")
 	grid := MakeGameGrid(GRID_X, GRID_Y)
 
+	title := "Mayhem!"
+
 	cfg := pixelgl.WindowConfig{
-		Title:  "Mayhem!",
+		Title:  title,
 		Bounds: pixel.R(0, 0, WIN_X, WIN_Y),
 		VSync:  true,
 	}
@@ -113,7 +117,13 @@ func run() {
 	placeCharactersTest(grid, ct)
 	drawMainWindow(win, grid, ss)
 
+	last := time.Now()
 	for !win.Closed() {
+		dt := time.Since(last).Seconds()
+		last = time.Now()
+
+		win.SetTitle(title + " " + fmt.Sprintf("(%.0f fps)", 1/dt))
+
 		win.Update()
 		grid.AnimationTick()
 		drawMainWindow(win, grid, ss)

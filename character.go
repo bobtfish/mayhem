@@ -58,7 +58,7 @@ func (c *Character) GetSprite(ss pixel.Picture) *pixel.Sprite {
 	spriteLocation := c.Sprites[c.SpriteIdx]
 	x := spriteLocation[0]
 	y := spriteLocation[1]
-//	fmt.Printf("Character %s has %d sprites, in sprite sheet sprite 0 is x %d, y %d topx %d topy %d\n", c.Name, len(c.Sprites), x*SPRITE_SIZE, y*SPRITE_SIZE, x*SPRITE_SIZE+SPRITE_SIZE, y*SPRITE_SIZE+SPRITE_SIZE)
+	//	fmt.Printf("Character %s has %d sprites, in sprite sheet sprite 0 is x %d, y %d topx %d topy %d\n", c.Name, len(c.Sprites), x*SPRITE_SIZE, y*SPRITE_SIZE, x*SPRITE_SIZE+SPRITE_SIZE, y*SPRITE_SIZE+SPRITE_SIZE)
 	return pixel.NewSprite(ss, pixel.R(float64(x*SPRITE_SIZE), float64(y*SPRITE_SIZE), float64(x*SPRITE_SIZE+SPRITE_SIZE), float64(y*SPRITE_SIZE+SPRITE_SIZE)))
 }
 
