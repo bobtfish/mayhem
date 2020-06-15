@@ -6,6 +6,8 @@ import (
 	"math/rand"
 
 	"github.com/faiface/pixel"
+
+	"github.com/bobtfish/mayhem/logical"
 )
 
 type CharacterType struct {
@@ -47,8 +49,8 @@ func (c *Character) AnimationTick() {
 	return
 }
 
-func (c *Character) GetSpriteSheetCoordinates() (int, int) {
-	return c.Sprites[c.SpriteIdx][0], c.Sprites[c.SpriteIdx][1]
+func (c *Character) GetSpriteSheetCoordinates() logical.Vec {
+	return logical.V(c.Sprites[c.SpriteIdx][0], c.Sprites[c.SpriteIdx][1])
 }
 
 func (c *Character) GetColorMask() color.Color {

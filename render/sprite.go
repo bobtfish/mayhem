@@ -33,6 +33,7 @@ func NewSpriteDrawer(io io.Reader) SpriteDrawer {
 			Multiplier: SPRITE_SIZE,
 		},
 		WinConverter: logical.VecConverter{
+			Offset:     logical.V(0, CHAR_PIXELS),
 			Multiplier: CHAR_PIXELS,
 		},
 	}

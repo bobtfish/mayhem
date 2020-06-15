@@ -35,12 +35,11 @@ func (grid *GameGrid) DrawBatch(sd *render.SpriteDrawer) *pixel.Batch {
 	for x := 0; x < maxx; x++ {
 		for y := 0; y < maxy; y++ {
 			c := grid.GetCharacter(logical.V(x, y))
-			ssX := BLANK_SPRITE_X
-			ssY := BLANK_SPRITE_Y
+			v := logical.V(BLANK_SPRITE_X, BLANK_SPRITE_Y)
 			if c != nil {
-				ssX, ssY = c.GetSpriteSheetCoordinates()
+				v = c.GetSpriteSheetCoordinates()
 			}
-			sd.DrawSprite(logical.V(ssX, ssY), logical.V(x, y+1), batch)
+			sd.DrawSprite(v, logical.V(x, y), batch)
 		}
 	}
 	return batch

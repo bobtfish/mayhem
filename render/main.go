@@ -66,11 +66,11 @@ func (screen *MainScreen) Draw(win *pixelgl.Window, sd *SpriteDrawer) {
 	if !screen.Drawn {
 		win.Clear(colornames.Black)
 		// Explicitly set this as it may have been reset (see below)
-		sd.WinConverter.Offset = logical.V(0, 0)
+		sd.WinConverter.Offset = logical.V(0, CHAR_PIXELS)
 		drawMainBorder(win, sd)
 		// Change the offset so that all future sprites
 		// are drawn inside the border
-		sd.WinConverter.Offset = logical.V(CHAR_PIXELS/2, CHAR_PIXELS/2)
+		sd.WinConverter.Offset = logical.V(CHAR_PIXELS/2, CHAR_PIXELS/2+CHAR_PIXELS)
 	}
 	screen.Drawn = true
 }
@@ -78,26 +78,26 @@ func (screen *MainScreen) Draw(win *pixelgl.Window, sd *SpriteDrawer) {
 func drawMainBorder(win *pixelgl.Window, sd *SpriteDrawer) {
 	batch := sd.GetNewBatch()
 	// Bottom left
-	sd.DrawSprite(logical.V(6, 20), logical.V(0, 1), batch)
+	sd.DrawSprite(logical.V(6, 20), logical.V(0, 0), batch)
 	// Bottom row
 	for i := 1; i < 15; i++ {
-		sd.DrawSprite(logical.V(7, 20), logical.V(i, 1), batch)
+		sd.DrawSprite(logical.V(7, 20), logical.V(i, 0), batch)
 	}
 	// Bottom right
-	sd.DrawSprite(logical.V(8, 20), logical.V(15, 1), batch)
+	sd.DrawSprite(logical.V(8, 20), logical.V(15, 0), batch)
 	// LHS and RHS
-	for i := 2; i <= 10; i++ {
+	for i := 1; i < 10; i++ {
 		sd.DrawSprite(logical.V(5, 20), logical.V(0, i), batch)
 		sd.DrawSprite(logical.V(9, 20), logical.V(15, i), batch)
 	}
 	// Top Left
-	sd.DrawSprite(logical.V(2, 20), logical.V(0, 11), batch)
+	sd.DrawSprite(logical.V(2, 20), logical.V(0, 10), batch)
 	// Top row
 	for i := 1; i < 15; i++ {
-		sd.DrawSprite(logical.V(3, 20), logical.V(i, 11), batch)
+		sd.DrawSprite(logical.V(3, 20), logical.V(i, 10), batch)
 	}
 	// Top right
-	sd.DrawSprite(logical.V(4, 20), logical.V(15, 11), batch)
+	sd.DrawSprite(logical.V(4, 20), logical.V(15, 10), batch)
 	batch.Draw(win)
 
 	imd := imdraw.New(nil)
