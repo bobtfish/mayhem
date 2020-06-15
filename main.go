@@ -35,7 +35,7 @@ func placeCharactersTest(grid *GameGrid, ct CharacterTypes) {
 	x := 0
 	y := 0
 	for k := range ct {
-		grid.PlaceCharacter(logical.V(x, y), ct.NewCharacter(k))
+		grid.PlaceGameObject(logical.V(x, y), ct.NewCharacter(k))
 		x++
 		if x == 15 {
 			x = 0

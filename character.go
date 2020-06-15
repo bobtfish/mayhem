@@ -34,19 +34,19 @@ type Character struct {
 	SpriteIdx int
 }
 
-func (c *Character) AnimationTick() {
+func (c *Character) AnimationTick() bool {
 	if c.Sprites == nil {
-		return
+		return false
 	}
 	spriteCount := len(c.Sprites)
 	if spriteCount == 0 {
-		return
+		return false
 	}
 	c.SpriteIdx++
 	if c.SpriteIdx == spriteCount {
 		c.SpriteIdx = 0
 	}
-	return
+	return true
 }
 
 func (c *Character) GetSpriteSheetCoordinates() logical.Vec {
