@@ -26,15 +26,18 @@ func NewSpriteDrawer(io io.Reader) SpriteDrawer {
 	return SpriteDrawer{
 		SpriteSheet: ss,
 		SSConverterMin: logical.VecConverter{
-			Multiplier: SPRITE_SIZE,
+			XMultiplier: SPRITE_SIZE,
+			YMultiplier: SPRITE_SIZE,
 		},
 		SSConverterMax: logical.VecConverter{
-			Offset:     logical.V(SPRITE_SIZE, SPRITE_SIZE),
-			Multiplier: SPRITE_SIZE,
+			Offset:      logical.V(SPRITE_SIZE, SPRITE_SIZE),
+			XMultiplier: SPRITE_SIZE,
+			YMultiplier: SPRITE_SIZE,
 		},
 		WinConverter: logical.VecConverter{
-			Offset:     logical.V(0, CHAR_PIXELS),
-			Multiplier: CHAR_PIXELS,
+			Offset:      logical.V(0, CHAR_PIXELS),
+			XMultiplier: CHAR_PIXELS,
+			YMultiplier: CHAR_PIXELS,
 		},
 	}
 }

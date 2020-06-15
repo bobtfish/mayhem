@@ -80,40 +80,41 @@ func run() {
 	}
 	r := bytes.NewReader(data)
 
-	ct := LoadCharacterTemplates()
-	grid := MakeGameGrid(logical.V(GRID_X, GRID_Y))
+	//ct := LoadCharacterTemplates()
+	//	grid := MakeGameGrid(logical.V(GRID_X, GRID_Y))
 
 	title := "Mayhem!"
 
 	gw := render.NewGameWindow(r)
 
-	players := getPlayers()
+	//	players := getPlayers()
 
-	placePlayers(players, grid)
+	//	placePlayers(players, grid)
 
-	placeCharactersTest(grid, ct)
+	//	placeCharactersTest(grid, ct)
 
 	QsecondTicks := 0
 	frames := 0
 	Qsecond := time.Tick(time.Second / 4)
 
 	for !gw.Closed() {
-		batch := grid.DrawBatch(&gw.SpriteDrawer)
-		batch.Draw(gw.Window)
+		gw.SpriteDrawer.DrawText("H", logical.V(1, 8), gw.Window)
+		//		batch := grid.DrawBatch(&gw.SpriteDrawer)
+		//		batch.Draw(gw.Window)
 
 		gw.Update()
 
 		frames++
 		select {
 		case <-Qsecond:
-			grid.AnimationTick()
+			//			grid.AnimationTick()
 			QsecondTicks++
 			if QsecondTicks == 4 {
 				gw.Window.SetTitle(fmt.Sprintf("%s | FPS: %d", title, frames*4))
 				frames = 0
 				QsecondTicks = 0
 
-				blowSomethingUp(grid)
+				//				blowSomethingUp(grid)
 			}
 		default:
 		}

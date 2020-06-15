@@ -1,14 +1,22 @@
 package render
 
 import (
-	"github.com/bobtfish/mayhem"
+	"fmt"
+
+	"github.com/bobtfish/mayhem/logical"
+	"github.com/faiface/pixel"
 )
 
 var textMap map[string]logical.Vec
 
 func (sd *SpriteDrawer) DrawText(text string, win logical.Vec, target pixel.Target) {
 	for _, c := range text {
-		sd.GetSprite(textMap[c]).Draw(target, sd.GetSpriteMatrix(win))
+		sheetRef := textMap[string(c)]
+		fmt.Printf("Render %s from X %d Y %d\n", string(c), sheetRef.X, sheetRef.Y)
+		sprite := sd.GetSprite(logical.V(0, 39))
+		sprite.Draw(target, sd.GetSpriteMatrix(win))
+		//		sd.GetSprite(textMap[string(c)]).Draw(target, sd.GetSpriteMatrix(win))
+		//win.X++
 	}
 }
 
