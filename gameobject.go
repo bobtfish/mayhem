@@ -5,24 +5,32 @@ import (
 )
 
 type GameObject interface {
-	AnimationTick() bool
+	AnimationTick()
 	GetSpriteSheetCoordinates() logical.Vec
 }
 
 /* Object stack */
 
-type GameObjectStack []GameObject
+type GameObjectStackable interface {
+	GameObject
+	RemoveMe() bool
+}
 
-func (s *GameObjectStack) AnimationTick() bool {
-	return (*s)[0].AnimationTick()
+type GameObjectStack []GameObjectStackable
+
+func (s *GameObjectStack) AnimationTick() {
+	(*s)[0].AnimationTick()
+	if (*s)[0].RemoveMe() {
+		(*s) = (*s)[1:]
+	}
 }
 
 func (s *GameObjectStack) GetSpriteSheetCoordinates() logical.Vec {
 	return (*s)[0].GetSpriteSheetCoordinates()
 }
 
-func (s *GameObjectStack) PlaceObject(o GameObject) {
-	(*s) = append([]GameObject{o}, (*s)...)
+func (s *GameObjectStack) PlaceObject(o GameObjectStackable) {
+	(*s) = append([]GameObjectStackable{o}, (*s)...)
 }
 
 func NewGameObjectStack() *GameObjectStack {
@@ -44,7 +52,9 @@ var EMPTY_OBJECT = EmptyObject{
 	SpriteCoordinates: logical.V(BLANK_SPRITE_X, BLANK_SPRITE_Y),
 }
 
-func (e EmptyObject) AnimationTick() bool {
+func (e EmptyObject) AnimationTick() {}
+
+func (e EmptyObject) RemoveMe() bool {
 	return false
 }
 

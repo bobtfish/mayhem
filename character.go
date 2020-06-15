@@ -10,6 +10,62 @@ import (
 	"github.com/bobtfish/mayhem/logical"
 )
 
+type Fx struct {
+	SpriteVec   logical.Vec
+	SpriteCount int
+	SpriteIdx   int
+}
+
+func (c *Fx) AnimationTick() {
+	c.SpriteIdx++
+}
+
+func (c *Fx) RemoveMe() bool {
+	if c.SpriteIdx == c.SpriteCount {
+		return true
+	}
+	return false
+}
+
+func (c *Fx) GetSpriteSheetCoordinates() logical.Vec {
+	return logical.V(c.SpriteVec.X+c.SpriteIdx, c.SpriteVec.Y)
+}
+
+func FxWarp() *Fx {
+	return &Fx{
+		SpriteVec:   logical.V(0, 28),
+		SpriteCount: 8,
+	}
+}
+
+func FxBlam() *Fx {
+	return &Fx{
+		SpriteVec:   logical.V(0, 27),
+		SpriteCount: 8,
+	}
+}
+
+func FxFire() *Fx {
+	return &Fx{
+		SpriteVec:   logical.V(0, 26),
+		SpriteCount: 8,
+	}
+}
+
+func FxBoom() *Fx {
+	return &Fx{
+		SpriteVec:   logical.V(0, 25),
+		SpriteCount: 7,
+	}
+}
+
+func FxPop() *Fx {
+	return &Fx{
+		SpriteVec:   logical.V(0, 24),
+		SpriteCount: 4,
+	}
+}
+
 type CharacterType struct {
 	Name              string  `yaml:"name"`
 	Combat            int     `yaml:"combat"`
@@ -34,19 +90,23 @@ type Character struct {
 	SpriteIdx int
 }
 
-func (c *Character) AnimationTick() bool {
+func (c *Character) AnimationTick() {
 	if c.Sprites == nil {
-		return false
+		return
 	}
 	spriteCount := len(c.Sprites)
 	if spriteCount == 0 {
-		return false
+		return
 	}
 	c.SpriteIdx++
 	if c.SpriteIdx == spriteCount {
 		c.SpriteIdx = 0
 	}
-	return true
+	return
+}
+
+func (c *Character) RemoveMe() bool {
+	return false
 }
 
 func (c *Character) GetSpriteSheetCoordinates() logical.Vec {

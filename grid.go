@@ -20,7 +20,7 @@ func MakeGameGrid(v logical.Vec) *GameGrid {
 	return &gg
 }
 
-func (grid *GameGrid) PlaceGameObject(v logical.Vec, c GameObject) {
+func (grid *GameGrid) PlaceGameObject(v logical.Vec, c GameObjectStackable) {
 	(*grid)[v.Y][v.X].PlaceObject(c)
 }
 
