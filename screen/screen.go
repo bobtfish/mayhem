@@ -3,6 +3,7 @@ package screen
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"golang.org/x/image/colornames"
 
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/render"
@@ -22,6 +23,7 @@ type ScreenBasics struct {
 }
 
 func (screen *ScreenBasics) Setup(ss pixel.Picture, win *pixelgl.Window) {
+	win.Clear(colornames.Black)
 	screen.SpriteSheet = ss
 	sd := render.NewSpriteDrawer(ss, logical.V(0, render.CHAR_PIXELS))
 	drawMainBorder(win, sd)

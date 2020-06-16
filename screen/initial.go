@@ -4,10 +4,8 @@ import (
 	"fmt"
 
 	"github.com/faiface/pixel/pixelgl"
-	"golang.org/x/image/colornames"
 
 	"github.com/bobtfish/mayhem/logical"
-	"github.com/bobtfish/mayhem/render"
 )
 
 type InitialScreen struct {
@@ -20,13 +18,6 @@ type InitialScreen struct {
 
 func (screen *InitialScreen) Draw(win *pixelgl.Window) {
 	if !screen.DrawnFirst {
-		win.Clear(colornames.Black)
-
-		sd := render.NewSpriteDrawer(screen.SpriteSheet, logical.V(0, render.CHAR_PIXELS))
-		drawMainBorder(win, sd)
-		sd.WinConverter.Offset = logical.V(render.CHAR_PIXELS/2, render.CHAR_PIXELS/2+render.CHAR_PIXELS)
-		screen.SpriteDrawer = sd
-		screen.TextDrawer = render.NewTextDrawer(screen.SpriteSheet, sd.WinConverter.Offset)
 		screen.TextDrawer.DrawText("  MAYHEM - Remake of Chaos", logical.V(0, 9), win)
 		screen.TextDrawer.DrawText("         By bobtfish", logical.V(0, 8), win)
 		screen.TextDrawer.DrawText("How many wizards?", logical.V(0, 6), win)
