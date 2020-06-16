@@ -12,7 +12,7 @@ import (
 	"math/rand"
 
 	"github.com/bobtfish/mayhem/logical"
-	"github.com/bobtfish/mayhem/render"
+	"github.com/bobtfish/mayhem/screen"
 )
 
 const GRID_X = 15
@@ -85,7 +85,7 @@ func run() {
 
 	title := "Mayhem!"
 
-	gw := render.NewGameWindow(r)
+	gw := screen.NewGameWindow(r)
 
 	//	players := getPlayers()
 
