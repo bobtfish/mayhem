@@ -1,8 +1,6 @@
 package render
 
 import (
-	"fmt"
-
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/faiface/pixel"
 )
