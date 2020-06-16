@@ -11,12 +11,8 @@ var textMap map[string]logical.Vec
 
 func (sd *SpriteDrawer) DrawText(text string, win logical.Vec, target pixel.Target) {
 	for _, c := range text {
-		sheetRef := textMap[string(c)]
-		fmt.Printf("Render %s from X %d Y %d\n", string(c), sheetRef.X, sheetRef.Y)
-		sprite := sd.GetSprite(logical.V(0, 39))
-		sprite.Draw(target, sd.GetSpriteMatrix(win))
-		//		sd.GetSprite(textMap[string(c)]).Draw(target, sd.GetSpriteMatrix(win))
-		//win.X++
+		sd.GetSprite(textMap[string(c)]).Draw(target, sd.GetSpriteMatrix(win))
+		win.X++
 	}
 }
 

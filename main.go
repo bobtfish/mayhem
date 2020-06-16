@@ -98,7 +98,6 @@ func run() {
 	Qsecond := time.Tick(time.Second / 4)
 
 	for !gw.Closed() {
-		gw.SpriteDrawer.DrawText("H", logical.V(1, 8), gw.Window)
 		//		batch := grid.DrawBatch(&gw.SpriteDrawer)
 		//		batch.Draw(gw.Window)
 

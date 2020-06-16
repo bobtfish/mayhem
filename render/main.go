@@ -20,9 +20,9 @@ const CHAR_PIXELS = 64
 const SPRITE_SIZE = 16
 
 type GameWindow struct {
-	Window       *pixelgl.Window
-	Screen       GameScreen
-	SpriteDrawer SpriteDrawer
+	Window      *pixelgl.Window
+	Screen      GameScreen
+	SpriteSheet pixel.Picture
 }
 
 func (gw *GameWindow) Closed() bool {
@@ -30,11 +30,11 @@ func (gw *GameWindow) Closed() bool {
 }
 
 func (gw *GameWindow) Update() {
-	gw.Screen.Draw(gw.Window, &gw.SpriteDrawer)
+	gw.Screen.Draw(gw.Window)
 	gw.Window.Update()
 }
 
-func NewGameWindow(sd io.Reader) *GameWindow {
+func NewGameWindow(spriteReader io.Reader) *GameWindow {
 	title := "Mayhem!"
 
 	cfg := pixelgl.WindowConfig{
@@ -47,30 +47,38 @@ func NewGameWindow(sd io.Reader) *GameWindow {
 		panic(err)
 	}
 
+	ss := GetSpriteSheet(spriteReader)
+
 	return &GameWindow{
-		Window:       win,
-		Screen:       &MainScreen{},
-		SpriteDrawer: NewSpriteDrawer(sd),
+		Window: win,
+		Screen: &MainScreen{
+			SpriteSheet: ss,
+		},
+		SpriteSheet: ss,
+		//		SpriteDrawer: NewSpriteDrawer(ss, logical.V(0, CHAR_PIXELS)),
 	}
 }
 
 type GameScreen interface {
-	Draw(*pixelgl.Window, *SpriteDrawer)
+	Draw(*pixelgl.Window)
 }
 
 type MainScreen struct {
-	Drawn bool
+	SpriteSheet  pixel.Picture
+	SpriteDrawer *SpriteDrawer
+	TextDrawer   *SpriteDrawer
+	Drawn        bool
 }
 
-func (screen *MainScreen) Draw(win *pixelgl.Window, sd *SpriteDrawer) {
+func (screen *MainScreen) Draw(win *pixelgl.Window) {
 	if !screen.Drawn {
 		win.Clear(colornames.Black)
-		// Explicitly set this as it may have been reset (see below)
-		sd.WinConverter.Offset = logical.V(0, CHAR_PIXELS)
+		sd := NewSpriteDrawer(screen.SpriteSheet, logical.V(0, CHAR_PIXELS))
 		drawMainBorder(win, sd)
-		// Change the offset so that all future sprites
-		// are drawn inside the border
 		sd.WinConverter.Offset = logical.V(CHAR_PIXELS/2, CHAR_PIXELS/2+CHAR_PIXELS)
+		screen.SpriteDrawer = sd
+		screen.TextDrawer = NewTextDrawer(screen.SpriteSheet, sd.WinConverter.Offset)
+		screen.TextDrawer.DrawText("Hello", logical.V(1, 8), win)
 	}
 	screen.Drawn = true
 }

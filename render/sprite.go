@@ -10,20 +10,16 @@ import (
 	"github.com/bobtfish/mayhem/logical"
 )
 
-func loadPicture(io io.Reader) (pixel.Picture, error) {
+func GetSpriteSheet(io io.Reader) pixel.Picture {
 	img, _, err := image.Decode(io)
-	if err != nil {
-		return nil, err
-	}
-	return pixel.PictureDataFromImage(img), nil
-}
-
-func NewSpriteDrawer(io io.Reader) SpriteDrawer {
-	ss, err := loadPicture(io)
 	if err != nil {
 		panic(err)
 	}
-	return SpriteDrawer{
+	return pixel.PictureDataFromImage(img)
+}
+
+func NewSpriteDrawer(ss pixel.Picture, windowOffset logical.Vec) *SpriteDrawer {
+	return &SpriteDrawer{
 		SpriteSheet: ss,
 		SSConverterMin: logical.VecConverter{
 			XMultiplier: SPRITE_SIZE,
@@ -35,8 +31,28 @@ func NewSpriteDrawer(io io.Reader) SpriteDrawer {
 			YMultiplier: SPRITE_SIZE,
 		},
 		WinConverter: logical.VecConverter{
-			Offset:      logical.V(0, CHAR_PIXELS),
+			Offset:      windowOffset,
 			XMultiplier: CHAR_PIXELS,
+			YMultiplier: CHAR_PIXELS,
+		},
+	}
+}
+
+func NewTextDrawer(ss pixel.Picture, windowOffset logical.Vec) *SpriteDrawer {
+	return &SpriteDrawer{
+		SpriteSheet: ss,
+		SSConverterMin: logical.VecConverter{
+			XMultiplier: SPRITE_SIZE / 2,
+			YMultiplier: SPRITE_SIZE,
+		},
+		SSConverterMax: logical.VecConverter{
+			Offset:      logical.V(SPRITE_SIZE/2, SPRITE_SIZE),
+			XMultiplier: SPRITE_SIZE / 2,
+			YMultiplier: SPRITE_SIZE,
+		},
+		WinConverter: logical.VecConverter{
+			Offset:      windowOffset,
+			XMultiplier: CHAR_PIXELS / 2,
 			YMultiplier: CHAR_PIXELS,
 		},
 	}
