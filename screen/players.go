@@ -13,62 +13,80 @@ type PlayersScreen struct {
 	ScreenBasics
 	WizardCount        int
 	ComputerDifficulty int
-	Players            []Player
-	CurrentPlayer      Player
+
+	Players       []Player
+	CurrentPlayer Player
 }
 
 type Player struct {
-	Name string
+	Name         string
+	NameFinished bool
+	HumanPlayer  bool
+	AIFinished   bool
 }
 
 func (screen *PlayersScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
 	screen.ScreenBasics.Setup(ss, win)
-	screen.Players = make([]Player, 0)
+	if screen.Players == nil {
+		screen.Players = make([]Player, 0)
+	}
 }
 
 func (screen *PlayersScreen) Draw(win *pixelgl.Window) {
-	if screen.CurrentPlayer.Name == "" {
+	if !screen.CurrentPlayer.NameFinished {
 		playerCount := len(screen.Players) + 1
+
+		if win.JustPressed(pixelgl.KeyEnter) && len(screen.CurrentPlayer.Name) >= 0 {
+			screen.CurrentPlayer.NameFinished = true
+		} else {
+			if win.JustPressed(pixelgl.KeyBackspace) && len(screen.CurrentPlayer.Name) >= 0 {
+				length := len(screen.CurrentPlayer.Name) - 1
+				screen.CurrentPlayer.Name = screen.CurrentPlayer.Name[:length]
+			} else {
+				screen.CurrentPlayer.Name = fmt.Sprintf("%s%s", screen.CurrentPlayer.Name, win.Typed())
+			}
+		}
+
+		if len(screen.CurrentPlayer.Name) > 12 {
+			screen.CurrentPlayer.Name = screen.CurrentPlayer.Name[:12]
+		}
+
 		screen.TextDrawer.DrawText(fmt.Sprintf("PLAYER %d", playerCount), logical.V(0, 9), win)
 		screen.TextDrawer.DrawText("Enter name (12 letters max.)", logical.V(0, 8), win)
-	}
-	/*
-		if !screen.DrawnFirst {
-			screen.TextDrawer.DrawText("  MAYHEM - Remake of Chaos", logical.V(0, 9), win)
-			screen.TextDrawer.DrawText("         By bobtfish", logical.V(0, 8), win)
-			screen.TextDrawer.DrawText("How many wizards?", logical.V(0, 6), win)
-			screen.TextDrawer.DrawText("(Press 2 to 8)", logical.V(0, 5), win)
-			screen.DrawnFirst = true
-		} else {
-			if screen.WizardCount == 0 {
-				c := captureNumKey(win)
-				if c >= 2 && c <= 8 {
-					screen.WizardCount = c
-					screen.TextDrawer.DrawText(fmt.Sprintf("%d", c), logical.V(18, 6), win)
-				}
-			} else {
-				if !screen.DrawnSecond {
-					screen.TextDrawer.DrawText("Level of computer wizards?", logical.V(0, 3), win)
-					screen.TextDrawer.DrawText("(Press 1 to 8)", logical.V(0, 2), win)
-					screen.DrawnSecond = true
-				} else {
-					c := captureNumKey(win)
-					if c >= 1 && c <= 8 {
-						screen.ComputerDifficulty = c
-						screen.TextDrawer.DrawText(fmt.Sprintf("%d", c), logical.V(27, 3), win)
-					}
-				}
+		screen.TextDrawer.DrawText("            ", logical.V(0, 7), win)
+		screen.TextDrawer.DrawText(screen.CurrentPlayer.Name, logical.V(0, 7), win)
+
+		if win.JustPressed(pixelgl.KeyEnter) && len(screen.CurrentPlayer.Name) >= 0 {
+			screen.CurrentPlayer.NameFinished = true
+		}
+	} else {
+		if !screen.CurrentPlayer.AIFinished {
+			screen.TextDrawer.DrawText("Computer controlled?", logical.V(0, 5), win)
+			if win.JustPressed(pixelgl.KeyY) {
+				screen.CurrentPlayer.AIFinished = true
+				screen.TextDrawer.DrawText("Y", logical.V(21, 5), win)
 			}
-		}*/
+			if win.JustPressed(pixelgl.KeyN) {
+				screen.CurrentPlayer.AIFinished = true
+				screen.CurrentPlayer.HumanPlayer = true
+				screen.TextDrawer.DrawText("N", logical.V(21, 5), win)
+			}
+		}
+	}
 }
 
 func (screen *PlayersScreen) NextScreen() GameScreen {
-	return &InitialScreen{}
+	screen.Players = append(screen.Players, screen.CurrentPlayer)
+	screen.CurrentPlayer = Player{}
+	if len(screen.Players) == screen.WizardCount {
+		return &InitialScreen{}
+	}
+	return screen
 }
 
 func (screen *PlayersScreen) Finished() bool {
-	/*	if screen.ComputerDifficulty > 0 && screen.WizardCount > 0 {
+	if len(screen.Players) == screen.WizardCount {
 		return true
-	}*/
+	}
 	return false
 }
