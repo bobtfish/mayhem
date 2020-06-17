@@ -85,7 +85,7 @@ func (screen *PlayersScreen) NextScreen() GameScreen {
 }
 
 func (screen *PlayersScreen) Finished() bool {
-	if len(screen.Players) == screen.WizardCount {
+	if screen.CurrentPlayer.AIFinished == true {
 		return true
 	}
 	return false
