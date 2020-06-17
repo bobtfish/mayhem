@@ -19,10 +19,13 @@ type PlayersScreen struct {
 }
 
 type Player struct {
-	Name         string
-	NameFinished bool
-	HumanPlayer  bool
-	AIFinished   bool
+	Name          string
+	NameFinished  bool
+	HumanPlayer   bool
+	AIFinished    bool
+	CharacterIcon logical.Vec
+	IconChosen    bool
+	ColorChosen   bool
 }
 
 func (screen *PlayersScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
@@ -71,6 +74,27 @@ func (screen *PlayersScreen) Draw(win *pixelgl.Window) {
 				screen.CurrentPlayer.HumanPlayer = true
 				screen.TextDrawer.DrawText("N", logical.V(21, 5), win)
 			}
+		} else {
+			if !screen.CurrentPlayer.IconChosen {
+				screen.TextDrawer.DrawText("Which character?", logical.V(0, 4), win)
+				screen.TextDrawer.DrawText("1  2  3  4  5  6  7  8", logical.V(0, 3), win)
+				// FIXME draw sprites here
+				c := captureNumKey(win)
+				if c >= 1 && c <= 8 {
+					// FIXME do something with the choice here
+					screen.CurrentPlayer.IconChosen = true
+				}
+			} else {
+				if !screen.CurrentPlayer.ColorChosen {
+					screen.TextDrawer.DrawText("Which color?", logical.V(0, 2), win)
+					// FIXME draw characters in colors here
+					c := captureNumKey(win)
+					if c >= 1 && c <= 8 {
+						// FIXME do something with the choice here
+						screen.CurrentPlayer.ColorChosen = true
+					}
+				}
+			}
 		}
 	}
 }
@@ -85,7 +109,7 @@ func (screen *PlayersScreen) NextScreen() GameScreen {
 }
 
 func (screen *PlayersScreen) Finished() bool {
-	if screen.CurrentPlayer.AIFinished == true {
+	if screen.CurrentPlayer.ColorChosen == true {
 		return true
 	}
 	return false
