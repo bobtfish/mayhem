@@ -47,7 +47,10 @@ func (screen *InitialScreen) Draw(win *pixelgl.Window) {
 }
 
 func (screen *InitialScreen) NextScreen() GameScreen {
-	return &InitialScreen{}
+	return &PlayersScreen{
+		WizardCount:        screen.WizardCount,
+		ComputerDifficulty: screen.ComputerDifficulty,
+	}
 }
 
 func (screen *InitialScreen) Finished() bool {
