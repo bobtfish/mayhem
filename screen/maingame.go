@@ -3,6 +3,8 @@ package screen
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+
+	"github.com/bobtfish/mayhem/spells"
 )
 
 type MainGameScreen struct {
@@ -11,15 +13,19 @@ type MainGameScreen struct {
 }
 
 func NewMainGameScreen(players []Player) *MainGameScreen {
-	var refPlayers = make([]*Player, len(players))
 	for i := 0; i < len(players); i++ {
-		refPlayers[i] = &players[i]
+		players[i].Spells = spells.AllSpells
+	}
+	var refPlayers = make([]*Player, len(players))
+	turnmenu := &TurnMenuScreen{
+		Players: refPlayers,
 	}
 	main := MainGameScreen{
-		Players: players,
-		CurrentScreen: &TurnMenuScreen{
-			Players: refPlayers,
-		},
+		Players:       players,
+		CurrentScreen: turnmenu,
+	}
+	for i := 0; i < len(players); i++ {
+		turnmenu.Players[i] = &main.Players[i]
 	}
 	return &main
 }
@@ -34,7 +40,7 @@ func (screen *MainGameScreen) Draw(win *pixelgl.Window) {
 
 func (screen *MainGameScreen) NextScreen() GameScreen {
 	screen.CurrentScreen = screen.CurrentScreen.NextScreen()
-    return screen
+	return screen
 }
 
 func (screen *MainGameScreen) Finished() bool {

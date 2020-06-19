@@ -8,6 +8,8 @@ import (
 
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/render"
+
+	"github.com/bobtfish/mayhem/spells"
 )
 
 type PlayersScreen struct {
@@ -25,6 +27,8 @@ type Player struct {
 	Name          string
 	HumanPlayer   bool
 	CharacterIcon logical.Vec
+
+	Spells []spells.Spell
 }
 
 type BuildingPlayer struct {
