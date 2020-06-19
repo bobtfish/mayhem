@@ -29,6 +29,10 @@ func (screen *SpellListScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
 }
 
 func (screen *SpellListScreen) Draw(win *pixelgl.Window) {
+	screen.TextDrawer.DrawText(fmt.Sprintf("%s's spells", screen.Player.Name), logical.V(0, 9), win)
+	for i := 0; i < len(screen.Player.Spells); i++ {
+		screen.TextDrawer.DrawText(fmt.Sprintf("%s %s", intToChar(i), screen.Player.Spells[i].Name), logical.V(0, 8-i), win)
+	}
 	c := captureNumKey(win)
 	if c == 0 {
 		screen.finished = true

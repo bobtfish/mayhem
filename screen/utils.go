@@ -7,38 +7,57 @@ import (
 	"github.com/bobtfish/mayhem/render"
 )
 
+var numKeyMap map[pixelgl.Button]int
+var spellKeyMap map[pixelgl.Button]int
+
 func captureNumKey(win *pixelgl.Window) int {
-	if win.JustPressed(pixelgl.Key0) {
-		return 0
-	}
-	if win.JustPressed(pixelgl.Key1) {
-		return 1
-	}
-	if win.JustPressed(pixelgl.Key2) {
-		return 2
-	}
-	if win.JustPressed(pixelgl.Key3) {
-		return 3
-	}
-	if win.JustPressed(pixelgl.Key4) {
-		return 4
-	}
-	if win.JustPressed(pixelgl.Key5) {
-		return 5
-	}
-	if win.JustPressed(pixelgl.Key6) {
-		return 6
-	}
-	if win.JustPressed(pixelgl.Key7) {
-		return 7
-	}
-	if win.JustPressed(pixelgl.Key8) {
-		return 8
-	}
-	if win.JustPressed(pixelgl.Key9) {
-		return 9
+	return captureKey(win, numKeyMap)
+}
+
+func captureSpellKey(win *pixelgl.Window) int {
+	return captureKey(win, spellKeyMap)
+}
+
+func captureKey(win *pixelgl.Window, keyMap map[pixelgl.Button]int) int {
+	for button, r := range keyMap {
+		if win.JustPressed(button) {
+			return r
+		}
 	}
 	return -1
+}
+
+func init() {
+	numKeyMap = map[pixelgl.Button]int{
+		pixelgl.Key0: 0,
+		pixelgl.Key1: 1,
+		pixelgl.Key2: 2,
+		pixelgl.Key3: 3,
+		pixelgl.Key4: 4,
+		pixelgl.Key5: 5,
+		pixelgl.Key6: 6,
+		pixelgl.Key7: 7,
+		pixelgl.Key8: 8,
+		pixelgl.Key9: 9,
+	}
+	spellKeyMap = map[pixelgl.Button]int{
+		pixelgl.KeyA: 0,
+		pixelgl.KeyB: 1,
+		pixelgl.KeyC: 2,
+		pixelgl.KeyD: 3,
+		pixelgl.KeyE: 4,
+		pixelgl.KeyF: 5,
+		pixelgl.KeyG: 6,
+		pixelgl.KeyH: 7,
+		pixelgl.KeyI: 8,
+		pixelgl.KeyJ: 9,
+		pixelgl.KeyK: 10,
+		pixelgl.KeyL: 11,
+	}
+}
+
+func intToChar(i int) string {
+	return string('A' + i)
 }
 
 func drawMainBorder(win *pixelgl.Window, sd *render.SpriteDrawer) {
