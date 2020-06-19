@@ -18,17 +18,21 @@ type PlayersScreen struct {
 	origOffset logical.Vec
 
 	Players       []Player
-	CurrentPlayer Player
+	CurrentPlayer BuildingPlayer
 }
 
 type Player struct {
 	Name          string
-	NameFinished  bool
 	HumanPlayer   bool
-	AIFinished    bool
 	CharacterIcon logical.Vec
-	IconChosen    bool
-	ColorChosen   bool
+}
+
+type BuildingPlayer struct {
+	Player
+	NameFinished bool
+	AIFinished   bool
+	IconChosen   bool
+	ColorChosen  bool
 }
 
 func (screen *PlayersScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
@@ -119,10 +123,10 @@ func (screen *PlayersScreen) Draw(win *pixelgl.Window) {
 }
 
 func (screen *PlayersScreen) NextScreen() GameScreen {
-	screen.Players = append(screen.Players, screen.CurrentPlayer)
-	screen.CurrentPlayer = Player{}
+	screen.Players = append(screen.Players, screen.CurrentPlayer.Player)
+	screen.CurrentPlayer = BuildingPlayer{}
 	if len(screen.Players) == screen.WizardCount {
-		return &InitialScreen{}
+		return NewMainGameScreen(screen.Players)
 	}
 	return screen
 }
