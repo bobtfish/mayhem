@@ -1,8 +1,11 @@
 package spells
 
 type Spell struct {
-	Name      string
-	LawRating int
+	Name          string
+	LawRating     int
+	Reuseable     bool
+	CastingChance int
+	Range         int
 }
 
 func (s Spell) LawRatingSymbol() string {
@@ -20,8 +23,11 @@ var AllSpells []Spell
 func init() {
 	AllSpells = []Spell{
 		Spell{
-			Name:      "Spell1",
-			LawRating: 0,
+			Name:          "Disbelieve",
+			LawRating:     0,
+			Reuseable:     true,
+			CastingChance: 100,
+			Range:         20,
 		},
 		Spell{
 			Name:      "Spell2",

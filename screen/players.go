@@ -28,7 +28,8 @@ type Player struct {
 	HumanPlayer   bool
 	CharacterIcon logical.Vec
 
-	Spells []spells.Spell
+	Spells      []spells.Spell
+	ChosenSpell int
 }
 
 type BuildingPlayer struct {
@@ -129,6 +130,7 @@ func (screen *PlayersScreen) Draw(win *pixelgl.Window) {
 func (screen *PlayersScreen) NextScreen() GameScreen {
 	screen.Players = append(screen.Players, screen.CurrentPlayer.Player)
 	screen.CurrentPlayer = BuildingPlayer{}
+	screen.CurrentPlayer.ChosenSpell = -1
 	if len(screen.Players) == screen.WizardCount {
 		return NewMainGameScreen(screen.Players)
 	}

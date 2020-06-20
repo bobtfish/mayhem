@@ -8,6 +8,7 @@ import (
 
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/render"
+	"github.com/bobtfish/mayhem/spells"
 )
 
 const (
@@ -17,6 +18,35 @@ const (
 	ChoseContinue      = iota
 )
 
+type ExamineOneSpellScreen struct {
+	ScreenBasics
+	Spell        *spells.Spell
+	ReturnScreen *ExamineSpellsScreen
+	finished     bool
+}
+
+func (screen *ExamineOneSpellScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
+	screen.ScreenBasics.Setup(ss, win)
+	render.NewTextDrawer(ss, logical.V(0, 0)).DrawText("Press any key to continue", logical.V(0, 0), win)
+	screen.TextDrawer.DrawText(screen.Spell.Name, logical.V(0, 9), win)
+	screen.TextDrawer.DrawText("FIXME add stuff per spell", logical.V(0, 7), win)
+}
+
+func (screen *ExamineOneSpellScreen) Draw(win *pixelgl.Window) {
+	if win.Typed() != "" {
+		screen.finished = true
+	}
+}
+
+func (screen *ExamineOneSpellScreen) Finished() bool {
+	return screen.finished
+}
+
+func (screen *ExamineOneSpellScreen) NextScreen() GameScreen {
+	return screen.ReturnScreen
+}
+
+// Shared SpellListScreen is common functionality
 type SpellListScreen struct {
 	ScreenBasics
 	MainMenu *TurnMenuScreen
@@ -48,22 +78,65 @@ func (screen *SpellListScreen) Finished() bool {
 	return screen.finished
 }
 
+// End SpellListScreen
+
+// Begin Examine Spells list screen
 type ExamineSpellsScreen struct {
 	SpellListScreen
+	SpellToExamine *spells.Spell
 }
 
-func (screen *ExamineSpellsScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
-	screen.SpellListScreen.Setup(ss, win)
+//func (screen *ExamineSpellsScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
+//	screen.SpellListScreen.Setup(ss, win)
+//}
+
+func (screen *ExamineSpellsScreen) Draw(win *pixelgl.Window) {
+	screen.SpellListScreen.Draw(win)
+	i := captureSpellKey(win)
+	if i >= 0 && i < len(screen.Player.Spells) {
+		fmt.Println("Examine a spell")
+		screen.SpellToExamine = &screen.Player.Spells[i]
+		screen.finished = true
+	}
 }
 
+func (screen *ExamineSpellsScreen) NextScreen() GameScreen {
+	if screen.SpellToExamine != nil {
+		ess := &ExamineOneSpellScreen{
+			Spell:        screen.SpellToExamine,
+			ReturnScreen: screen,
+		}
+		screen.finished = false
+		screen.SpellToExamine = nil
+		return ess
+	}
+	return screen.MainMenu
+}
+
+// End
+
+// Being Select a Spell screen
 type SelectSpellScreen struct {
 	SpellListScreen
 }
 
-func (screen *SelectSpellScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
-	screen.SpellListScreen.Setup(ss, win)
+//func (screen *SelectSpellScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
+//	screen.SpellListScreen.Setup(ss, win)
+//}
+
+func (screen *SelectSpellScreen) Draw(win *pixelgl.Window) {
+	screen.SpellListScreen.Draw(win)
+	i := captureSpellKey(win)
+	if i >= 0 && i < len(screen.Player.Spells) {
+		screen.Player.ChosenSpell = i
+		screen.finished = true
+		fmt.Println("Chose a spell")
+	}
 }
 
+// End
+
+// Begin main turn menu screen
 type TurnMenuScreen struct {
 	Players     []*Player
 	PlayerIndex int
@@ -98,15 +171,12 @@ func (screen *TurnMenuScreen) Draw(win *pixelgl.Window) {
 }
 
 func (screen *TurnMenuScreen) NextScreen() GameScreen {
-	fmt.Println("NextScreen")
 	if screen.ChosenOption == ChoseContinue {
 		if screen.PlayerIndex < len(screen.Players)-1 {
-			fmt.Println("NextScreen return screen")
 			screen.PlayerIndex++
 			screen.ChosenOption = ChoseNothing
 			return screen
 		}
-		fmt.Println("NextScreen return Initial")
 		return nil
 	}
 	if screen.ChosenOption == ChoseSelectSpell {
