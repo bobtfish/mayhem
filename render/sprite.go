@@ -27,11 +27,11 @@ func SSTextSizeVec() logical.Vec {
 }
 
 func WinSpriteSizeVec() logical.Vec {
-    return logical.V(CHAR_PIXELS, CHAR_PIXELS)
+	return logical.V(CHAR_PIXELS, CHAR_PIXELS)
 }
 
 func WinTextSizeVec() logical.Vec {
-    return logical.V(CHAR_PIXELS / 2, CHAR_PIXELS)
+	return logical.V(CHAR_PIXELS/2, CHAR_PIXELS)
 }
 
 func NewSpriteDrawer(ss pixel.Picture, windowOffset logical.Vec) *SpriteDrawer {
@@ -59,14 +59,15 @@ type SpriteDrawer struct {
 	WinConverter   logical.VecConverter
 }
 
+func (sd *SpriteDrawer) GetPixelRect(v logical.Vec) pixel.Rect {
+	return pixel.Rect{
+		Min: sd.SSConverterMin.ToPixelVec(v),
+		Max: sd.SSConverterMax.ToPixelVec(v),
+	}
+}
+
 func (sd *SpriteDrawer) GetSprite(v logical.Vec) *pixel.Sprite {
-	return pixel.NewSprite(
-		sd.SpriteSheet,
-		pixel.Rect{
-			Min: sd.SSConverterMin.ToPixelVec(v),
-			Max: sd.SSConverterMax.ToPixelVec(v),
-		},
-	)
+	return pixel.NewSprite(sd.SpriteSheet, sd.GetPixelRect(v))
 }
 
 func (sd *SpriteDrawer) GetSpriteMatrix(win logical.Vec) pixel.Matrix {
