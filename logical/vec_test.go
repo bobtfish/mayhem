@@ -21,3 +21,13 @@ func TestVecAdd(t *testing.T) {
         t.Errorf("v(1, 2) + v(1, 2) x != 4")
     }
 }
+
+func TestVecSubtract(t *testing.T) {
+    v := V(4, 8).Subtract(V(1, 2))
+    if v.X != 3 {
+        t.Errorf("v(4, 8) - v(1, 2) x != 3 is %d", v.X)
+    }
+    if v.Y != 6 {
+        t.Errorf("v(4, 8) + v(1, 2) x != 6 is %d", v.Y)
+    }
+}

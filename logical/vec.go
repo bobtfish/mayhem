@@ -12,3 +12,7 @@ func V(x, y int) Vec {
 func (v Vec) Add(w Vec) Vec {
     return Vec{v.X+w.X, v.Y+w.Y}
 }
+
+func (v Vec) Subtract(w Vec) Vec {
+    return Vec{v.X-w.X, v.Y-w.Y}
+}
