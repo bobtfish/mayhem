@@ -36,33 +36,30 @@ func WinTextSizeVec() logical.Vec {
 
 func NewSpriteDrawer(ss pixel.Picture, windowOffset logical.Vec) *SpriteDrawer {
 	return &SpriteDrawer{
-		SpriteSheet:    ss,
-		SSConverterMin: logical.NewVecConverter(logical.ZeroVec(), SSSpriteSizeVec()),
-		SSConverterMax: logical.NewVecConverter(SSSpriteSizeVec(), SSSpriteSizeVec()),
-		WinConverter:   logical.NewVecConverter(windowOffset, WinSpriteSizeVec()),
+		SpriteSheet:  ss,
+		SpriteSizeV:  SSSpriteSizeVec(),
+		WinConverter: logical.NewVecConverter(windowOffset, WinSpriteSizeVec()),
 	}
 }
 
 func NewTextDrawer(ss pixel.Picture, windowOffset logical.Vec) *SpriteDrawer {
 	return &SpriteDrawer{
-		SpriteSheet:    ss,
-		SSConverterMin: logical.NewVecConverter(logical.ZeroVec(), SSTextSizeVec()),
-		SSConverterMax: logical.NewVecConverter(SSTextSizeVec(), SSTextSizeVec()),
-		WinConverter:   logical.NewVecConverter(windowOffset, WinTextSizeVec()),
+		SpriteSheet:  ss,
+		SpriteSizeV:  SSTextSizeVec(),
+		WinConverter: logical.NewVecConverter(windowOffset, WinTextSizeVec()),
 	}
 }
 
 type SpriteDrawer struct {
-	SpriteSheet    pixel.Picture
-	SSConverterMin logical.VecConverter
-	SSConverterMax logical.VecConverter
-	WinConverter   logical.VecConverter
+	SpriteSheet  pixel.Picture
+	SpriteSizeV  logical.Vec
+	WinConverter logical.VecConverter
 }
 
 func (sd *SpriteDrawer) GetPixelRect(v logical.Vec) pixel.Rect {
 	return pixel.Rect{
-		Min: sd.SSConverterMin.ToPixelVec(v),
-		Max: sd.SSConverterMax.ToPixelVec(v),
+		Min: v.Multiply(sd.SpriteSizeV).ToPixelVec(),
+		Max: v.Multiply(sd.SpriteSizeV).Add(sd.SpriteSizeV).ToPixelVec(),
 	}
 }
 

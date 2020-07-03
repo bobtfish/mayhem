@@ -13,15 +13,15 @@ func TestVec(t *testing.T) {
 }
 
 func TestVecEquals(t *testing.T) {
-    if !V(0, 0).Equals(ZeroVec()) {
-        t.Errorf("V(0, 0) not equal zero Vec")
-    }
-    if V(1, 0).Equals(ZeroVec()) {
-        t.Errorf("V(1, 0) is equal zero Vec")
-    }
-    if V(0, 1).Equals(ZeroVec()) {
-        t.Errorf("V(0, 1) is equal zero Vec")
-    }
+	if !V(0, 0).Equals(ZeroVec()) {
+		t.Errorf("V(0, 0) not equal zero Vec")
+	}
+	if V(1, 0).Equals(ZeroVec()) {
+		t.Errorf("V(1, 0) is equal zero Vec")
+	}
+	if V(0, 1).Equals(ZeroVec()) {
+		t.Errorf("V(0, 1) is equal zero Vec")
+	}
 }
 
 func TestVecAdd(t *testing.T) {
@@ -85,11 +85,11 @@ func TestVecZeroAdd(t *testing.T) {
 }
 
 func TestToPixelVec(t *testing.T) {
-    v := V(12, 18).ToPixelVec()
-    if v.X != 12.0 {
-        t.Errorf("v(12, 18).ToPixelVec().X != 12.0 is %f", v.X)
-    }
-    if v.Y != 18.0 {
-        t.Errorf("v(12, 18).ToPixelVec().X != 18.0 is %f", v.Y)
-    }
+	v := V(12, 18).ToPixelVec()
+	if v.X != 12.0 {
+		t.Errorf("v(12, 18).ToPixelVec().X != 12.0 is %f", v.X)
+	}
+	if v.Y != 18.0 {
+		t.Errorf("v(12, 18).ToPixelVec().X != 18.0 is %f", v.Y)
+	}
 }

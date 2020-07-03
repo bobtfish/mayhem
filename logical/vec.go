@@ -15,7 +15,7 @@ func V(x, y int) Vec {
 }
 
 func (v Vec) Equals(w Vec) bool {
-    return v.X == w.X && v.Y == w.Y
+	return v.X == w.X && v.Y == w.Y
 }
 
 func (v Vec) Add(w Vec) Vec {
@@ -31,5 +31,5 @@ func (v Vec) Multiply(w Vec) Vec {
 }
 
 func (v Vec) ToPixelVec() pixel.Vec {
-    return pixel.V(float64(v.X), float64(v.Y))
+	return pixel.V(float64(v.X), float64(v.Y))
 }
