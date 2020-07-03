@@ -18,16 +18,17 @@ type GameScreen interface {
 
 type ScreenBasics struct {
 	SpriteSheet  pixel.Picture
-	SpriteDrawer *render.SpriteDrawer
-	TextDrawer   *render.SpriteDrawer
+	SpriteDrawer render.SpriteDrawer
+	TextDrawer   render.SpriteDrawer
 }
 
 func (screen *ScreenBasics) Setup(ss pixel.Picture, win *pixelgl.Window) {
 	win.Clear(colornames.Black)
 	screen.SpriteSheet = ss
-	sd := render.NewSpriteDrawer(ss, logical.V(0, render.CHAR_PIXELS))
+	offset := logical.V(0, render.CHAR_PIXELS)
+	sd := render.NewSpriteDrawer(ss, offset)
 	drawMainBorder(win, sd)
-	sd.WinConverter.Offset = logical.V(render.CHAR_PIXELS/2, render.CHAR_PIXELS/2+render.CHAR_PIXELS)
-	screen.SpriteDrawer = sd
-	screen.TextDrawer = render.NewTextDrawer(ss, sd.WinConverter.Offset)
+	offset = offset.Add(logical.V(render.CHAR_PIXELS/2, render.CHAR_PIXELS/2))
+	screen.SpriteDrawer = sd.WithOffset(offset)
+	screen.TextDrawer = render.NewTextDrawer(ss, offset)
 }

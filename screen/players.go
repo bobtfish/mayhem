@@ -17,8 +17,6 @@ type PlayersScreen struct {
 	WizardCount        int
 	ComputerDifficulty int
 
-	origOffset logical.Vec
-
 	Players       []Player
 	CurrentPlayer BuildingPlayer
 }
@@ -45,7 +43,6 @@ func (screen *PlayersScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
 	if screen.Players == nil {
 		screen.Players = make([]Player, 0)
 	}
-	screen.origOffset = screen.SpriteDrawer.WinConverter.Offset
 }
 
 func (screen *PlayersScreen) Draw(win *pixelgl.Window) {
@@ -92,34 +89,32 @@ func (screen *PlayersScreen) Draw(win *pixelgl.Window) {
 				screen.TextDrawer.DrawText("Which character?", logical.V(0, 4), win)
 				screen.TextDrawer.DrawText("1  2  3  4  5  6  7  8", logical.V(0, 3), win)
 				for x := 0; x < 8; x++ {
-					screen.SpriteDrawer.WinConverter.Offset = logical.V(render.CHAR_PIXELS/4+render.CHAR_PIXELS/2*x*3, render.CHAR_PIXELS*2-render.CHAR_PIXELS/2)
-					screen.SpriteDrawer.DrawSprite(logical.V(x, 23), logical.V(1, 3), win)
+					offset := logical.V(render.CHAR_PIXELS/4+render.CHAR_PIXELS/2*x*3, render.CHAR_PIXELS*2-render.CHAR_PIXELS/2)
+					screen.SpriteDrawer.WithOffset(offset).DrawSprite(logical.V(x, 23), logical.V(1, 3), win)
 				}
 				c := captureNumKey(win)
 				if c >= 1 && c <= 8 {
 					screen.CurrentPlayer.CharacterIcon = logical.V(c-1, 23)
 					screen.CurrentPlayer.IconChosen = true
 					screen.TextDrawer.DrawText(fmt.Sprintf("%d", c), logical.V(17, 4), win)
-					screen.SpriteDrawer.WinConverter.Offset = screen.origOffset
-					screen.SpriteDrawer.WinConverter.Offset.X = screen.SpriteDrawer.WinConverter.Offset.X + render.CHAR_PIXELS/4
-					screen.SpriteDrawer.DrawSprite(screen.CurrentPlayer.CharacterIcon, logical.V(9, 4), win)
+					offset := screen.SpriteDrawer.WinOffsetV.Add(logical.V(render.CHAR_PIXELS/4, 0))
+					screen.SpriteDrawer.WithOffset(offset).DrawSprite(screen.CurrentPlayer.CharacterIcon, logical.V(9, 4), win)
 				}
 			} else {
 				if !screen.CurrentPlayer.ColorChosen {
 					screen.TextDrawer.DrawText("Which color?", logical.V(0, 2), win)
 					screen.TextDrawer.DrawText("1  2  3  4  5  6  7  8", logical.V(0, 1), win)
 					for x := 0; x < 8; x++ {
-						screen.SpriteDrawer.WinConverter.Offset = logical.V(render.CHAR_PIXELS/4+render.CHAR_PIXELS/2*x*3, render.CHAR_PIXELS*2-render.CHAR_PIXELS/2)
-						screen.SpriteDrawer.DrawSprite(screen.CurrentPlayer.CharacterIcon, logical.V(1, 1), win)
+						offset := logical.V(render.CHAR_PIXELS/4+render.CHAR_PIXELS/2*x*3, render.CHAR_PIXELS*2-render.CHAR_PIXELS/2)
+						screen.SpriteDrawer.WithOffset(offset).DrawSprite(screen.CurrentPlayer.CharacterIcon, logical.V(1, 1), win)
 					}
 					c := captureNumKey(win)
 					if c >= 1 && c <= 8 {
 						// FIXME do something with the choice here
 						screen.CurrentPlayer.ColorChosen = true
 						screen.TextDrawer.DrawText(fmt.Sprintf("%d", c), logical.V(13, 2), win)
-						screen.SpriteDrawer.WinConverter.Offset = screen.origOffset
-						screen.SpriteDrawer.WinConverter.Offset.X = screen.SpriteDrawer.WinConverter.Offset.X + render.CHAR_PIXELS/4
-						screen.SpriteDrawer.DrawSprite(screen.CurrentPlayer.CharacterIcon, logical.V(7, 2), win)
+						offset := screen.SpriteDrawer.WinOffsetV.Add(logical.V(render.CHAR_PIXELS/4, 0))
+						screen.SpriteDrawer.WithOffset(offset).DrawSprite(screen.CurrentPlayer.CharacterIcon, logical.V(7, 2), win)
 					}
 				}
 			}

@@ -33,7 +33,7 @@ func (gw *GameWindow) MaybeNextScreen() {
 	}
 }
 
-func (gw *GameWindow) NewSpriteDrawer(v logical.Vec) *render.SpriteDrawer {
+func (gw *GameWindow) NewSpriteDrawer(v logical.Vec) render.SpriteDrawer {
 	return render.NewSpriteDrawer(gw.SpriteSheet, v)
 }
 

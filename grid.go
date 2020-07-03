@@ -28,7 +28,7 @@ func (grid *GameGrid) GetGameObject(v logical.Vec) GameObject {
 	return (*grid)[v.Y][v.X]
 }
 
-func (grid *GameGrid) DrawBatch(sd *render.SpriteDrawer) *pixel.Batch {
+func (grid *GameGrid) DrawBatch(sd render.SpriteDrawer) *pixel.Batch {
 	batch := sd.GetNewBatch()
 	maxy := len(*grid)
 	maxx := len((*grid)[0])

@@ -60,7 +60,7 @@ func intToChar(i int) string {
 	return string('A' + i)
 }
 
-func drawMainBorder(win *pixelgl.Window, sd *render.SpriteDrawer) {
+func drawMainBorder(win *pixelgl.Window, sd render.SpriteDrawer) {
 	batch := sd.GetNewBatch()
 	// Bottom left
 	sd.DrawSprite(logical.V(6, 20), logical.V(0, 0), batch)

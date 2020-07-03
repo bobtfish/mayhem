@@ -7,7 +7,7 @@ import (
 
 var textMap map[string]logical.Vec
 
-func (sd *SpriteDrawer) DrawText(text string, win logical.Vec, target pixel.Target) {
+func (sd SpriteDrawer) DrawText(text string, win logical.Vec, target pixel.Target) {
 	for _, c := range text {
 		sd.GetSprite(textMap[string(c)]).Draw(target, sd.GetSpriteMatrix(win))
 		win.X++
