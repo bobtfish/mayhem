@@ -34,16 +34,13 @@ func (v Vec) ToPixelVec() pixel.Vec {
 	return pixel.V(float64(v.X), float64(v.Y))
 }
 
-func (v Vec) ToPixelRect(scale Vec) pixel.Rect {
-	return pixel.Rect{
-		Min: v.Multiply(scale).ToPixelVec(),
-		Max: v.Multiply(scale).Add(scale).ToPixelVec(),
+func (v Vec) ToPixelRect(scale Vec, offsets ...Vec) pixel.Rect {
+	min := v.Multiply(scale)
+	for _, offset := range offsets {
+		min = min.Add(offset)
 	}
-}
-
-func (v Vec) ToPixelRectOffset(scale Vec, offset Vec) pixel.Rect {
 	return pixel.Rect{
-		Min: v.Multiply(scale).Add(offset).ToPixelVec(),
-		Max: v.Multiply(scale).Add(scale).Add(offset).ToPixelVec(),
+		Min: min.ToPixelVec(),
+		Max: min.Add(scale).ToPixelVec(),
 	}
 }

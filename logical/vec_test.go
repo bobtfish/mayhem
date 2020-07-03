@@ -143,7 +143,7 @@ func TestToPixelRectIdentityTen(t *testing.T) {
 }
 
 func TestToPixelRectOffsetZeroOne(t *testing.T) {
-	r := ZeroVec().ToPixelRectOffset(IdentityVec(), V(5, 5))
+	r := ZeroVec().ToPixelRect(IdentityVec(), V(5, 5))
 	if r.Min.X != 5.0 {
 		t.Errorf("r.Min.X != 5.0")
 	}
@@ -159,7 +159,7 @@ func TestToPixelRectOffsetZeroOne(t *testing.T) {
 }
 
 func TestToPixelRectOffsetZeroTen(t *testing.T) {
-	r := ZeroVec().ToPixelRectOffset(V(10, 10), V(5, 5))
+	r := ZeroVec().ToPixelRect(V(10, 10), V(5, 5))
 	if r.Min.X != 5.0 {
 		t.Errorf("r.Min.X != 5.0")
 	}
@@ -175,7 +175,7 @@ func TestToPixelRectOffsetZeroTen(t *testing.T) {
 }
 
 func TestToPixelRectOffsetIdentityTen(t *testing.T) {
-	r := IdentityVec().ToPixelRectOffset(V(10, 10), V(5, 5))
+	r := IdentityVec().ToPixelRect(V(10, 10), V(5, 5))
 	if r.Min.X != 15.0 {
 		t.Errorf("r.Min.X != 15.0")
 	}
