@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/bobtfish/mayhem/logical"
+    "github.com/bobtfish/mayhem/spells"
 )
 
 type PlayerList []Player
@@ -13,20 +14,20 @@ type Player interface {
 type HumanPlayer struct {
 	Name       string
 	BaseSprite logical.Vec
-	Spells     []Spell
-	NextSpell  Spell
+	Spells     []spells.Spell
+	NextSpell  spells.Spell
 }
 
 func NewHumanPlayer(name string, spriteId int) *HumanPlayer {
 	if spriteId < 0 || spriteId > 7 {
 		panic("spriteId wrong")
 	}
-	spells := make([]Spell, 1)
-	spells[0] = &DoNothingSpell{}
+	sps := make([]spells.Spell, 1)
+	sps[0] = spells.AllSpells[0]
 	return &HumanPlayer{
 		Name:       name,
 		BaseSprite: logical.V(spriteId, 23),
-		Spells:     spells,
+		Spells:     sps,
 	}
 }
 

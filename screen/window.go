@@ -6,7 +6,6 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/render"
 )
 
@@ -49,19 +48,19 @@ func NewGameWindow(spriteReader io.Reader) *GameWindow {
 	ss := render.GetSpriteSheet(spriteReader)
 
 	// FIXME
-	//screen := &InitialScreen{}
-	screen := NewMainGameScreen([]Player{
-		Player{
-			Name:          "Player1",
-			HumanPlayer:   true,
-			CharacterIcon: logical.V(0, 23),
-		},
-		Player{
-			Name:          "Player2",
-			HumanPlayer:   true,
-			CharacterIcon: logical.V(1, 23),
-		},
-	})
+	screen := &InitialScreen{}
+	//screen := NewMainGameScreen([]Player{
+	//	Player{
+	//		Name:          "Player1",
+	//		HumanPlayer:   true,
+	//		CharacterIcon: logical.V(0, 23),
+	//	},
+	//	Player{
+	//		Name:          "Player2",
+	//		HumanPlayer:   true,
+	//		CharacterIcon: logical.V(1, 23),
+	//	},
+	//})
 	screen.Setup(ss, win)
 
 	return &GameWindow{

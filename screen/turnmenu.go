@@ -177,6 +177,7 @@ func (screen *TurnMenuScreen) NextScreen() GameScreen {
 			screen.ChosenOption = ChoseNothing
 			return screen
 		}
+        //FIXME
 		return nil
 	}
 	if screen.ChosenOption == ChoseSelectSpell {
