@@ -31,7 +31,10 @@ func run() {
 
 	title := "Mayhem!"
 
-	gw := screen.NewGameWindow(loadSpriteSheet())
+	spriteReader := loadSpriteSheet()
+	ss := render.GetSpriteSheet(spriteReader)
+
+	gw := screen.NewGameWindow(ss)
 
 	//	players := getPlayers()
 
@@ -44,7 +47,7 @@ func run() {
 	Qsecond := time.Tick(time.Second / 4)
 
 	for !gw.Closed() {
-		sd := gw.NewSpriteDrawer(logical.V(0, render.CHAR_PIXELS))
+		sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
 		batch := grid.DrawBatch(sd)
 		batch.Draw(gw.Window)
 

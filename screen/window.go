@@ -1,13 +1,8 @@
 package screen
 
 import (
-	"io"
-
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-
-	"github.com/bobtfish/mayhem/logical"
-	"github.com/bobtfish/mayhem/render"
 )
 
 type GameWindow struct {
@@ -33,11 +28,7 @@ func (gw *GameWindow) MaybeNextScreen() {
 	}
 }
 
-func (gw *GameWindow) NewSpriteDrawer(v logical.Vec) render.SpriteDrawer {
-	return render.NewSpriteDrawer(gw.SpriteSheet, v)
-}
-
-func NewGameWindow(spriteReader io.Reader) *GameWindow {
+func NewGameWindow(ss pixel.Picture) *GameWindow {
 	title := "Mayhem!"
 
 	cfg := pixelgl.WindowConfig{
@@ -49,8 +40,6 @@ func NewGameWindow(spriteReader io.Reader) *GameWindow {
 	if err != nil {
 		panic(err)
 	}
-
-	ss := render.GetSpriteSheet(spriteReader)
 
 	// FIXME
 	screen := &InitialScreen{}

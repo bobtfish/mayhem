@@ -18,20 +18,20 @@ func GetSpriteSheet(io io.Reader) pixel.Picture {
 	return pixel.PictureDataFromImage(img)
 }
 
-func NewSpriteDrawer(ss pixel.Picture, windowOffset logical.Vec) SpriteDrawer {
+func NewSpriteDrawer(ss pixel.Picture) SpriteDrawer {
 	return SpriteDrawer{
 		SpriteSheet:      ss,
 		SpriteSheetSizeV: logical.V(SPRITE_SIZE, SPRITE_SIZE),
 		WinSizeV:         logical.V(CHAR_PIXELS, CHAR_PIXELS),
-	}.WithOffset(windowOffset)
+	}
 }
 
-func NewTextDrawer(ss pixel.Picture, windowOffset logical.Vec) SpriteDrawer {
+func NewTextDrawer(ss pixel.Picture) SpriteDrawer {
 	return SpriteDrawer{
 		SpriteSheet:      ss,
 		SpriteSheetSizeV: logical.V(SPRITE_SIZE/2, SPRITE_SIZE),
 		WinSizeV:         logical.V(CHAR_PIXELS/2, CHAR_PIXELS),
-	}.WithOffset(windowOffset)
+	}
 }
 
 type SpriteDrawer struct {

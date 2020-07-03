@@ -27,7 +27,7 @@ type ExamineOneSpellScreen struct {
 
 func (screen *ExamineOneSpellScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
 	screen.ScreenBasics.Setup(ss, win)
-	render.NewTextDrawer(ss, logical.V(0, 0)).DrawText("Press any key to continue", logical.V(0, 0), win)
+	render.NewTextDrawer(ss).DrawText("Press any key to continue", logical.V(0, 0), win)
 	screen.TextDrawer.DrawText(screen.Spell.Name, logical.V(0, 9), win)
 	screen.TextDrawer.DrawText("FIXME add stuff per spell", logical.V(0, 7), win)
 }
@@ -56,7 +56,7 @@ type SpellListScreen struct {
 
 func (screen *SpellListScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
 	screen.ScreenBasics.Setup(ss, win)
-	render.NewTextDrawer(ss, logical.V(0, 0)).DrawText("Press 0 to return to main menu", logical.V(0, 0), win)
+	render.NewTextDrawer(ss).DrawText("Press 0 to return to main menu", logical.V(0, 0), win)
 }
 
 func (screen *SpellListScreen) Draw(win *pixelgl.Window) {
@@ -147,7 +147,7 @@ type TurnMenuScreen struct {
 func (screen *TurnMenuScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
 	fmt.Println(fmt.Sprintf("index %d", screen.PlayerIndex))
 	screen.ScreenBasics.Setup(ss, win)
-	render.NewTextDrawer(ss, logical.V(0, 0)).DrawText("      Press Keys 1 to 4", logical.V(0, 0), win)
+	render.NewTextDrawer(ss).DrawText("      Press Keys 1 to 4", logical.V(0, 0), win)
 	screen.TextDrawer.DrawText(screen.Players[screen.PlayerIndex].Name, logical.V(3, 7), win)
 	screen.TextDrawer.DrawText("1. Examine Spells", logical.V(3, 5), win)
 	screen.TextDrawer.DrawText("2. Select Spell", logical.V(3, 4), win)

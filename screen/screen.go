@@ -5,7 +5,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
 
-	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/render"
 )
 
@@ -25,10 +24,7 @@ type ScreenBasics struct {
 func (screen *ScreenBasics) Setup(ss pixel.Picture, win *pixelgl.Window) {
 	win.Clear(colornames.Black)
 	screen.SpriteSheet = ss
-	offset := logical.V(0, render.CHAR_PIXELS)
-	sd := render.NewSpriteDrawer(ss, offset)
-	drawMainBorder(win, sd)
-	offset = offset.Add(logical.V(render.CHAR_PIXELS/2, render.CHAR_PIXELS/2))
-	screen.SpriteDrawer = sd.WithOffset(offset)
-	screen.TextDrawer = render.NewTextDrawer(ss, offset)
+	drawMainBorder(win, render.NewSpriteDrawer(ss).WithOffset(render.MainScreenV()))
+	screen.SpriteDrawer = render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
+	screen.TextDrawer = render.NewTextDrawer(ss).WithOffset(render.GameBoardV())
 }
