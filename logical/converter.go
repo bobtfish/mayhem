@@ -12,5 +12,5 @@ func NewVecConverter(offset Vec, multipler Vec) VecConverter {
 }
 
 func (c VecConverter) ToPixelVec(v Vec) pixel.Vec {
-	return pixel.V(float64(v.X*c.Multiplier.X+c.Offset.X), float64(v.Y*c.Multiplier.Y+c.Offset.Y))
+    return v.Multiply(c.Multiplier).Add(c.Offset).ToPixelVec()
 }

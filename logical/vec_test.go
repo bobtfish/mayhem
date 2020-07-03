@@ -83,3 +83,13 @@ func TestVecZeroAdd(t *testing.T) {
 		t.Errorf("v(2, 3) + ZeroVec() y != 3 is %d", v.Y)
 	}
 }
+
+func TestToPixelVec(t *testing.T) {
+    v := V(12, 18).ToPixelVec()
+    if v.X != 12.0 {
+        t.Errorf("v(12, 18).ToPixelVec().X != 12.0 is %f", v.X)
+    }
+    if v.Y != 18.0 {
+        t.Errorf("v(12, 18).ToPixelVec().X != 18.0 is %f", v.Y)
+    }
+}
