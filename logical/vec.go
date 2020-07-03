@@ -35,15 +35,15 @@ func (v Vec) ToPixelVec() pixel.Vec {
 }
 
 func (v Vec) ToPixelRect(scale Vec) pixel.Rect {
-    return pixel.Rect{
-        Min: v.Multiply(scale).ToPixelVec(),
-        Max: v.Multiply(scale).Add(scale).ToPixelVec(),
-    }
+	return pixel.Rect{
+		Min: v.Multiply(scale).ToPixelVec(),
+		Max: v.Multiply(scale).Add(scale).ToPixelVec(),
+	}
 }
 
 func (v Vec) ToPixelRectOffset(scale Vec, offset Vec) pixel.Rect {
-    return pixel.Rect{
-        Min: v.Multiply(scale).Add(offset).ToPixelVec(),
-        Max: v.Multiply(scale).Add(scale).Add(offset).ToPixelVec(),
-    }
+	return pixel.Rect{
+		Min: v.Multiply(scale).Add(offset).ToPixelVec(),
+		Max: v.Multiply(scale).Add(scale).Add(offset).ToPixelVec(),
+	}
 }
