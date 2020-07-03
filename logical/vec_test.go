@@ -11,3 +11,13 @@ func TestVec(t *testing.T) {
 		t.Errorf("Zero vec not zero Y")
 	}
 }
+
+func TestVecAdd(t *testing.T) {
+    v := V(1, 2).Add(V(1, 2))
+    if v.X != 2 {
+        t.Errorf("v(1, 2) + v(1, 2) x != 2")
+    }
+    if v.Y != 4 {
+        t.Errorf("v(1, 2) + v(1, 2) x != 4")
+    }
+}
