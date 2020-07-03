@@ -39,7 +39,7 @@ func NewGameObjectStack() *GameObjectStack {
 	return &os
 }
 
-/* Empty game object (bottom level tile */
+/* Empty game object (bottom level tile) */
 
 const BLANK_SPRITE_X = 8
 const BLANK_SPRITE_Y = 26

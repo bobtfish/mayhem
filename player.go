@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/bobtfish/mayhem/logical"
-    "github.com/bobtfish/mayhem/spells"
+	"github.com/bobtfish/mayhem/spells"
 )
 
 type PlayerList []Player

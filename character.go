@@ -10,62 +10,10 @@ import (
 	"github.com/bobtfish/mayhem/logical"
 )
 
-type Fx struct {
-	SpriteVec   logical.Vec
-	SpriteCount int
-	SpriteIdx   int
-}
+// Characters on the board
 
-func (c *Fx) AnimationTick() {
-	c.SpriteIdx++
-}
-
-func (c *Fx) RemoveMe() bool {
-	if c.SpriteIdx == c.SpriteCount {
-		return true
-	}
-	return false
-}
-
-func (c *Fx) GetSpriteSheetCoordinates() logical.Vec {
-	return logical.V(c.SpriteVec.X+c.SpriteIdx, c.SpriteVec.Y)
-}
-
-func FxWarp() *Fx {
-	return &Fx{
-		SpriteVec:   logical.V(0, 28),
-		SpriteCount: 8,
-	}
-}
-
-func FxBlam() *Fx {
-	return &Fx{
-		SpriteVec:   logical.V(0, 27),
-		SpriteCount: 8,
-	}
-}
-
-func FxFire() *Fx {
-	return &Fx{
-		SpriteVec:   logical.V(0, 26),
-		SpriteCount: 8,
-	}
-}
-
-func FxBoom() *Fx {
-	return &Fx{
-		SpriteVec:   logical.V(0, 25),
-		SpriteCount: 7,
-	}
-}
-
-func FxPop() *Fx {
-	return &Fx{
-		SpriteVec:   logical.V(0, 24),
-		SpriteCount: 4,
-	}
-}
-
+// Abstract character that can be created
+type CharacterTypes map[string]CharacterType
 type CharacterType struct {
 	Name              string  `yaml:"name"`
 	Combat            int     `yaml:"combat"`
@@ -85,42 +33,11 @@ type CharacterType struct {
 	ColorB            int     `yaml:"color_b"`
 }
 
+// Individual character instance
 type Character struct {
 	CharacterType
 	SpriteIdx int
 }
-
-func (c *Character) AnimationTick() {
-	if c.Sprites == nil {
-		return
-	}
-	spriteCount := len(c.Sprites)
-	if spriteCount == 0 {
-		return
-	}
-	c.SpriteIdx++
-	if c.SpriteIdx == spriteCount {
-		c.SpriteIdx = 0
-	}
-	return
-}
-
-func (c *Character) RemoveMe() bool {
-	return false
-}
-
-func (c *Character) GetSpriteSheetCoordinates() logical.Vec {
-	return logical.V(c.Sprites[c.SpriteIdx][0], c.Sprites[c.SpriteIdx][1])
-}
-
-func (c *Character) GetColorMask() color.Color {
-	if c.ColorR == 0 && c.ColorG == 0 && c.ColorB == 0 {
-		return pixel.RGB(1, 1, 1)
-	}
-	return pixel.RGB(float64(c.ColorR)/255, float64(c.ColorG)/255, float64(c.ColorB)/255)
-}
-
-type CharacterTypes map[string]CharacterType
 
 func LoadCharacterTemplates() CharacterTypes {
 	cl := make([]CharacterType, 0)
@@ -151,4 +68,37 @@ func (ct CharacterTypes) NewCharacter(typeName string) *Character {
 	}
 
 	return ch
+}
+
+// GameObject interface BEGIN
+func (c *Character) AnimationTick() {
+	if c.Sprites == nil {
+		return
+	}
+	spriteCount := len(c.Sprites)
+	if spriteCount == 0 {
+		return
+	}
+	c.SpriteIdx++
+	if c.SpriteIdx == spriteCount {
+		c.SpriteIdx = 0
+	}
+	return
+}
+
+func (c *Character) RemoveMe() bool {
+	return false
+}
+
+func (c *Character) GetSpriteSheetCoordinates() logical.Vec {
+	return logical.V(c.Sprites[c.SpriteIdx][0], c.Sprites[c.SpriteIdx][1])
+}
+
+// GameObject interface END
+
+func (c *Character) GetColorMask() color.Color {
+	if c.ColorR == 0 && c.ColorG == 0 && c.ColorB == 0 {
+		return pixel.RGB(1, 1, 1)
+	}
+	return pixel.RGB(float64(c.ColorR)/255, float64(c.ColorG)/255, float64(c.ColorB)/255)
 }
