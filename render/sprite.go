@@ -18,21 +18,29 @@ func GetSpriteSheet(io io.Reader) pixel.Picture {
 	return pixel.PictureDataFromImage(img)
 }
 
+func SpriteSizeVec() logical.Vec {
+	return logical.V(SPRITE_SIZE, SPRITE_SIZE)
+}
+
+func TextSizeVec() logical.Vec {
+	return logical.V(SPRITE_SIZE/2, SPRITE_SIZE)
+}
+
 func NewSpriteDrawer(ss pixel.Picture, windowOffset logical.Vec) *SpriteDrawer {
 	return &SpriteDrawer{
-		SpriteSheet: ss,
-		SSConverterMin: logical.NewVecConverter(logical.ZeroVec(), SPRITE_SIZE, SPRITE_SIZE),
-		SSConverterMax: logical.NewVecConverter(logical.V(SPRITE_SIZE, SPRITE_SIZE), SPRITE_SIZE, SPRITE_SIZE),
-		WinConverter: logical.NewVecConverter(windowOffset, CHAR_PIXELS, CHAR_PIXELS),
+		SpriteSheet:    ss,
+		SSConverterMin: logical.NewVecConverter(logical.ZeroVec(), SpriteSizeVec()),
+		SSConverterMax: logical.NewVecConverter(SpriteSizeVec(), SpriteSizeVec()),
+		WinConverter:   logical.NewVecConverter(windowOffset, SpriteSizeVec()),
 	}
 }
 
 func NewTextDrawer(ss pixel.Picture, windowOffset logical.Vec) *SpriteDrawer {
 	return &SpriteDrawer{
-		SpriteSheet: ss,
-		SSConverterMin: logical.NewVecConverter(logical.ZeroVec(), SPRITE_SIZE/2, SPRITE_SIZE),
-		SSConverterMax: logical.NewVecConverter(logical.V(SPRITE_SIZE/2, SPRITE_SIZE), SPRITE_SIZE / 2, SPRITE_SIZE),
-		WinConverter: logical.NewVecConverter(windowOffset, CHAR_PIXELS / 2, CHAR_PIXELS),
+		SpriteSheet:    ss,
+		SSConverterMin: logical.NewVecConverter(logical.ZeroVec(), TextSizeVec()),
+		SSConverterMax: logical.NewVecConverter(TextSizeVec(), TextSizeVec()),
+		WinConverter:   logical.NewVecConverter(windowOffset, TextSizeVec()),
 	}
 }
 

@@ -8,8 +8,8 @@ type VecConverter struct {
 	YMultiplier int
 }
 
-func NewVecConverter(offset Vec, mulX int, mulY int) VecConverter {
-    return VecConverter{offset, mulX, mulY}
+func NewVecConverter(offset Vec, multipler Vec) VecConverter {
+	return VecConverter{offset, multipler.X, multipler.Y}
 }
 
 func (c VecConverter) ToPixelVec(v Vec) pixel.Vec {
