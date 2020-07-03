@@ -93,3 +93,99 @@ func TestToPixelVec(t *testing.T) {
 		t.Errorf("v(12, 18).ToPixelVec().X != 18.0 is %f", v.Y)
 	}
 }
+
+func TestToPixelRectZeroOne(t *testing.T) {
+    r := ZeroVec().ToPixelRect(IdentityVec())
+    if r.Min.X != 0.0 {
+        t.Errorf("r.Min.X != 0.0")
+    }
+    if r.Min.Y != 0.0 {
+        t.Errorf("r.Min.Y != 0.0")
+    }
+    if r.Max.X != 1.0 {
+        t.Errorf("r.Min.X != 1.0")
+    }
+    if r.Max.Y != 1.0 {
+        t.Errorf("r.Min.Y != 1.0")
+    }
+}
+
+func TestToPixelRectZeroTen(t *testing.T) {
+    r := ZeroVec().ToPixelRect(V(10, 10))
+    if r.Min.X != 0.0 {
+        t.Errorf("r.Min.X != 0.0")
+    }
+    if r.Min.Y != 0.0 {
+        t.Errorf("r.Min.Y != 0.0")
+    }
+    if r.Max.X != 10.0 {
+        t.Errorf("r.Min.X != 10.0")
+    }
+    if r.Max.Y != 10.0 {
+        t.Errorf("r.Min.Y != 10.0")
+    }
+}
+
+func TestToPixelRectIdentityTen(t *testing.T) {
+    r := IdentityVec().ToPixelRect(V(10, 10))
+    if r.Min.X != 10.0 {
+        t.Errorf("r.Min.X != 10.0")
+    }
+    if r.Min.Y != 10.0 {
+        t.Errorf("r.Min.Y != 10.0")
+    }
+    if r.Max.X != 20.0 {
+        t.Errorf("r.Min.X != 20.0")
+    }
+    if r.Max.Y != 20.0 {
+        t.Errorf("r.Min.Y != 20.0")
+    }
+}
+
+func TestToPixelRectOffsetZeroOne(t *testing.T) {
+    r := ZeroVec().ToPixelRectOffset(IdentityVec(), V(5, 5))
+    if r.Min.X != 5.0 {
+        t.Errorf("r.Min.X != 5.0")
+    }
+    if r.Min.Y != 5.0 {
+        t.Errorf("r.Min.Y != 5.0")
+    }
+    if r.Max.X != 6.0 {
+        t.Errorf("r.Min.X != 6.0")
+    }
+    if r.Max.Y != 6.0 {
+        t.Errorf("r.Min.Y != 6.0")
+    }
+}
+
+func TestToPixelRectOffsetZeroTen(t *testing.T) {
+    r := ZeroVec().ToPixelRectOffset(V(10, 10), V(5, 5))
+    if r.Min.X != 5.0 {
+        t.Errorf("r.Min.X != 5.0")
+    }
+    if r.Min.Y != 5.0 {
+        t.Errorf("r.Min.Y != 5.0")
+    }
+    if r.Max.X != 15.0 {
+        t.Errorf("r.Min.X != 15.0")
+    }
+    if r.Max.Y != 15.0 {
+        t.Errorf("r.Min.Y != 15.0")
+    }
+}
+
+func TestToPixelRectOffsetIdentityTen(t *testing.T) {
+    r := IdentityVec().ToPixelRectOffset(V(10, 10), V(5, 5))
+    if r.Min.X != 15.0 {
+        t.Errorf("r.Min.X != 15.0")
+    }
+    if r.Min.Y != 15.0 {
+        t.Errorf("r.Min.Y != 15.0")
+    }
+    if r.Max.X != 25.0 {
+        t.Errorf("r.Min.X != 25.0")
+    }
+    if r.Max.Y != 25.0 {
+        t.Errorf("r.Min.Y != 25.0")
+    }
+}
