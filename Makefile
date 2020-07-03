@@ -17,3 +17,7 @@ test:
 .PHONY: fmt
 fmt:
 	go fmt ./...
+
+.PHONY: clean
+clean:
+	rm sprite_sheet.go characters.go
