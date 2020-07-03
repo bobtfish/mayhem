@@ -44,7 +44,7 @@ func run() {
 	Qsecond := time.Tick(time.Second / 4)
 
 	for !gw.Closed() {
-		sd := render.NewSpriteDrawer(gw.SpriteSheet, logical.V(0, render.CHAR_PIXELS))
+		sd := gw.NewSpriteDrawer(logical.V(0, render.CHAR_PIXELS))
 		batch := grid.DrawBatch(sd)
 		batch.Draw(gw.Window)
 

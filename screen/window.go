@@ -6,6 +6,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/render"
 )
 
@@ -30,6 +31,10 @@ func (gw *GameWindow) MaybeNextScreen() {
 		screen.Setup(gw.SpriteSheet, gw.Window)
 		gw.Screen = screen
 	}
+}
+
+func (gw *GameWindow) NewSpriteDrawer(v logical.Vec) *render.SpriteDrawer {
+	return render.NewSpriteDrawer(gw.SpriteSheet, v)
 }
 
 func NewGameWindow(spriteReader io.Reader) *GameWindow {
