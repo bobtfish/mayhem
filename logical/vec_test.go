@@ -12,6 +12,18 @@ func TestVec(t *testing.T) {
 	}
 }
 
+func TestVecEquals(t *testing.T) {
+    if !V(0, 0).Equals(ZeroVec()) {
+        t.Errorf("V(0, 0) not equal zero Vec")
+    }
+    if V(1, 0).Equals(ZeroVec()) {
+        t.Errorf("V(1, 0) is equal zero Vec")
+    }
+    if V(0, 1).Equals(ZeroVec()) {
+        t.Errorf("V(0, 1) is equal zero Vec")
+    }
+}
+
 func TestVecAdd(t *testing.T) {
 	v := V(1, 2).Add(V(1, 2))
 	if v.X != 2 {
