@@ -39,6 +39,8 @@ func NewSpriteDrawer(ss pixel.Picture, windowOffset logical.Vec) *SpriteDrawer {
 		SpriteSheet:      ss,
 		SpriteSheetSizeV: SSSpriteSizeVec(),
 		WinConverter:     logical.NewVecConverter(windowOffset, WinSpriteSizeVec()),
+		WinSizeV:         WinSpriteSizeVec(),
+		WinOffsetV:       windowOffset,
 	}
 }
 
@@ -47,6 +49,8 @@ func NewTextDrawer(ss pixel.Picture, windowOffset logical.Vec) *SpriteDrawer {
 		SpriteSheet:      ss,
 		SpriteSheetSizeV: SSTextSizeVec(),
 		WinConverter:     logical.NewVecConverter(windowOffset, WinTextSizeVec()),
+		WinSizeV:         WinTextSizeVec(),
+		WinOffsetV:       windowOffset,
 	}
 }
 
@@ -54,17 +58,12 @@ type SpriteDrawer struct {
 	SpriteSheet      pixel.Picture
 	SpriteSheetSizeV logical.Vec
 	WinConverter     logical.VecConverter
-}
-
-func (sd *SpriteDrawer) GetPixelRect(v logical.Vec) pixel.Rect {
-	return pixel.Rect{
-		Min: v.Multiply(sd.SpriteSheetSizeV).ToPixelVec(),
-		Max: v.Multiply(sd.SpriteSheetSizeV).Add(sd.SpriteSheetSizeV).ToPixelVec(),
-	}
+	WinSizeV         logical.Vec
+	WinOffsetV       logical.Vec
 }
 
 func (sd *SpriteDrawer) GetSprite(v logical.Vec) *pixel.Sprite {
-	return pixel.NewSprite(sd.SpriteSheet, sd.GetPixelRect(v))
+	return pixel.NewSprite(sd.SpriteSheet, v.ToPixelRect(sd.SpriteSheetSizeV))
 }
 
 func (sd *SpriteDrawer) GetSpriteMatrix(win logical.Vec) pixel.Matrix {
