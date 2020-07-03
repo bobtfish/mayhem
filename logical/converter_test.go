@@ -3,11 +3,7 @@ package logical
 import "testing"
 
 func TestNullConverter(t *testing.T) {
-	c := VecConverter{
-		Offset:      V(0, 0),
-		XMultiplier: 1,
-		YMultiplier: 1,
-	}
+	c := NewVecConverter(ZeroVec(), 1, 1)
 	v := c.ToPixelVec(V(0, 0))
 	if v.X != 0.0 {
 		t.Errorf("Zero vec not zero X")
@@ -25,11 +21,7 @@ func TestNullConverter(t *testing.T) {
 }
 
 func TestDoubleConverter(t *testing.T) {
-	c := VecConverter{
-		Offset:      V(0, 0),
-		XMultiplier: 2,
-		YMultiplier: 2,
-	}
+	c := NewVecConverter(ZeroVec(), 2, 2)
 	v := c.ToPixelVec(V(0, 0))
 	if v.X != 0.0 {
 		t.Errorf("Zero vec not zero X")
@@ -47,11 +39,7 @@ func TestDoubleConverter(t *testing.T) {
 }
 
 func TestXOnlyDoubleConverter(t *testing.T) {
-	c := VecConverter{
-		Offset:      V(0, 0),
-		XMultiplier: 2,
-		YMultiplier: 1,
-	}
+	c := NewVecConverter(ZeroVec(), 2, 1)
 	v := c.ToPixelVec(V(0, 0))
 	if v.X != 0.0 {
 		t.Errorf("Zero vec not zero X")
@@ -69,11 +57,7 @@ func TestXOnlyDoubleConverter(t *testing.T) {
 }
 
 func TestOffsetConverter(t *testing.T) {
-	c := VecConverter{
-		Offset:      V(10, 20),
-		XMultiplier: 1,
-		YMultiplier: 1,
-	}
+	c := NewVecConverter(V(10, 20), 1, 1)
 	v := c.ToPixelVec(V(0, 0))
 	if v.X != 10.0 {
 		t.Errorf("Zero vec not zero X")

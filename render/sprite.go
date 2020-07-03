@@ -21,40 +21,18 @@ func GetSpriteSheet(io io.Reader) pixel.Picture {
 func NewSpriteDrawer(ss pixel.Picture, windowOffset logical.Vec) *SpriteDrawer {
 	return &SpriteDrawer{
 		SpriteSheet: ss,
-		SSConverterMin: logical.VecConverter{
-			XMultiplier: SPRITE_SIZE,
-			YMultiplier: SPRITE_SIZE,
-		},
-		SSConverterMax: logical.VecConverter{
-			Offset:      logical.V(SPRITE_SIZE, SPRITE_SIZE),
-			XMultiplier: SPRITE_SIZE,
-			YMultiplier: SPRITE_SIZE,
-		},
-		WinConverter: logical.VecConverter{
-			Offset:      windowOffset,
-			XMultiplier: CHAR_PIXELS,
-			YMultiplier: CHAR_PIXELS,
-		},
+		SSConverterMin: logical.NewVecConverter(logical.ZeroVec(), SPRITE_SIZE, SPRITE_SIZE),
+		SSConverterMax: logical.NewVecConverter(logical.V(SPRITE_SIZE, SPRITE_SIZE), SPRITE_SIZE, SPRITE_SIZE),
+		WinConverter: logical.NewVecConverter(windowOffset, CHAR_PIXELS, CHAR_PIXELS),
 	}
 }
 
 func NewTextDrawer(ss pixel.Picture, windowOffset logical.Vec) *SpriteDrawer {
 	return &SpriteDrawer{
 		SpriteSheet: ss,
-		SSConverterMin: logical.VecConverter{
-			XMultiplier: SPRITE_SIZE / 2,
-			YMultiplier: SPRITE_SIZE,
-		},
-		SSConverterMax: logical.VecConverter{
-			Offset:      logical.V(SPRITE_SIZE/2, SPRITE_SIZE),
-			XMultiplier: SPRITE_SIZE / 2,
-			YMultiplier: SPRITE_SIZE,
-		},
-		WinConverter: logical.VecConverter{
-			Offset:      windowOffset,
-			XMultiplier: CHAR_PIXELS / 2,
-			YMultiplier: CHAR_PIXELS,
-		},
+		SSConverterMin: logical.NewVecConverter(logical.ZeroVec(), SPRITE_SIZE/2, SPRITE_SIZE),
+		SSConverterMax: logical.NewVecConverter(logical.V(SPRITE_SIZE/2, SPRITE_SIZE), SPRITE_SIZE / 2, SPRITE_SIZE),
+		WinConverter: logical.NewVecConverter(windowOffset, CHAR_PIXELS / 2, CHAR_PIXELS),
 	}
 }
 
