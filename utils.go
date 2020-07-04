@@ -6,6 +6,7 @@ import (
 
 	"math/rand"
 
+	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 )
 
@@ -22,7 +23,7 @@ func drawHydra(ss pixel.Picture, win *pixelgl.Window) {
 	sprite.Draw(win, mat)
 }
 
-func placeCharactersTest(grid *GameGrid, ct CharacterTypes) {
+func placeCharactersTest(grid *grid.GameGrid, ct CharacterTypes) {
 	x := 0
 	y := 0
 	for k := range ct {
@@ -42,7 +43,7 @@ func getPlayers() PlayerList {
 	return l
 }
 
-func placePlayers(players PlayerList, grid *GameGrid) {
+func placePlayers(players PlayerList, grid *grid.GameGrid) {
 	y := 9
 	for i, player := range players {
 		x := 0
@@ -56,7 +57,7 @@ func placePlayers(players PlayerList, grid *GameGrid) {
 	}
 }
 
-func blowSomethingUp(grid *GameGrid) {
+func blowSomethingUp(grid *grid.GameGrid) {
 	x := rand.Intn(14)
 	y := rand.Intn(9)
 	fxA := []*Fx{FxWarp(), FxBlam(), FxFire(), FxBoom(), FxPop()}

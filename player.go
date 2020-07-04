@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/spells"
 )
@@ -8,7 +9,7 @@ import (
 type PlayerList []Player
 
 type Player interface {
-	GameObjectStackable
+	grid.GameObjectStackable
 }
 
 type HumanPlayer struct {
