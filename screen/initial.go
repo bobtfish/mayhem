@@ -10,15 +10,18 @@ import (
 )
 
 type InitialScreen struct {
-	ScreenBasics
 	DrawnFirst         bool
 	WizardCount        int
 	DrawnSecond        bool
 	ComputerDifficulty int
 }
 
+func (screen *InitialScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+	ClearScreen(ss, win)
+}
+
 func (screen *InitialScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
-	td := TextDrawer(screen.SpriteSheet)
+	td := TextDrawer(ss)
 	if !screen.DrawnFirst {
 		td.DrawText("  MAYHEM - Remake of Chaos", logical.V(0, 9), win)
 		td.DrawText("         By bobtfish", logical.V(0, 8), win)

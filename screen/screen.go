@@ -13,10 +13,6 @@ type GameScreen interface {
 	Step(pixel.Picture, *pixelgl.Window) GameScreen
 }
 
-type ScreenBasics struct {
-	SpriteSheet pixel.Picture
-}
-
 func SpriteDrawer(ss pixel.Picture) render.SpriteDrawer {
 	return render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
 }
@@ -27,11 +23,5 @@ func TextDrawer(ss pixel.Picture) render.SpriteDrawer {
 
 func ClearScreen(ss pixel.Picture, win *pixelgl.Window) {
 	win.Clear(colornames.Black)
-	drawMainBorder(win, render.NewSpriteDrawer(ss).WithOffset(render.MainScreenV()))
-}
-
-func (screen *ScreenBasics) Enter(ss pixel.Picture, win *pixelgl.Window) {
-	win.Clear(colornames.Black)
-	screen.SpriteSheet = ss
 	drawMainBorder(win, render.NewSpriteDrawer(ss).WithOffset(render.MainScreenV()))
 }

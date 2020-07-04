@@ -13,7 +13,6 @@ import (
 )
 
 type PlayersScreen struct {
-	ScreenBasics
 	WizardCount        int
 	ComputerDifficulty int
 
@@ -39,15 +38,15 @@ type BuildingPlayer struct {
 }
 
 func (screen *PlayersScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
-	screen.ScreenBasics.Enter(ss, win)
+	ClearScreen(ss, win)
 	if screen.Players == nil {
 		screen.Players = make([]Player, 0)
 	}
 }
 
 func (screen *PlayersScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
-	td := TextDrawer(screen.SpriteSheet)
-	sd := SpriteDrawer(screen.SpriteSheet)
+	td := TextDrawer(ss)
+	sd := SpriteDrawer(ss)
 	if !screen.CurrentPlayer.NameFinished {
 		playerCount := len(screen.Players) + 1
 

@@ -19,16 +19,15 @@ const (
 )
 
 type ExamineOneSpellScreen struct {
-	ScreenBasics
 	Spell        *spells.Spell
 	ReturnScreen *ExamineSpellsScreen
 	finished     bool
 }
 
 func (screen *ExamineOneSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
-	screen.ScreenBasics.Enter(ss, win)
+	ClearScreen(ss, win)
 	render.NewTextDrawer(ss).DrawText("Press any key to continue", logical.V(0, 0), win)
-	td := TextDrawer(screen.SpriteSheet)
+	td := TextDrawer(ss)
 	td.DrawText(screen.Spell.Name, logical.V(0, 9), win)
 	td.DrawText("FIXME add stuff per spell", logical.V(0, 7), win)
 }
@@ -42,19 +41,18 @@ func (screen *ExamineOneSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window)
 
 // Shared SpellListScreen is common functionality
 type SpellListScreen struct {
-	ScreenBasics
 	MainMenu *TurnMenuScreen
 	Player   *Player
 	finished bool
 }
 
 func (screen *SpellListScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
-	screen.ScreenBasics.Enter(ss, win)
+	ClearScreen(ss, win)
 	render.NewTextDrawer(ss).DrawText("Press 0 to return to main menu", logical.V(0, 0), win)
 }
 
 func (screen *SpellListScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
-	td := TextDrawer(screen.SpriteSheet)
+	td := TextDrawer(ss)
 	td.DrawText(fmt.Sprintf("%s's spells", screen.Player.Name), logical.V(0, 9), win)
 	for i := 0; i < len(screen.Player.Spells); i++ {
 		td.DrawText(fmt.Sprintf("%s%s%s", intToChar(i), screen.Player.Spells[i].LawRatingSymbol(), screen.Player.Spells[i].Name), logical.V(0, 8-i), win)
@@ -117,17 +115,16 @@ func (screen *SelectSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 
 // Begin main turn menu screen
 type TurnMenuScreen struct {
-	Players     []*Player
-	PlayerIndex int
-	ScreenBasics
+	Players      []*Player
+	PlayerIndex  int
 	ChosenOption int
 }
 
 func (screen *TurnMenuScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+	ClearScreen(ss, win)
 	fmt.Println(fmt.Sprintf("index %d", screen.PlayerIndex))
-	screen.ScreenBasics.Enter(ss, win)
 	render.NewTextDrawer(ss).DrawText("      Press Keys 1 to 4", logical.V(0, 0), win)
-	td := TextDrawer(screen.SpriteSheet)
+	td := TextDrawer(ss)
 	td.DrawText(screen.Players[screen.PlayerIndex].Name, logical.V(3, 7), win)
 	td.DrawText("1. Examine Spells", logical.V(3, 5), win)
 	td.DrawText("2. Select Spell", logical.V(3, 4), win)
