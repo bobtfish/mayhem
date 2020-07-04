@@ -23,7 +23,7 @@ func (gw *GameWindow) Update() {
 func (gw *GameWindow) MaybeNextScreen() {
 	if gw.Screen.Finished() {
 		screen := gw.Screen.NextScreen()
-		screen.Setup(gw.SpriteSheet, gw.Window)
+		screen.Enter(gw.SpriteSheet, gw.Window)
 		gw.Screen = screen
 	}
 }
@@ -55,7 +55,7 @@ func NewGameWindow(ss pixel.Picture) *GameWindow {
 	//		CharacterIcon: logical.V(1, 23),
 	//	},
 	//})
-	screen.Setup(ss, win)
+	screen.Enter(ss, win)
 
 	return &GameWindow{
 		Window:      win,

@@ -25,8 +25,8 @@ type ExamineOneSpellScreen struct {
 	finished     bool
 }
 
-func (screen *ExamineOneSpellScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
-	screen.ScreenBasics.Setup(ss, win)
+func (screen *ExamineOneSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+	screen.ScreenBasics.Enter(ss, win)
 	render.NewTextDrawer(ss).DrawText("Press any key to continue", logical.V(0, 0), win)
 	screen.TextDrawer.DrawText(screen.Spell.Name, logical.V(0, 9), win)
 	screen.TextDrawer.DrawText("FIXME add stuff per spell", logical.V(0, 7), win)
@@ -54,8 +54,8 @@ type SpellListScreen struct {
 	finished bool
 }
 
-func (screen *SpellListScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
-	screen.ScreenBasics.Setup(ss, win)
+func (screen *SpellListScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+	screen.ScreenBasics.Enter(ss, win)
 	render.NewTextDrawer(ss).DrawText("Press 0 to return to main menu", logical.V(0, 0), win)
 }
 
@@ -86,8 +86,8 @@ type ExamineSpellsScreen struct {
 	SpellToExamine *spells.Spell
 }
 
-//func (screen *ExamineSpellsScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
-//	screen.SpellListScreen.Setup(ss, win)
+//func (screen *ExamineSpellsScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+//	screen.SpellListScreen.Enter(ss, win)
 //}
 
 func (screen *ExamineSpellsScreen) Draw(win *pixelgl.Window) {
@@ -120,8 +120,8 @@ type SelectSpellScreen struct {
 	SpellListScreen
 }
 
-//func (screen *SelectSpellScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
-//	screen.SpellListScreen.Setup(ss, win)
+//func (screen *SelectSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+//	screen.SpellListScreen.Enter(ss, win)
 //}
 
 func (screen *SelectSpellScreen) Draw(win *pixelgl.Window) {
@@ -144,9 +144,9 @@ type TurnMenuScreen struct {
 	ChosenOption int
 }
 
-func (screen *TurnMenuScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *TurnMenuScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	fmt.Println(fmt.Sprintf("index %d", screen.PlayerIndex))
-	screen.ScreenBasics.Setup(ss, win)
+	screen.ScreenBasics.Enter(ss, win)
 	render.NewTextDrawer(ss).DrawText("      Press Keys 1 to 4", logical.V(0, 0), win)
 	screen.TextDrawer.DrawText(screen.Players[screen.PlayerIndex].Name, logical.V(3, 7), win)
 	screen.TextDrawer.DrawText("1. Examine Spells", logical.V(3, 5), win)

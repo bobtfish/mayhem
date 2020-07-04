@@ -38,8 +38,8 @@ type BuildingPlayer struct {
 	ColorChosen  bool
 }
 
-func (screen *PlayersScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
-	screen.ScreenBasics.Setup(ss, win)
+func (screen *PlayersScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+	screen.ScreenBasics.Enter(ss, win)
 	if screen.Players == nil {
 		screen.Players = make([]Player, 0)
 	}

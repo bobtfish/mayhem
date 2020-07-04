@@ -9,7 +9,7 @@ import (
 )
 
 type GameScreen interface {
-	Setup(pixel.Picture, *pixelgl.Window)
+	Enter(pixel.Picture, *pixelgl.Window)
 	Draw(*pixelgl.Window)
 	Finished() bool
 	NextScreen() GameScreen
@@ -21,7 +21,7 @@ type ScreenBasics struct {
 	TextDrawer   render.SpriteDrawer
 }
 
-func (screen *ScreenBasics) Setup(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *ScreenBasics) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	win.Clear(colornames.Black)
 	screen.SpriteSheet = ss
 	drawMainBorder(win, render.NewSpriteDrawer(ss).WithOffset(render.MainScreenV()))

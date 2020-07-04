@@ -30,8 +30,8 @@ func NewMainGameScreen(players []Player) *MainGameScreen {
 	return &main
 }
 
-func (screen *MainGameScreen) Setup(ss pixel.Picture, win *pixelgl.Window) {
-	screen.CurrentScreen.Setup(ss, win)
+func (screen *MainGameScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+	screen.CurrentScreen.Enter(ss, win)
 }
 
 func (screen *MainGameScreen) Draw(win *pixelgl.Window) {
