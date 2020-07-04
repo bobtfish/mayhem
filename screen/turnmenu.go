@@ -28,8 +28,9 @@ type ExamineOneSpellScreen struct {
 func (screen *ExamineOneSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	screen.ScreenBasics.Enter(ss, win)
 	render.NewTextDrawer(ss).DrawText("Press any key to continue", logical.V(0, 0), win)
-	screen.TextDrawer.DrawText(screen.Spell.Name, logical.V(0, 9), win)
-	screen.TextDrawer.DrawText("FIXME add stuff per spell", logical.V(0, 7), win)
+	td := TextDrawer(screen.SpriteSheet)
+	td.DrawText(screen.Spell.Name, logical.V(0, 9), win)
+	td.DrawText("FIXME add stuff per spell", logical.V(0, 7), win)
 }
 
 func (screen *ExamineOneSpellScreen) Step(win *pixelgl.Window) GameScreen {
@@ -53,9 +54,10 @@ func (screen *SpellListScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 }
 
 func (screen *SpellListScreen) Step(win *pixelgl.Window) GameScreen {
-	screen.TextDrawer.DrawText(fmt.Sprintf("%s's spells", screen.Player.Name), logical.V(0, 9), win)
+	td := TextDrawer(screen.SpriteSheet)
+	td.DrawText(fmt.Sprintf("%s's spells", screen.Player.Name), logical.V(0, 9), win)
 	for i := 0; i < len(screen.Player.Spells); i++ {
-		screen.TextDrawer.DrawText(fmt.Sprintf("%s%s%s", intToChar(i), screen.Player.Spells[i].LawRatingSymbol(), screen.Player.Spells[i].Name), logical.V(0, 8-i), win)
+		td.DrawText(fmt.Sprintf("%s%s%s", intToChar(i), screen.Player.Spells[i].LawRatingSymbol(), screen.Player.Spells[i].Name), logical.V(0, 8-i), win)
 	}
 	c := captureNumKey(win)
 	if c == 0 {
@@ -125,11 +127,12 @@ func (screen *TurnMenuScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	fmt.Println(fmt.Sprintf("index %d", screen.PlayerIndex))
 	screen.ScreenBasics.Enter(ss, win)
 	render.NewTextDrawer(ss).DrawText("      Press Keys 1 to 4", logical.V(0, 0), win)
-	screen.TextDrawer.DrawText(screen.Players[screen.PlayerIndex].Name, logical.V(3, 7), win)
-	screen.TextDrawer.DrawText("1. Examine Spells", logical.V(3, 5), win)
-	screen.TextDrawer.DrawText("2. Select Spell", logical.V(3, 4), win)
-	screen.TextDrawer.DrawText("3. Examine Board", logical.V(3, 3), win)
-	screen.TextDrawer.DrawText("4. Continue With Game", logical.V(3, 2), win)
+	td := TextDrawer(screen.SpriteSheet)
+	td.DrawText(screen.Players[screen.PlayerIndex].Name, logical.V(3, 7), win)
+	td.DrawText("1. Examine Spells", logical.V(3, 5), win)
+	td.DrawText("2. Select Spell", logical.V(3, 4), win)
+	td.DrawText("3. Examine Board", logical.V(3, 3), win)
+	td.DrawText("4. Continue With Game", logical.V(3, 2), win)
 	screen.ChosenOption = ChoseNothing
 }
 
