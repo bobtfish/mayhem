@@ -45,9 +45,10 @@ func (screen *ComputerDifficultyScreen) Step(ss pixel.Picture, win *pixelgl.Wind
 	c := captureNumKey(win)
 	if c >= 1 && c <= 8 {
 		TextDrawer(ss).DrawText(fmt.Sprintf("%d", c), logical.V(27, 3), win)
-		return &PlayersScreen{
+		return &PlayerNameScreen{PlayersScreen: PlayersScreen{
 			WizardCount:        screen.WizardCount,
 			ComputerDifficulty: c,
+		},
 		}
 	}
 	return screen
