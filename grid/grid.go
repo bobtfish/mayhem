@@ -1,6 +1,8 @@
 package grid
 
 import (
+	"time"
+
 	"github.com/faiface/pixel"
 
 	"github.com/bobtfish/mayhem/logical"
@@ -17,7 +19,19 @@ func MakeGameGrid(v logical.Vec) *GameGrid {
 			gg[i][j] = NewGameObjectStack()
 		}
 	}
-	return &gg
+	grid := &gg
+
+	go func() {
+		Qsecond := time.Tick(time.Second / 4)
+		for true == true {
+			select {
+			case <-Qsecond:
+				grid.AnimationTick()
+			}
+		}
+	}()
+
+	return grid
 }
 
 func (grid *GameGrid) PlaceGameObject(v logical.Vec, c GameObjectStackable) {

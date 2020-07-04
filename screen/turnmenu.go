@@ -6,10 +6,34 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
 	"github.com/bobtfish/mayhem/spells"
 )
+
+type ExamineBoardScreen struct {
+	MainMenu GameScreen
+	Grid     *grid.GameGrid
+}
+
+func (screen *ExamineBoardScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+	ClearScreen(ss, win)
+}
+
+func (screen *ExamineBoardScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
+	batch := screen.Grid.DrawBatch(sd)
+	batch.Draw(win)
+
+	c := captureNumKey(win)
+	if c == 0 {
+		fmt.Println("Return to main menu")
+		return screen.MainMenu
+	}
+	return screen
+}
 
 type ExamineOneSpellScreen struct {
 	Spell        *spells.Spell
@@ -34,7 +58,7 @@ func (screen *ExamineOneSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window)
 // Shared SpellListScreen is common functionality
 type SpellListScreen struct {
 	MainMenu *TurnMenuScreen
-	Player   *Player
+	Player   *player.Player
 }
 
 func (screen *SpellListScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -104,8 +128,9 @@ func (screen *SelectSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 
 // Begin main turn menu screen
 type TurnMenuScreen struct {
-	Players     []*Player
+	Players     []*player.Player
 	PlayerIndex int
+	Grid        *grid.GameGrid
 }
 
 func (screen *TurnMenuScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -124,20 +149,30 @@ func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 	c := captureNumKey(win)
 	if c == 1 {
 		return &ExamineSpellsScreen{
-			SpellListScreen: SpellListScreen{MainMenu: screen,
-				Player: screen.Players[screen.PlayerIndex]},
+			SpellListScreen: SpellListScreen{
+				MainMenu: screen,
+				Player:   screen.Players[screen.PlayerIndex],
+			},
 		}
 	}
 	if c == 2 {
 		return &SelectSpellScreen{
-			SpellListScreen: SpellListScreen{MainMenu: screen,
-				Player: screen.Players[screen.PlayerIndex]},
+			SpellListScreen: SpellListScreen{
+				MainMenu: screen,
+				Player:   screen.Players[screen.PlayerIndex],
+			},
+		}
+	}
+	if c == 3 {
+		return &ExamineBoardScreen{
+			MainMenu: screen,
+			Grid:     screen.Grid,
 		}
 	}
 	if c == 4 {
 		fmt.Println("Set Continue")
 		if len(screen.Players) == screen.PlayerIndex+1 {
-			return nil
+			return &CastSpellScreen{}
 		}
 		return &TurnMenuScreen{
 			Players:     screen.Players,

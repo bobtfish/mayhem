@@ -41,9 +41,8 @@ func run() {
 
 	//placeCharactersTest(grid, ct)
 
-	QsecondTicks := 0
 	frames := 0
-	Qsecond := time.Tick(time.Second / 4)
+	Second := time.Tick(time.Second)
 
 	for !gw.Closed() {
 		//sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
@@ -54,15 +53,10 @@ func run() {
 
 		frames++
 		select {
-		case <-Qsecond:
-			//grid.AnimationTick()
-			QsecondTicks++
-			if QsecondTicks == 4 {
-				gw.Window.SetTitle(fmt.Sprintf("%s | FPS: %d", title, frames*4))
-				frames = 0
-				QsecondTicks = 0
-				//blowSomethingUp(grid)
-			}
+		case <-Second:
+			gw.Window.SetTitle(fmt.Sprintf("%s | FPS: %d", title, frames))
+			frames = 0
+			//blowSomethingUp(grid)
 		default:
 		}
 	}

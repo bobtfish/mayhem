@@ -7,26 +7,16 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
-
-	"github.com/bobtfish/mayhem/spells"
 )
 
 type PlayersScreen struct {
 	WizardCount        int
 	ComputerDifficulty int
 
-	Players       []*Player
-	CurrentPlayer Player
-}
-
-type Player struct {
-	Name          string
-	HumanPlayer   bool
-	CharacterIcon logical.Vec
-
-	Spells      []spells.Spell
-	ChosenSpell int
+	Players       []*player.Player
+	CurrentPlayer player.Player
 }
 
 type PlayerNameScreen struct {
@@ -36,7 +26,7 @@ type PlayerNameScreen struct {
 func (screen *PlayerNameScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
 	if screen.Players == nil {
-		screen.Players = make([]*Player, 0)
+		screen.Players = make([]*player.Player, 0)
 	}
 	td := TextDrawer(ss)
 	td.DrawText(fmt.Sprintf("PLAYER %d", screen.WizardCount), logical.V(0, 9), win)
@@ -138,7 +128,7 @@ func (screen *PlayerColorScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 		sd.WithOffset(offset).DrawSprite(screen.CurrentPlayer.CharacterIcon, logical.V(7, 2), win)
 		newPlayer := screen.CurrentPlayer
 		screen.Players = append(screen.Players, &newPlayer)
-		screen.CurrentPlayer = Player{}
+		screen.CurrentPlayer = player.Player{}
 		if len(screen.Players) == screen.WizardCount {
 			// FIXME do something with ComputerDifficulty here
 

@@ -36,27 +36,6 @@ func placeCharactersTest(grid *grid.GameGrid, ct CharacterTypes) {
 	}
 }
 
-func getPlayers() PlayerList {
-	l := make([]Player, 2)
-	l[0] = NewHumanPlayer("Player1", 0)
-	l[1] = NewHumanPlayer("Player2", 1)
-	return l
-}
-
-func placePlayers(players PlayerList, grid *grid.GameGrid) {
-	y := 9
-	for i, player := range players {
-		x := 0
-		if (i % 2) != 0 {
-			x = 14
-		}
-		grid.PlaceGameObject(logical.V(x, y), player)
-		if (i % 2) != 0 {
-			y--
-		}
-	}
-}
-
 func blowSomethingUp(grid *grid.GameGrid) {
 	x := rand.Intn(14)
 	y := rand.Intn(9)
