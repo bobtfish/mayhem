@@ -11,17 +11,9 @@ import (
 	"github.com/bobtfish/mayhem/spells"
 )
 
-const (
-	ChoseNothing       = iota
-	ChoseExamineSpells = iota
-	ChoseSelectSpell   = iota
-	ChoseContinue      = iota
-)
-
 type ExamineOneSpellScreen struct {
 	Spell        *spells.Spell
-	ReturnScreen *ExamineSpellsScreen
-	finished     bool
+	ReturnScreen GameScreen
 }
 
 func (screen *ExamineOneSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -43,25 +35,16 @@ func (screen *ExamineOneSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window)
 type SpellListScreen struct {
 	MainMenu *TurnMenuScreen
 	Player   *Player
-	finished bool
 }
 
 func (screen *SpellListScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
 	render.NewTextDrawer(ss).DrawText("Press 0 to return to main menu", logical.V(0, 0), win)
-}
-
-func (screen *SpellListScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	td := TextDrawer(ss)
 	td.DrawText(fmt.Sprintf("%s's spells", screen.Player.Name), logical.V(0, 9), win)
 	for i := 0; i < len(screen.Player.Spells); i++ {
 		td.DrawText(fmt.Sprintf("%s%s%s", intToChar(i), screen.Player.Spells[i].LawRatingSymbol(), screen.Player.Spells[i].Name), logical.V(0, 8-i), win)
 	}
-	c := captureNumKey(win)
-	if c == 0 {
-		return screen.MainMenu
-	}
-	return screen
 }
 
 // End SpellListScreen
@@ -77,7 +60,11 @@ type ExamineSpellsScreen struct {
 //}
 
 func (screen *ExamineSpellsScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
-	screen.SpellListScreen.Step(ss, win)
+	c := captureNumKey(win)
+	if c == 0 {
+		fmt.Println("Return to main menu")
+		return screen.MainMenu
+	}
 	i := captureSpellKey(win)
 	if i >= 0 && i < len(screen.Player.Spells) {
 		fmt.Println("Examine a spell")
@@ -101,11 +88,13 @@ type SelectSpellScreen struct {
 //}
 
 func (screen *SelectSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
-	screen.SpellListScreen.Step(ss, win)
+	c := captureNumKey(win)
+	if c == 0 {
+		return screen.MainMenu
+	}
 	i := captureSpellKey(win)
 	if i >= 0 && i < len(screen.Player.Spells) {
 		screen.Player.ChosenSpell = i
-		fmt.Println("Chose a spell")
 		return screen.MainMenu
 	}
 	return screen
@@ -115,9 +104,8 @@ func (screen *SelectSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 
 // Begin main turn menu screen
 type TurnMenuScreen struct {
-	Players      []*Player
-	PlayerIndex  int
-	ChosenOption int
+	Players     []*Player
+	PlayerIndex int
 }
 
 func (screen *TurnMenuScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -130,28 +118,31 @@ func (screen *TurnMenuScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	td.DrawText("2. Select Spell", logical.V(3, 4), win)
 	td.DrawText("3. Examine Board", logical.V(3, 3), win)
 	td.DrawText("4. Continue With Game", logical.V(3, 2), win)
-	screen.ChosenOption = ChoseNothing
 }
 
 func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	c := captureNumKey(win)
 	if c == 1 {
-		newS := &ExamineSpellsScreen{}
-		newS.MainMenu = screen
-		newS.Player = screen.Players[screen.PlayerIndex]
-		return newS
+		return &ExamineSpellsScreen{
+			SpellListScreen: SpellListScreen{MainMenu: screen,
+				Player: screen.Players[screen.PlayerIndex]},
+		}
 	}
 	if c == 2 {
-		newS := &SelectSpellScreen{}
-		newS.MainMenu = screen
-		newS.Player = screen.Players[screen.PlayerIndex]
-		return newS
+		return &SelectSpellScreen{
+			SpellListScreen: SpellListScreen{MainMenu: screen,
+				Player: screen.Players[screen.PlayerIndex]},
+		}
 	}
 	if c == 4 {
 		fmt.Println("Set Continue")
-		screen.PlayerIndex++
-		screen.ChosenOption = ChoseNothing
-		return screen
+		if len(screen.Players) == screen.PlayerIndex+1 {
+			return nil
+		}
+		return &TurnMenuScreen{
+			Players:     screen.Players,
+			PlayerIndex: screen.PlayerIndex + 1,
+		}
 	}
 	return screen
 }

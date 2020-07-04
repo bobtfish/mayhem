@@ -16,7 +16,7 @@ type PlayersScreen struct {
 	WizardCount        int
 	ComputerDifficulty int
 
-	Players       []Player
+	Players       []*Player
 	CurrentPlayer Player
 }
 
@@ -36,7 +36,7 @@ type PlayerNameScreen struct {
 func (screen *PlayerNameScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
 	if screen.Players == nil {
-		screen.Players = make([]Player, 0)
+		screen.Players = make([]*Player, 0)
 	}
 	td := TextDrawer(ss)
 	td.DrawText(fmt.Sprintf("PLAYER %d", screen.WizardCount), logical.V(0, 9), win)
@@ -136,11 +136,15 @@ func (screen *PlayerColorScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 		td.DrawText(fmt.Sprintf("%d", c), logical.V(13, 2), win)
 		offset := sd.WinOffsetV.Add(logical.V(render.CHAR_PIXELS/4, 0))
 		sd.WithOffset(offset).DrawSprite(screen.CurrentPlayer.CharacterIcon, logical.V(7, 2), win)
-		screen.Players = append(screen.Players, screen.CurrentPlayer)
+		newPlayer := screen.CurrentPlayer
+		screen.Players = append(screen.Players, &newPlayer)
 		screen.CurrentPlayer = Player{}
 		if len(screen.Players) == screen.WizardCount {
 			// FIXME do something with ComputerDifficulty here
-			return NewMainGameScreen(screen.Players)
+
+			return &StartMainGame{
+				Players: screen.Players,
+			}
 		} else {
 			return &PlayerNameScreen{PlayersScreen: screen.PlayersScreen}
 		}
