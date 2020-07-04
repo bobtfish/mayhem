@@ -33,7 +33,7 @@ func (screen *ExamineOneSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window
 	td.DrawText("FIXME add stuff per spell", logical.V(0, 7), win)
 }
 
-func (screen *ExamineOneSpellScreen) Step(win *pixelgl.Window) GameScreen {
+func (screen *ExamineOneSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	if win.Typed() != "" {
 		return screen.ReturnScreen
 	}
@@ -53,7 +53,7 @@ func (screen *SpellListScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	render.NewTextDrawer(ss).DrawText("Press 0 to return to main menu", logical.V(0, 0), win)
 }
 
-func (screen *SpellListScreen) Step(win *pixelgl.Window) GameScreen {
+func (screen *SpellListScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	td := TextDrawer(screen.SpriteSheet)
 	td.DrawText(fmt.Sprintf("%s's spells", screen.Player.Name), logical.V(0, 9), win)
 	for i := 0; i < len(screen.Player.Spells); i++ {
@@ -78,8 +78,8 @@ type ExamineSpellsScreen struct {
 //	screen.SpellListScreen.Enter(ss, win)
 //}
 
-func (screen *ExamineSpellsScreen) Step(win *pixelgl.Window) GameScreen {
-	screen.SpellListScreen.Step(win)
+func (screen *ExamineSpellsScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+	screen.SpellListScreen.Step(ss, win)
 	i := captureSpellKey(win)
 	if i >= 0 && i < len(screen.Player.Spells) {
 		fmt.Println("Examine a spell")
@@ -102,8 +102,8 @@ type SelectSpellScreen struct {
 //	screen.SpellListScreen.Enter(ss, win)
 //}
 
-func (screen *SelectSpellScreen) Step(win *pixelgl.Window) GameScreen {
-	screen.SpellListScreen.Step(win)
+func (screen *SelectSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+	screen.SpellListScreen.Step(ss, win)
 	i := captureSpellKey(win)
 	if i >= 0 && i < len(screen.Player.Spells) {
 		screen.Player.ChosenSpell = i
@@ -136,7 +136,7 @@ func (screen *TurnMenuScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	screen.ChosenOption = ChoseNothing
 }
 
-func (screen *TurnMenuScreen) Step(win *pixelgl.Window) GameScreen {
+func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	c := captureNumKey(win)
 	if c == 1 {
 		newS := &ExamineSpellsScreen{}

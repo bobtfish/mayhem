@@ -61,7 +61,6 @@ func run() {
 				gw.Window.SetTitle(fmt.Sprintf("%s | FPS: %d", title, frames*4))
 				frames = 0
 				QsecondTicks = 0
-				gw.MaybeNextScreen()
 				//blowSomethingUp(grid)
 			}
 		default:

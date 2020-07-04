@@ -16,15 +16,12 @@ func (gw *GameWindow) Closed() bool {
 }
 
 func (gw *GameWindow) Update() {
-	newScreen := gw.Screen.Step(gw.Window)
+	newScreen := gw.Screen.Step(gw.SpriteSheet, gw.Window)
 	gw.Window.Update()
 	if newScreen != gw.Screen {
 		gw.Screen = newScreen
 		gw.Screen.Enter(gw.SpriteSheet, gw.Window)
 	}
-}
-
-func (gw *GameWindow) MaybeNextScreen() {
 }
 
 func NewGameWindow(ss pixel.Picture) *GameWindow {

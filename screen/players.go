@@ -45,7 +45,7 @@ func (screen *PlayersScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	}
 }
 
-func (screen *PlayersScreen) Step(win *pixelgl.Window) GameScreen {
+func (screen *PlayersScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	td := TextDrawer(screen.SpriteSheet)
 	sd := SpriteDrawer(screen.SpriteSheet)
 	if !screen.CurrentPlayer.NameFinished {

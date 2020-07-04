@@ -3,6 +3,7 @@ package screen
 import (
 	"fmt"
 
+	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/logical"
@@ -16,7 +17,7 @@ type InitialScreen struct {
 	ComputerDifficulty int
 }
 
-func (screen *InitialScreen) Step(win *pixelgl.Window) GameScreen {
+func (screen *InitialScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	td := TextDrawer(screen.SpriteSheet)
 	if !screen.DrawnFirst {
 		td.DrawText("  MAYHEM - Remake of Chaos", logical.V(0, 9), win)

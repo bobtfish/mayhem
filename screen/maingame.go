@@ -34,6 +34,6 @@ func (screen *MainGameScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	screen.CurrentScreen.Enter(ss, win)
 }
 
-func (screen *MainGameScreen) Step(win *pixelgl.Window) GameScreen {
-	return screen.CurrentScreen.Step(win)
+func (screen *MainGameScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+	return screen.CurrentScreen.Step(ss, win)
 }
