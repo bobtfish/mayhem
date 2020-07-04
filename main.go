@@ -9,7 +9,6 @@ import (
 
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/render"
 	"github.com/bobtfish/mayhem/screen"
 )
@@ -26,8 +25,8 @@ func loadSpriteSheet() io.Reader {
 }
 
 func run() {
-	ct := LoadCharacterTemplates()
-	grid := MakeGameGrid(logical.V(GRID_X, GRID_Y))
+	//ct := LoadCharacterTemplates()
+	//grid := MakeGameGrid(logical.V(GRID_X, GRID_Y))
 
 	title := "Mayhem!"
 
@@ -40,30 +39,30 @@ func run() {
 
 	//	placePlayers(players, grid)
 
-	placeCharactersTest(grid, ct)
+	//placeCharactersTest(grid, ct)
 
 	QsecondTicks := 0
 	frames := 0
 	Qsecond := time.Tick(time.Second / 4)
 
 	for !gw.Closed() {
-		sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
-		batch := grid.DrawBatch(sd)
-		batch.Draw(gw.Window)
+		//sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
+		//batch := grid.DrawBatch(sd)
+		//batch.Draw(gw.Window)
 
 		gw.Update()
 
 		frames++
 		select {
 		case <-Qsecond:
-			grid.AnimationTick()
+			//grid.AnimationTick()
 			QsecondTicks++
 			if QsecondTicks == 4 {
 				gw.Window.SetTitle(fmt.Sprintf("%s | FPS: %d", title, frames*4))
 				frames = 0
 				QsecondTicks = 0
-				//gw.MaybeNextScreen()
-				blowSomethingUp(grid)
+				gw.MaybeNextScreen()
+				//blowSomethingUp(grid)
 			}
 		default:
 		}

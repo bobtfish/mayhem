@@ -45,7 +45,7 @@ func (screen *PlayersScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	}
 }
 
-func (screen *PlayersScreen) Draw(win *pixelgl.Window) {
+func (screen *PlayersScreen) Step(win *pixelgl.Window) GameScreen {
 	if !screen.CurrentPlayer.NameFinished {
 		playerCount := len(screen.Players) + 1
 
@@ -120,21 +120,13 @@ func (screen *PlayersScreen) Draw(win *pixelgl.Window) {
 			}
 		}
 	}
-}
-
-func (screen *PlayersScreen) NextScreen() GameScreen {
-	screen.Players = append(screen.Players, screen.CurrentPlayer.Player)
-	screen.CurrentPlayer = BuildingPlayer{}
-	screen.CurrentPlayer.ChosenSpell = -1
-	if len(screen.Players) == screen.WizardCount {
-		return NewMainGameScreen(screen.Players)
+	if screen.CurrentPlayer.ColorChosen == true {
+		screen.Players = append(screen.Players, screen.CurrentPlayer.Player)
+		screen.CurrentPlayer = BuildingPlayer{}
+		screen.CurrentPlayer.ChosenSpell = -1
+		if len(screen.Players) == screen.WizardCount {
+			return NewMainGameScreen(screen.Players)
+		}
 	}
 	return screen
-}
-
-func (screen *PlayersScreen) Finished() bool {
-	if screen.CurrentPlayer.ColorChosen == true {
-		return true
-	}
-	return false
 }

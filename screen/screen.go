@@ -10,9 +10,7 @@ import (
 
 type GameScreen interface {
 	Enter(pixel.Picture, *pixelgl.Window)
-	Draw(*pixelgl.Window)
-	Finished() bool
-	NextScreen() GameScreen
+	Step(*pixelgl.Window) GameScreen
 }
 
 type ScreenBasics struct {

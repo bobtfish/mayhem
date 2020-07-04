@@ -32,18 +32,11 @@ func (screen *ExamineOneSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window
 	screen.TextDrawer.DrawText("FIXME add stuff per spell", logical.V(0, 7), win)
 }
 
-func (screen *ExamineOneSpellScreen) Draw(win *pixelgl.Window) {
+func (screen *ExamineOneSpellScreen) Step(win *pixelgl.Window) GameScreen {
 	if win.Typed() != "" {
-		screen.finished = true
+		return screen.ReturnScreen
 	}
-}
-
-func (screen *ExamineOneSpellScreen) Finished() bool {
-	return screen.finished
-}
-
-func (screen *ExamineOneSpellScreen) NextScreen() GameScreen {
-	return screen.ReturnScreen
+	return screen
 }
 
 // Shared SpellListScreen is common functionality
@@ -59,23 +52,16 @@ func (screen *SpellListScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	render.NewTextDrawer(ss).DrawText("Press 0 to return to main menu", logical.V(0, 0), win)
 }
 
-func (screen *SpellListScreen) Draw(win *pixelgl.Window) {
+func (screen *SpellListScreen) Step(win *pixelgl.Window) GameScreen {
 	screen.TextDrawer.DrawText(fmt.Sprintf("%s's spells", screen.Player.Name), logical.V(0, 9), win)
 	for i := 0; i < len(screen.Player.Spells); i++ {
 		screen.TextDrawer.DrawText(fmt.Sprintf("%s%s%s", intToChar(i), screen.Player.Spells[i].LawRatingSymbol(), screen.Player.Spells[i].Name), logical.V(0, 8-i), win)
 	}
 	c := captureNumKey(win)
 	if c == 0 {
-		screen.finished = true
+		return screen.MainMenu
 	}
-}
-
-func (screen *SpellListScreen) NextScreen() GameScreen {
-	return screen.MainMenu
-}
-
-func (screen *SpellListScreen) Finished() bool {
-	return screen.finished
+	return screen
 }
 
 // End SpellListScreen
@@ -90,27 +76,17 @@ type ExamineSpellsScreen struct {
 //	screen.SpellListScreen.Enter(ss, win)
 //}
 
-func (screen *ExamineSpellsScreen) Draw(win *pixelgl.Window) {
-	screen.SpellListScreen.Draw(win)
+func (screen *ExamineSpellsScreen) Step(win *pixelgl.Window) GameScreen {
+	screen.SpellListScreen.Step(win)
 	i := captureSpellKey(win)
 	if i >= 0 && i < len(screen.Player.Spells) {
 		fmt.Println("Examine a spell")
-		screen.SpellToExamine = &screen.Player.Spells[i]
-		screen.finished = true
-	}
-}
-
-func (screen *ExamineSpellsScreen) NextScreen() GameScreen {
-	if screen.SpellToExamine != nil {
-		ess := &ExamineOneSpellScreen{
-			Spell:        screen.SpellToExamine,
+		return &ExamineOneSpellScreen{
+			Spell:        &screen.Player.Spells[i],
 			ReturnScreen: screen,
 		}
-		screen.finished = false
-		screen.SpellToExamine = nil
-		return ess
 	}
-	return screen.MainMenu
+	return screen
 }
 
 // End
@@ -124,14 +100,15 @@ type SelectSpellScreen struct {
 //	screen.SpellListScreen.Enter(ss, win)
 //}
 
-func (screen *SelectSpellScreen) Draw(win *pixelgl.Window) {
-	screen.SpellListScreen.Draw(win)
+func (screen *SelectSpellScreen) Step(win *pixelgl.Window) GameScreen {
+	screen.SpellListScreen.Step(win)
 	i := captureSpellKey(win)
 	if i >= 0 && i < len(screen.Player.Spells) {
 		screen.Player.ChosenSpell = i
-		screen.finished = true
 		fmt.Println("Chose a spell")
+		return screen.MainMenu
 	}
+	return screen
 }
 
 // End
@@ -156,45 +133,25 @@ func (screen *TurnMenuScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	screen.ChosenOption = ChoseNothing
 }
 
-func (screen *TurnMenuScreen) Draw(win *pixelgl.Window) {
+func (screen *TurnMenuScreen) Step(win *pixelgl.Window) GameScreen {
 	c := captureNumKey(win)
 	if c == 1 {
-		screen.ChosenOption = ChoseExamineSpells
-	}
-	if c == 2 {
-		screen.ChosenOption = ChoseSelectSpell
-	}
-	if c == 4 {
-		fmt.Println("Set Continue")
-		screen.ChosenOption = ChoseContinue
-	}
-}
-
-func (screen *TurnMenuScreen) NextScreen() GameScreen {
-	if screen.ChosenOption == ChoseContinue {
-		if screen.PlayerIndex < len(screen.Players)-1 {
-			screen.PlayerIndex++
-			screen.ChosenOption = ChoseNothing
-			return screen
-		}
-		//FIXME
-		return nil
-	}
-	if screen.ChosenOption == ChoseSelectSpell {
-		newS := &SelectSpellScreen{}
-		newS.MainMenu = screen
-		newS.Player = screen.Players[screen.PlayerIndex]
-		return newS
-	}
-	if screen.ChosenOption == ChoseExamineSpells {
 		newS := &ExamineSpellsScreen{}
 		newS.MainMenu = screen
 		newS.Player = screen.Players[screen.PlayerIndex]
 		return newS
 	}
-	return nil
-}
-
-func (screen *TurnMenuScreen) Finished() bool {
-	return screen.ChosenOption != ChoseNothing
+	if c == 2 {
+		newS := &SelectSpellScreen{}
+		newS.MainMenu = screen
+		newS.Player = screen.Players[screen.PlayerIndex]
+		return newS
+	}
+	if c == 4 {
+		fmt.Println("Set Continue")
+		screen.PlayerIndex++
+		screen.ChosenOption = ChoseNothing
+		return screen
+	}
+	return screen
 }

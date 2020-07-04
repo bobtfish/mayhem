@@ -16,7 +16,7 @@ type InitialScreen struct {
 	ComputerDifficulty int
 }
 
-func (screen *InitialScreen) Draw(win *pixelgl.Window) {
+func (screen *InitialScreen) Step(win *pixelgl.Window) GameScreen {
 	if !screen.DrawnFirst {
 		screen.TextDrawer.DrawText("  MAYHEM - Remake of Chaos", logical.V(0, 9), win)
 		screen.TextDrawer.DrawText("         By bobtfish", logical.V(0, 8), win)
@@ -44,18 +44,11 @@ func (screen *InitialScreen) Draw(win *pixelgl.Window) {
 			}
 		}
 	}
-}
-
-func (screen *InitialScreen) NextScreen() GameScreen {
-	return &PlayersScreen{
-		WizardCount:        screen.WizardCount,
-		ComputerDifficulty: screen.ComputerDifficulty,
-	}
-}
-
-func (screen *InitialScreen) Finished() bool {
 	if screen.ComputerDifficulty > 0 && screen.WizardCount > 0 {
-		return true
+		return &PlayersScreen{
+			WizardCount:        screen.WizardCount,
+			ComputerDifficulty: screen.ComputerDifficulty,
+		}
 	}
-	return false
+	return screen
 }

@@ -34,15 +34,6 @@ func (screen *MainGameScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	screen.CurrentScreen.Enter(ss, win)
 }
 
-func (screen *MainGameScreen) Draw(win *pixelgl.Window) {
-	screen.CurrentScreen.Draw(win)
-}
-
-func (screen *MainGameScreen) NextScreen() GameScreen {
-	screen.CurrentScreen = screen.CurrentScreen.NextScreen()
-	return screen
-}
-
-func (screen *MainGameScreen) Finished() bool {
-	return screen.CurrentScreen.Finished()
+func (screen *MainGameScreen) Step(win *pixelgl.Window) GameScreen {
+	return screen.CurrentScreen.Step(win)
 }
