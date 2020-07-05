@@ -5,11 +5,13 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/grid"
+	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
 )
 
 type CastSpellScreen struct {
-	Grid *grid.GameGrid
+	Grid    *grid.GameGrid
+	Players []*player.Player
 }
 
 func (screen *CastSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {

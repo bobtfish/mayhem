@@ -151,7 +151,10 @@ func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 	if c == 4 {
 		fmt.Println("Set Continue")
 		if len(screen.Players) == screen.PlayerIndex+1 {
-			return &CastSpellScreen{}
+			return &CastSpellScreen{
+				Grid:    screen.Grid,
+				Players: screen.Players,
+			}
 		}
 		return &TurnMenuScreen{
 			Players:     screen.Players,
