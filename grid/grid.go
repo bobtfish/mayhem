@@ -1,6 +1,7 @@
 package grid
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/faiface/pixel"
@@ -12,6 +13,7 @@ import (
 type GameGrid [][]*GameObjectStack
 
 func MakeGameGrid(v logical.Vec) *GameGrid {
+	fmt.Printf("Make grid X%d Y%d\n", v.X, v.Y)
 	gg := make(GameGrid, v.Y)
 	for i := 0; i < v.Y; i++ {
 		gg[i] = make([]*GameObjectStack, v.X)
@@ -44,10 +46,8 @@ func (grid *GameGrid) GetGameObject(v logical.Vec) GameObject {
 
 func (grid *GameGrid) DrawBatch(sd render.SpriteDrawer) *pixel.Batch {
 	batch := sd.GetNewBatch()
-	maxy := len(*grid)
-	maxx := len((*grid)[0])
-	for x := 0; x < maxx; x++ {
-		for y := 0; y < maxy; y++ {
+	for x := 0; x < grid.Width(); x++ {
+		for y := 0; y < grid.Height(); y++ {
 			c := grid.GetGameObject(logical.V(x, y))
 			v := c.GetSpriteSheetCoordinates()
 			sd.DrawSprite(v, logical.V(x, y), batch)
@@ -56,17 +56,18 @@ func (grid *GameGrid) DrawBatch(sd render.SpriteDrawer) *pixel.Batch {
 	return batch
 }
 
-func (grid *GameGrid) Width() int {
+func (grid *GameGrid) Height() int {
 	return len(*grid)
 }
 
-func (grid *GameGrid) Height() int {
+func (grid *GameGrid) Width() int {
 	return len((*grid)[0])
 }
 
 func (grid *GameGrid) AnimationTick() {
 	for x := 0; x < grid.Width(); x++ {
 		for y := 0; y < grid.Height(); y++ {
+			fmt.Printf("Animation tick for grid X%d Y%d\n", x, y)
 			c := grid.GetGameObject(logical.V(x, y))
 			if c != nil {
 				c.AnimationTick()

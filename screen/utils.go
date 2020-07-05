@@ -9,6 +9,7 @@ import (
 
 var numKeyMap map[pixelgl.Button]int
 var spellKeyMap map[pixelgl.Button]int
+var directionKeyMap map[pixelgl.Button]logical.Vec
 
 func captureNumKey(win *pixelgl.Window) int {
 	return captureKey(win, numKeyMap)

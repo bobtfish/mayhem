@@ -13,28 +13,6 @@ import (
 	"github.com/bobtfish/mayhem/spells"
 )
 
-type ExamineBoardScreen struct {
-	MainMenu GameScreen
-	Grid     *grid.GameGrid
-}
-
-func (screen *ExamineBoardScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
-	ClearScreen(ss, win)
-}
-
-func (screen *ExamineBoardScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
-	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
-	batch := screen.Grid.DrawBatch(sd)
-	batch.Draw(win)
-
-	c := captureNumKey(win)
-	if c == 0 {
-		fmt.Println("Return to main menu")
-		return screen.MainMenu
-	}
-	return screen
-}
-
 type ExamineOneSpellScreen struct {
 	Spell        *spells.Spell
 	ReturnScreen GameScreen
@@ -167,6 +145,7 @@ func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 		return &ExamineBoardScreen{
 			MainMenu: screen,
 			Grid:     screen.Grid,
+			Players:  screen.Players,
 		}
 	}
 	if c == 4 {

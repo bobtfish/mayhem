@@ -22,3 +22,13 @@ func TestGrid(t *testing.T) {
 		t.Errorf("3,3 grid Height width not 3")
 	}
 }
+
+func TestGridTwoByThree(t *testing.T) {
+	grid := MakeGameGrid(logical.V(2, 3))
+	if grid.Width() != 2 {
+		t.Errorf("2,3 grid width not 2 is %d", grid.Width())
+	}
+	if grid.Height() != 3 {
+		t.Errorf("2,3 grid height not 3 is %d", grid.Height())
+	}
+}
