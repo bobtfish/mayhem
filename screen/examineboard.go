@@ -32,7 +32,7 @@ func (screen *ExamineBoardScreen) Step(ss pixel.Picture, win *pixelgl.Window) Ga
 		fmt.Println("Return to main menu")
 		return screen.MainMenu
 	}
-	if c > 0 && c < len(screen.Players) {
+	if c > 0 && c <= len(screen.Players) {
 		fmt.Printf("Flash player %d characters\n", c)
 	}
 	v := captureDirectionKey(win)

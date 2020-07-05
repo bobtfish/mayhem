@@ -67,7 +67,6 @@ func (grid *GameGrid) Width() int {
 func (grid *GameGrid) AnimationTick() {
 	for x := 0; x < grid.Width(); x++ {
 		for y := 0; y < grid.Height(); y++ {
-			fmt.Printf("Animation tick for grid X%d Y%d\n", x, y)
 			c := grid.GetGameObject(logical.V(x, y))
 			if c != nil {
 				c.AnimationTick()
