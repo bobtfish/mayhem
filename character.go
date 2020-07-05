@@ -103,6 +103,10 @@ func (c *Character) GetColor() color.Color {
 	return render.GetColor(c.ColorR, c.ColorG, c.ColorB)
 }
 
+func (c *Character) Describe() string {
+	return c.Name
+}
+
 // GameObject interface END
 
 func (c *Character) GetColorMask() color.Color {

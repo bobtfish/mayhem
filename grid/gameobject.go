@@ -12,6 +12,7 @@ type GameObject interface {
 	GetSpriteSheetCoordinates() logical.Vec
 	GetColor() color.Color
 	IsEmpty() bool
+	Describe() string
 }
 
 /* Object stack */
@@ -36,6 +37,10 @@ func (s *GameObjectStack) GetSpriteSheetCoordinates() logical.Vec {
 
 func (s *GameObjectStack) GetColor() color.Color {
 	return (*s)[0].GetColor()
+}
+
+func (s *GameObjectStack) Describe() string {
+	return (*s)[0].Describe()
 }
 
 func (s *GameObjectStack) IsEmpty() bool {
@@ -73,6 +78,10 @@ func (e EmptyObject) RemoveMe() bool {
 
 func (e EmptyObject) GetColor() color.Color {
 	return render.GetColor(0, 0, 0)
+}
+
+func (e EmptyObject) Describe() string {
+	return "                                  "
 }
 
 func (e EmptyObject) IsEmpty() bool {

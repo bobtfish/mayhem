@@ -39,6 +39,10 @@ func (f *Fx) GetColor() color.Color {
 	return render.GetColor(0, 0, 0)
 }
 
+func (f *Fx) Describe() string {
+	return "Fx"
+}
+
 // GameObject interface END
 
 // Fx Constructors
