@@ -79,23 +79,23 @@ func TestRecTwo(t *testing.T) {
 }
 
 func TestClamp(t *testing.T) {
-    r := R(2, 2)
-    if r.Clamp(V(1, 1)).X != 1 {
-        t.Errorf("Clamp in R(2, 2) should not touch X of V(1, 1)")
-    }
-    if r.Clamp(V(1, 1)).Y != 1 {
-        t.Errorf("Clamp in R(2, 2) should not touch Y of V(1, 1)")
-    }
-    if r.Clamp(V(3, 1)).X != 2 {
-        t.Errorf("Clamp in R(2, 2) should clamp V(3, 1) to V(2, 1)")
-    }
-    if r.Clamp(V(1, 3)).Y != 2 {
-        t.Errorf("Clamp in R(2, 2) should clamp V(1, 3) to V(1, 2)")
-    }
-    if r.Clamp(V(-1, -1)).X != 0 {
-        t.Errorf("Clamp in R(2, 2) should clamp V(-1, -1) to V(0, 0) X")
-    }
-    if r.Clamp(V(-1, -1)).Y != 0 {
-        t.Errorf("Clamp in R(2, 2) should clamp V(-1, -1) to V(0, 0) Y")
-    }
+	r := R(2, 2)
+	if r.Clamp(V(1, 1)).X != 1 {
+		t.Errorf("Clamp in R(2, 2) should not touch X of V(1, 1)")
+	}
+	if r.Clamp(V(1, 1)).Y != 1 {
+		t.Errorf("Clamp in R(2, 2) should not touch Y of V(1, 1)")
+	}
+	if r.Clamp(V(3, 1)).X != 2 {
+		t.Errorf("Clamp in R(2, 2) should clamp V(3, 1) to V(2, 1)")
+	}
+	if r.Clamp(V(1, 3)).Y != 2 {
+		t.Errorf("Clamp in R(2, 2) should clamp V(1, 3) to V(1, 2)")
+	}
+	if r.Clamp(V(-1, -1)).X != 0 {
+		t.Errorf("Clamp in R(2, 2) should clamp V(-1, -1) to V(0, 0) X")
+	}
+	if r.Clamp(V(-1, -1)).Y != 0 {
+		t.Errorf("Clamp in R(2, 2) should clamp V(-1, -1) to V(0, 0) Y")
+	}
 }

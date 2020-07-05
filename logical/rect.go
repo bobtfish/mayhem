@@ -45,17 +45,17 @@ func (r Rect) Height() int {
 }
 
 func (r Rect) Clamp(v Vec) Vec {
-    if v.X > r.Vec.X {
-        v.X = r.Vec.X
-    }
-    if v.X < 0 {
-        v.X = 0
-    }
-    if v.Y > r.Vec.Y {
-        v.Y = r.Vec.Y
-    }
-    if v.Y < 0 {
-        v.Y = 0
-    }
-    return v
+	if v.X > r.Vec.X {
+		v.X = r.Vec.X
+	}
+	if v.X < 0 {
+		v.X = 0
+	}
+	if v.Y > r.Vec.Y {
+		v.Y = r.Vec.Y
+	}
+	if v.Y < 0 {
+		v.Y = 0
+	}
+	return v
 }

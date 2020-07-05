@@ -27,6 +27,15 @@ func captureKey(win *pixelgl.Window, keyMap map[pixelgl.Button]int) int {
 	return -1
 }
 
+func captureDirectionKey(win *pixelgl.Window) logical.Vec {
+	for button, r := range directionKeyMap {
+		if win.JustPressed(button) {
+			return r
+		}
+	}
+	return logical.ZeroVec()
+}
+
 func init() {
 	numKeyMap = map[pixelgl.Button]int{
 		pixelgl.Key0: 0,
@@ -53,6 +62,16 @@ func init() {
 		pixelgl.KeyJ: 9,
 		pixelgl.KeyK: 10,
 		pixelgl.KeyL: 11,
+	}
+	directionKeyMap = map[pixelgl.Button]logical.Vec{
+		pixelgl.KeyA: logical.V(-1, 0),
+		pixelgl.KeyD: logical.V(1, 0),
+		pixelgl.KeyQ: logical.V(-1, 1),
+		pixelgl.KeyW: logical.V(0, 1),
+		pixelgl.KeyE: logical.V(1, 1),
+		pixelgl.KeyZ: logical.V(-1, -1),
+		pixelgl.KeyX: logical.V(0, -1),
+		pixelgl.KeyC: logical.V(1, -1),
 	}
 }
 

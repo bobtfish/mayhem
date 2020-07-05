@@ -44,4 +44,3 @@ func (v Vec) ToPixelRect(scale Vec, offsets ...Vec) pixel.Rect {
 		Max: min.Add(scale).ToPixelVec(),
 	}
 }
-
