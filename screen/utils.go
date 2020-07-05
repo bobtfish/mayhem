@@ -82,26 +82,27 @@ func intToChar(i int) string {
 
 func drawMainBorder(win *pixelgl.Window, sd render.SpriteDrawer) {
 	batch := sd.GetNewBatch()
+	color := render.GetColor(0, 0, 255)
 	// Bottom left
-	sd.DrawSprite(logical.V(6, 20), logical.V(0, 0), batch)
+	sd.DrawSpriteColor(logical.V(6, 20), logical.V(0, 0), color, batch)
 	// Bottom row
 	for i := 1; i < 15; i++ {
-		sd.DrawSprite(logical.V(7, 20), logical.V(i, 0), batch)
+		sd.DrawSpriteColor(logical.V(7, 20), logical.V(i, 0), color, batch)
 	}
 	// Bottom right
-	sd.DrawSprite(logical.V(8, 20), logical.V(15, 0), batch)
+	sd.DrawSpriteColor(logical.V(8, 20), logical.V(15, 0), color, batch)
 	// LHS and RHS
 	for i := 1; i < 10; i++ {
-		sd.DrawSprite(logical.V(5, 20), logical.V(0, i), batch)
-		sd.DrawSprite(logical.V(9, 20), logical.V(15, i), batch)
+		sd.DrawSpriteColor(logical.V(5, 20), logical.V(0, i), color, batch)
+		sd.DrawSpriteColor(logical.V(9, 20), logical.V(15, i), color, batch)
 	}
 	// Top Left
-	sd.DrawSprite(logical.V(2, 20), logical.V(0, 10), batch)
+	sd.DrawSpriteColor(logical.V(2, 20), logical.V(0, 10), color, batch)
 	// Top row
 	for i := 1; i < 15; i++ {
-		sd.DrawSprite(logical.V(3, 20), logical.V(i, 10), batch)
+		sd.DrawSpriteColor(logical.V(3, 20), logical.V(i, 10), color, batch)
 	}
 	// Top right
-	sd.DrawSprite(logical.V(4, 20), logical.V(15, 10), batch)
+	sd.DrawSpriteColor(logical.V(4, 20), logical.V(15, 10), color, batch)
 	batch.Draw(win)
 }
