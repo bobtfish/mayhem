@@ -2,6 +2,7 @@ package screen
 
 import (
 	"fmt"
+	"image/color"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -107,25 +108,41 @@ type PlayerColorScreen struct {
 	PlayersScreen
 }
 
+func characterColorChoices() []color.Color {
+	return []color.Color{
+		render.GetColor(255, 0, 0),
+		render.GetColor(255, 0, 255),
+		render.GetColor(0, 255, 0),
+		render.GetColor(0, 255, 255),
+		render.GetColor(204, 204, 0),
+		render.GetColor(255, 255, 0),
+		render.GetColor(204, 204, 204),
+		render.GetColor(255, 255, 255),
+	}
+}
+
 func (screen *PlayerColorScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	td := TextDrawer(ss)
 	sd := SpriteDrawer(ss)
 	td.DrawText("Which color?", logical.V(0, 2), win)
 	td.DrawText("1  2  3  4  5  6  7  8", logical.V(0, 1), win)
+	colors := characterColorChoices()
 	for x := 0; x < 8; x++ {
 		offset := logical.V(render.CHAR_PIXELS/4+render.CHAR_PIXELS/2*x*3, render.CHAR_PIXELS*2-render.CHAR_PIXELS/2)
-		sd.WithOffset(offset).DrawSprite(screen.CurrentPlayer.CharacterIcon, logical.V(1, 1), win)
+		sd.WithOffset(offset).DrawSpriteColor(screen.CurrentPlayer.CharacterIcon, logical.V(1, 1), colors[x], win)
 	}
 }
+
 func (screen *PlayerColorScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	td := TextDrawer(ss)
 	sd := SpriteDrawer(ss)
 	c := captureNumKey(win)
 	if c >= 1 && c <= 8 {
-		// FIXME do something with the choice here
+		colors := characterColorChoices()
 		td.DrawText(fmt.Sprintf("%d", c), logical.V(13, 2), win)
 		offset := sd.WinOffsetV.Add(logical.V(render.CHAR_PIXELS/4, 0))
-		sd.WithOffset(offset).DrawSprite(screen.CurrentPlayer.CharacterIcon, logical.V(7, 2), win)
+		sd.WithOffset(offset).DrawSpriteColor(screen.CurrentPlayer.CharacterIcon, logical.V(7, 2), colors[c-1], win)
+		screen.CurrentPlayer.Color = colors[c-1]
 		newPlayer := screen.CurrentPlayer
 		screen.Players = append(screen.Players, &newPlayer)
 		screen.CurrentPlayer = player.Player{}

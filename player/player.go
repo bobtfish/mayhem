@@ -1,6 +1,8 @@
 package player
 
 import (
+	"image/color"
+
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/spells"
 )
@@ -12,6 +14,7 @@ type Player struct {
 	HumanPlayer   bool
 	CharacterIcon logical.Vec
 	ChosenSpell   int
+	Color         color.Color
 }
 
 // GameObject interface
@@ -23,6 +26,10 @@ func (p *Player) IsEmpty() bool {
 
 func (p *Player) GetSpriteSheetCoordinates() logical.Vec {
 	return p.CharacterIcon
+}
+
+func (p *Player) GetColor() color.Color {
+	return p.Color
 }
 
 // GameObjectStackable interface

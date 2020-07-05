@@ -8,6 +8,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/render"
 )
 
 // Characters on the board
@@ -96,6 +97,10 @@ func (c *Character) IsEmpty() bool {
 
 func (c *Character) GetSpriteSheetCoordinates() logical.Vec {
 	return logical.V(c.Sprites[c.SpriteIdx][0], c.Sprites[c.SpriteIdx][1])
+}
+
+func (c *Character) GetColor() color.Color {
+	return render.GetColor(c.ColorR, c.ColorG, c.ColorB)
 }
 
 // GameObject interface END

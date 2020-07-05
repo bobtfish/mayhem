@@ -48,7 +48,7 @@ func (grid *GameGrid) DrawBatch(sd render.SpriteDrawer) *pixel.Batch {
 		for y := 0; y <= grid.MaxY(); y++ {
 			c := grid.GetGameObject(logical.V(x, y))
 			v := c.GetSpriteSheetCoordinates()
-			sd.DrawSprite(v, logical.V(x, y), batch)
+			sd.DrawSpriteColor(v, logical.V(x, y), c.GetColor(), batch)
 		}
 	}
 	return batch

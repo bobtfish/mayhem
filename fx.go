@@ -1,7 +1,10 @@
 package main
 
 import (
+	"image/color"
+
 	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/render"
 )
 
 // Special effects
@@ -30,6 +33,10 @@ func (c *Fx) IsEmpty() bool {
 
 func (c *Fx) GetSpriteSheetCoordinates() logical.Vec {
 	return logical.V(c.SpriteVec.X+c.SpriteIdx, c.SpriteVec.Y)
+}
+
+func (f *Fx) GetColor() color.Color {
+	return render.GetColor(0, 0, 0)
 }
 
 // GameObject interface END

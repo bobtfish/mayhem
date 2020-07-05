@@ -1,12 +1,16 @@
 package grid
 
 import (
+	"image/color"
+
 	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/render"
 )
 
 type GameObject interface {
 	AnimationTick()
 	GetSpriteSheetCoordinates() logical.Vec
+	GetColor() color.Color
 	IsEmpty() bool
 }
 
@@ -28,6 +32,10 @@ func (s *GameObjectStack) AnimationTick() {
 
 func (s *GameObjectStack) GetSpriteSheetCoordinates() logical.Vec {
 	return (*s)[0].GetSpriteSheetCoordinates()
+}
+
+func (s *GameObjectStack) GetColor() color.Color {
+	return (*s)[0].GetColor()
 }
 
 func (s *GameObjectStack) IsEmpty() bool {
@@ -61,6 +69,10 @@ func (e EmptyObject) AnimationTick() {}
 
 func (e EmptyObject) RemoveMe() bool {
 	return false
+}
+
+func (e EmptyObject) GetColor() color.Color {
+	return render.GetColor(0, 0, 0)
 }
 
 func (e EmptyObject) IsEmpty() bool {

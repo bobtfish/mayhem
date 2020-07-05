@@ -57,8 +57,14 @@ func (screen *ExamineBoardScreen) Step(ss pixel.Picture, win *pixelgl.Window) Ga
 		screen.CursorPosition = screen.Grid.AsRect().Clamp(screen.CursorPosition.Add(v))
 	}
 
-	if screen.ShouldIDrawCursor() || screen.Grid.GetGameObject(screen.CursorPosition).IsEmpty() {
-		sd.DrawSpriteColor(cursorSprite(), screen.CursorPosition, render.GetColor(0, 255, 255), batch)
+	objectAtCursor := screen.Grid.GetGameObject(screen.CursorPosition)
+	cursorColor := render.GetColor(0, 255, 255)
+	if !objectAtCursor.IsEmpty {
+		cursorColor = objectAtCursor.GetColor()
+		// FIXME - Put text about object at cursor in bottom bar
+	}
+	if screen.ShouldIDrawCursor() || objectAtCursor.IsEmpty() {
+		sd.DrawSpriteColor(cursorSprite(), screen.CursorPosition, cursorColor, batch)
 	}
 
 	batch.Draw(win)
