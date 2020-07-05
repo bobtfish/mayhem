@@ -90,6 +90,10 @@ func (c *Character) RemoveMe() bool {
 	return false
 }
 
+func (c *Character) IsEmpty() bool {
+	return false
+}
+
 func (c *Character) GetSpriteSheetCoordinates() logical.Vec {
 	return logical.V(c.Sprites[c.SpriteIdx][0], c.Sprites[c.SpriteIdx][1])
 }

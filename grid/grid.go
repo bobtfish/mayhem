@@ -44,8 +44,8 @@ func (grid *GameGrid) GetGameObject(v logical.Vec) GameObject {
 
 func (grid *GameGrid) DrawBatch(sd render.SpriteDrawer) *pixel.Batch {
 	batch := sd.GetNewBatch()
-	for x := 0; x < grid.MaxX(); x++ {
-		for y := 0; y < grid.MaxY(); y++ {
+	for x := 0; x <= grid.MaxX(); x++ {
+		for y := 0; y <= grid.MaxY(); y++ {
 			c := grid.GetGameObject(logical.V(x, y))
 			v := c.GetSpriteSheetCoordinates()
 			sd.DrawSprite(v, logical.V(x, y), batch)

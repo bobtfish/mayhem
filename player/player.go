@@ -17,6 +17,10 @@ type Player struct {
 // GameObject interface
 func (p *Player) AnimationTick() {}
 
+func (p *Player) IsEmpty() bool {
+	return false
+}
+
 func (p *Player) GetSpriteSheetCoordinates() logical.Vec {
 	return p.CharacterIcon
 }

@@ -2,6 +2,7 @@ package render
 
 import (
 	"image"
+	"image/color"
 	_ "image/png"
 	"io"
 
@@ -58,6 +59,10 @@ func (sd SpriteDrawer) GetSpriteMatrix(winPos logical.Vec) pixel.Matrix {
 	return mat.Moved(pixel.V(CHAR_PIXELS/2-1, CHAR_PIXELS/2-1))
 }
 
+func (sd SpriteDrawer) DrawSpriteColor(ssPos, winPos logical.Vec, mask color.Color, target pixel.Target) {
+	sd.GetSprite(ssPos).DrawColorMask(target, sd.GetSpriteMatrix(winPos), mask)
+}
+
 func (sd SpriteDrawer) DrawSprite(ssPos, winPos logical.Vec, target pixel.Target) {
 	sd.GetSprite(ssPos).Draw(target, sd.GetSpriteMatrix(winPos))
 }
@@ -66,4 +71,11 @@ func (sd *SpriteDrawer) GetNewBatch() *pixel.Batch {
 	batch := pixel.NewBatch(&pixel.TrianglesData{}, sd.SpriteSheet)
 	batch.Clear()
 	return batch
+}
+
+func GetColor(r, g, b int) color.Color {
+	if r == 0 && g == 0 && b == 0 {
+		return pixel.RGB(1, 1, 1)
+	}
+	return pixel.RGB(float64(r)/255, float64(g)/255, float64(b)/255)
 }

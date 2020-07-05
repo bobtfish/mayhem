@@ -2,6 +2,7 @@ package screen
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -13,24 +14,34 @@ import (
 )
 
 type ExamineBoardScreen struct {
-	MainMenu       GameScreen
-	Grid           *grid.GameGrid
-	Players        []*player.Player
-	CursorPosition logical.Vec
+	MainMenu        GameScreen
+	Grid            *grid.GameGrid
+	Players         []*player.Player
+	CursorPosition  logical.Vec
+	CursorFlash     bool
+	CursorFlashTime time.Time
 }
 
 func (screen *ExamineBoardScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
 }
 
+func (screen *ExamineBoardScreen) ShouldIDrawCursor() bool {
+	now := time.Now()
+	if screen.CursorFlashTime.Before(now) {
+		newFlash := true
+		if screen.CursorFlash {
+			newFlash = false
+		}
+		screen.CursorFlash = newFlash
+		screen.CursorFlashTime = now.Add(time.Second / 8)
+	}
+	return screen.CursorFlash
+}
+
 func (screen *ExamineBoardScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
 	batch := screen.Grid.DrawBatch(sd)
-
-	fmt.Printf("Draw Cursor at V(%d, %d)\n", screen.CursorPosition.X, screen.CursorPosition.Y)
-	sd.DrawSprite(cursorSprite(), screen.CursorPosition, batch)
-
-	batch.Draw(win)
 
 	c := captureNumKey(win)
 	if c == 0 {
@@ -45,5 +56,12 @@ func (screen *ExamineBoardScreen) Step(ss pixel.Picture, win *pixelgl.Window) Ga
 		fmt.Printf("Move cursor V(%d, %d)\n", v.X, v.Y)
 		screen.CursorPosition = screen.Grid.AsRect().Clamp(screen.CursorPosition.Add(v))
 	}
+
+	if screen.ShouldIDrawCursor() || screen.Grid.GetGameObject(screen.CursorPosition).IsEmpty() {
+		sd.DrawSpriteColor(cursorSprite(), screen.CursorPosition, render.GetColor(0, 255, 255), batch)
+	}
+
+	batch.Draw(win)
+
 	return screen
 }

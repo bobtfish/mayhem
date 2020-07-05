@@ -7,6 +7,7 @@ import (
 type GameObject interface {
 	AnimationTick()
 	GetSpriteSheetCoordinates() logical.Vec
+	IsEmpty() bool
 }
 
 /* Object stack */
@@ -27,6 +28,10 @@ func (s *GameObjectStack) AnimationTick() {
 
 func (s *GameObjectStack) GetSpriteSheetCoordinates() logical.Vec {
 	return (*s)[0].GetSpriteSheetCoordinates()
+}
+
+func (s *GameObjectStack) IsEmpty() bool {
+	return len(*s) == 1
 }
 
 func (s *GameObjectStack) PlaceObject(o GameObjectStackable) {
@@ -56,6 +61,10 @@ func (e EmptyObject) AnimationTick() {}
 
 func (e EmptyObject) RemoveMe() bool {
 	return false
+}
+
+func (e EmptyObject) IsEmpty() bool {
+	return true
 }
 
 func (e EmptyObject) GetSpriteSheetCoordinates() logical.Vec {

@@ -24,6 +24,10 @@ func (c *Fx) RemoveMe() bool {
 	return false
 }
 
+func (c *Fx) IsEmpty() bool {
+	return false
+}
+
 func (c *Fx) GetSpriteSheetCoordinates() logical.Vec {
 	return logical.V(c.SpriteVec.X+c.SpriteIdx, c.SpriteVec.Y)
 }
