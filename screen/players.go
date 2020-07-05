@@ -65,11 +65,11 @@ func (screen *PlayerAIScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 	td := TextDrawer(ss)
 	if win.JustPressed(pixelgl.KeyY) || win.JustPressed(pixelgl.KeyN) {
 		if win.JustPressed(pixelgl.KeyY) {
-			td.DrawText("Y", logical.V(21, 5), win)
+			td.DrawText("YES", logical.V(21, 5), win)
 		}
 		if win.JustPressed(pixelgl.KeyN) {
 			screen.CurrentPlayer.HumanPlayer = true
-			td.DrawText("N", logical.V(21, 5), win)
+			td.DrawText("NO", logical.V(21, 5), win)
 		}
 		return &PlayerIconScreen{PlayersScreen: screen.PlayersScreen}
 	}
