@@ -64,7 +64,7 @@ func (screen *ExamineBoardScreen) Step(ss pixel.Picture, win *pixelgl.Window) Ga
 	}
 	render.NewTextDrawer(ss).DrawText(objectAtCursor.Describe(), logical.V(0, 0), win)
 	if screen.ShouldIDrawCursor() || objectAtCursor.IsEmpty() {
-		sd.DrawSpriteColor(cursorSprite(0), screen.CursorPosition, cursorColor, batch)
+		sd.DrawSpriteColor(cursorSprite(CURSOR_SPELL), screen.CursorPosition, cursorColor, batch)
 	}
 
 	batch.Draw(win)
