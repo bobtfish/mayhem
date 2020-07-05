@@ -13,9 +13,6 @@ import (
 	"github.com/bobtfish/mayhem/screen"
 )
 
-const GRID_X = 15
-const GRID_Y = 10
-
 func loadSpriteSheet() io.Reader {
 	data, err := base64.StdEncoding.DecodeString(sprite_sheet_base64)
 	if err != nil {
@@ -26,7 +23,6 @@ func loadSpriteSheet() io.Reader {
 
 func run() {
 	//ct := LoadCharacterTemplates()
-	//grid := MakeGameGrid(logical.V(GRID_X, GRID_Y))
 
 	title := "Mayhem!"
 

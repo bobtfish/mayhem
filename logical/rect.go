@@ -37,11 +37,11 @@ func (r Rect) Adjacents(v Vec) []Vec {
 }
 
 func (r Rect) Width() int {
-	return r.Vec.X
+	return r.Vec.X + 1
 }
 
 func (r Rect) Height() int {
-	return r.Vec.Y
+	return r.Vec.Y + 1
 }
 
 func (r Rect) Clamp(v Vec) Vec {

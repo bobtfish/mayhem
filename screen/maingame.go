@@ -6,7 +6,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/grid"
-	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/spells"
 )
@@ -22,7 +21,7 @@ func (screen *StartMainGame) Enter(ss pixel.Picture, win *pixelgl.Window) {
 		fmt.Printf("%v", screen.Players[i])
 		screen.Players[i].Spells = spells.AllSpells
 	}
-	screen.Grid = grid.MakeGameGrid(logical.V(GRID_X, GRID_Y))
+	screen.Grid = grid.MakeGameGrid(GRID_WIDTH, GRID_HEIGHT)
 	for i, pos := range player.GetStartPositions(len(screen.Players)) {
 		screen.Grid.PlaceGameObject(pos, screen.Players[i])
 	}

@@ -13,9 +13,10 @@ import (
 )
 
 type ExamineBoardScreen struct {
-	MainMenu GameScreen
-	Grid     *grid.GameGrid
-	Players  []*player.Player
+	MainMenu       GameScreen
+	Grid           *grid.GameGrid
+	Players        []*player.Player
+	CursorPosition logical.Vec
 }
 
 func (screen *ExamineBoardScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -25,6 +26,10 @@ func (screen *ExamineBoardScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 func (screen *ExamineBoardScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
 	batch := screen.Grid.DrawBatch(sd)
+
+	fmt.Printf("Draw Cursor at V(%d, %d)\n", screen.CursorPosition.X, screen.CursorPosition.Y)
+	sd.DrawSprite(cursorSprite(), screen.CursorPosition, batch)
+
 	batch.Draw(win)
 
 	c := captureNumKey(win)
@@ -38,6 +43,7 @@ func (screen *ExamineBoardScreen) Step(ss pixel.Picture, win *pixelgl.Window) Ga
 	v := captureDirectionKey(win)
 	if !v.Equals(logical.ZeroVec()) {
 		fmt.Printf("Move cursor V(%d, %d)\n", v.X, v.Y)
+		screen.CursorPosition = screen.Grid.AsRect().Clamp(screen.CursorPosition.Add(v))
 	}
 	return screen
 }
