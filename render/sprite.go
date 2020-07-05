@@ -2,6 +2,7 @@ package render
 
 import (
 	"image"
+
 	"image/color"
 	_ "image/png"
 	"io"
@@ -22,11 +23,12 @@ func GetSpriteSheet(io io.Reader) pixel.Picture {
 	// all the same pixels but with the colours inverted.
 	// This allows us to draw inverse video :)
 	size := img.Bounds().Size()
-	wImg := image.NewNRGBA(image.Rect(0, 0, size.X, size.Y))
-	for x := 0; x < size.X*2; x++ {
+	wImg := image.NewNRGBA(image.Rect(0, 0, size.X*2, size.Y))
+	for x := 0; x < size.X; x++ {
 		for y := 0; y < size.Y; y++ {
-			pixel := img.At(x, y).(color.NRGBA)
-			newPixel := color.NRGBA{^pixel.R, ^pixel.G, ^pixel.B, pixel.A}
+			r, g, b, a := img.At(x, y).RGBA()
+			pixel := color.RGBA{uint8(r), uint8(g), uint8(b), uint8(a)}
+			newPixel := color.RGBA{uint8(^r), uint8(^g), uint8(^b), uint8(a)}
 			wImg.Set(x, y, pixel)
 			wImg.Set(x+size.X, y, newPixel)
 		}
