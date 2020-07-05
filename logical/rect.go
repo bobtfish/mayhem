@@ -35,3 +35,27 @@ func (r Rect) Adjacents(v Vec) []Vec {
 	}
 	return vecs
 }
+
+func (r Rect) Width() int {
+	return r.Vec.X
+}
+
+func (r Rect) Height() int {
+	return r.Vec.Y
+}
+
+func (r Rect) Clamp(v Vec) Vec {
+    if v.X > r.Vec.X {
+        v.X = r.Vec.X
+    }
+    if v.X < 0 {
+        v.X = 0
+    }
+    if v.Y > r.Vec.Y {
+        v.Y = r.Vec.Y
+    }
+    if v.Y < 0 {
+        v.Y = 0
+    }
+    return v
+}

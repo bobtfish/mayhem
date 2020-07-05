@@ -56,15 +56,25 @@ func (grid *GameGrid) DrawBatch(sd render.SpriteDrawer) *pixel.Batch {
 	return batch
 }
 
+func (grid *GameGrid) Width() int {
+	return len(*grid)
+}
+
+func (grid *GameGrid) Height() int {
+	return len((*grid)[0])
+}
+
 func (grid *GameGrid) AnimationTick() {
-	maxy := len(*grid)
-	maxx := len((*grid)[0])
-	for x := 0; x < maxx; x++ {
-		for y := 0; y < maxy; y++ {
+	for x := 0; x < grid.Width(); x++ {
+		for y := 0; y < grid.Height(); y++ {
 			c := grid.GetGameObject(logical.V(x, y))
 			if c != nil {
 				c.AnimationTick()
 			}
 		}
 	}
+}
+
+func (grid *GameGrid) AsRect() logical.Rect {
+	return logical.R(grid.Width(), grid.Height())
 }
