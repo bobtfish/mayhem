@@ -16,7 +16,22 @@ func GetSpriteSheet(io io.Reader) pixel.Picture {
 	if err != nil {
 		panic(err)
 	}
-	return pixel.PictureDataFromImage(img)
+
+	// Recreate an image of double the width of the sprite sheet.
+	// Copy the original sprite sheet, and then to the right copy
+	// all the same pixels but with the colours inverted.
+	// This allows us to draw inverse video :)
+	size := img.Bounds().Size()
+	wImg := image.NewNRGBA(image.Rect(0, 0, size.X, size.Y))
+	for x := 0; x < size.X*2; x++ {
+		for y := 0; y < size.Y; y++ {
+			pixel := img.At(x, y).(color.NRGBA)
+			newPixel := color.NRGBA{^pixel.R, ^pixel.G, ^pixel.B, pixel.A}
+			wImg.Set(x, y, pixel)
+			wImg.Set(x+size.X, y, newPixel)
+		}
+	}
+	return pixel.PictureDataFromImage(wImg)
 }
 
 func NewSpriteDrawer(ss pixel.Picture) SpriteDrawer {

@@ -4,6 +4,7 @@ import "github.com/bobtfish/mayhem/logical"
 
 const CHAR_PIXELS = 64
 const SPRITE_SIZE = 16
+const INVERSE_VIDEO_OFFSET = 10
 
 func MainScreenV() logical.Vec {
 	return logical.V(0, CHAR_PIXELS)
