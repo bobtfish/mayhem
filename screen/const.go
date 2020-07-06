@@ -11,9 +11,9 @@ const GRID_WIDTH = 15
 const GRID_HEIGHT = 10
 
 const CURSOR_SPELL = 0
-const CURSOR_BOX   = 1
-const CURSOR_FLY   = 2
-const CURSOR_BOOM  = 3
+const CURSOR_BOX = 1
+const CURSOR_FLY = 2
+const CURSOR_BOOM = 3
 
 func cursorSprite(index int) logical.Vec {
 	// All the cursors in the original sprite sheet are

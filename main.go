@@ -3,12 +3,15 @@ package main
 import (
 	"bytes"
 	"encoding/base64"
+	"flag"
 	"fmt"
 	"io"
 	"time"
 
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
 	"github.com/bobtfish/mayhem/screen"
 )
@@ -24,12 +27,35 @@ func loadSpriteSheet() io.Reader {
 func run() {
 	//ct := LoadCharacterTemplates()
 
+	quickPtr := flag.Bool("quick", false, "Skip Intro questions")
+	flag.Parse()
+
 	title := "Mayhem!"
 
 	spriteReader := loadSpriteSheet()
 	ss := render.GetSpriteSheet(spriteReader)
 
 	gw := screen.NewGameWindow(ss)
+
+	if *quickPtr {
+		gw.Screen = &screen.StartMainGame{
+			Players: []*player.Player{
+				&player.Player{
+					Name:          "fred",
+					HumanPlayer:   true,
+					CharacterIcon: logical.V(0, 23),
+					Color:         render.GetColor(255, 0, 0),
+				},
+				&player.Player{
+					Name:          "bob",
+					HumanPlayer:   true,
+					CharacterIcon: logical.V(1, 23),
+					Color:         render.GetColor(255, 0, 255),
+				},
+			},
+		}
+		gw.Screen.Enter(gw.SpriteSheet, gw.Window)
+	}
 
 	//	players := getPlayers()
 

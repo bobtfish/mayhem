@@ -14,7 +14,7 @@ import (
 )
 
 type ExamineOneSpellScreen struct {
-	Spell        *spells.Spell
+	Spell        spells.Spell
 	ReturnScreen GameScreen
 }
 
@@ -22,7 +22,7 @@ func (screen *ExamineOneSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window
 	ClearScreen(ss, win)
 	render.NewTextDrawer(ss).DrawText("Press any key to continue", logical.V(0, 0), win)
 	td := TextDrawer(ss)
-	td.DrawText(screen.Spell.Name, logical.V(0, 9), win)
+	td.DrawText(screen.Spell.GetName(), logical.V(0, 9), win)
 	td.DrawText("FIXME add stuff per spell", logical.V(0, 7), win)
 }
 
@@ -45,7 +45,7 @@ func (screen *SpellListScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	td := TextDrawer(ss)
 	td.DrawText(fmt.Sprintf("%s's spells", screen.Player.Name), logical.V(0, 9), win)
 	for i := 0; i < len(screen.Player.Spells); i++ {
-		td.DrawText(fmt.Sprintf("%s%s%s", intToChar(i), screen.Player.Spells[i].LawRatingSymbol(), screen.Player.Spells[i].Name), logical.V(0, 8-i), win)
+		td.DrawText(fmt.Sprintf("%s%s%s", intToChar(i), spells.LawRatingSymbol(screen.Player.Spells[i]), screen.Player.Spells[i].GetName()), logical.V(0, 8-i), win)
 	}
 }
 
@@ -71,7 +71,7 @@ func (screen *ExamineSpellsScreen) Step(ss pixel.Picture, win *pixelgl.Window) G
 	if i >= 0 && i < len(screen.Player.Spells) {
 		fmt.Println("Examine a spell")
 		return &ExamineOneSpellScreen{
-			Spell:        &screen.Player.Spells[i],
+			Spell:        screen.Player.Spells[i],
 			ReturnScreen: screen,
 		}
 	}
