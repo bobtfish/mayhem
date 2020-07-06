@@ -45,7 +45,11 @@ func (screen *SpellListScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	td := TextDrawer(ss)
 	td.DrawText(fmt.Sprintf("%s's spells", screen.Player.Name), logical.V(0, 9), win)
 	for i := 0; i < len(screen.Player.Spells); i++ {
-		td.DrawText(fmt.Sprintf("%s%s%s", intToChar(i), spells.LawRatingSymbol(screen.Player.Spells[i]), screen.Player.Spells[i].GetName()), logical.V(0, 8-i), win)
+		mod := i % 2
+		if mod == 1 {
+			mod = 15
+		}
+		td.DrawText(fmt.Sprintf("%s%s%s", intToChar(i), spells.LawRatingSymbol(screen.Player.Spells[i]), screen.Player.Spells[i].GetName()), logical.V(mod, 8-(i/2)), win)
 	}
 }
 
