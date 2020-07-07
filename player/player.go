@@ -15,6 +15,7 @@ type Player struct {
 	CharacterIcon logical.Vec
 	ChosenSpell   int
 	Color         color.Color
+	LawRating     int
 }
 
 // GameObject interface

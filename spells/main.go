@@ -28,8 +28,9 @@ func (s ASpell) GetName() string {
 func (s ASpell) GetLawRating() int {
 	return s.LawRating
 }
-func (s ASpell) GetCastingChance(lawRating int) int {
-    // FIXME - adjust casting chance based on law rating of the player
+func (s ASpell) GetCastingChance(playerLawRating int) int {
+	// FIXME - adjust casting chance based on law rating
+	// of the player and of the spell
 	return s.CastingChance
 }
 func (s ASpell) GetRange() int {
