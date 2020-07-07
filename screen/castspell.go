@@ -1,17 +1,15 @@
 package screen
 
 import (
+	"fmt"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-
-	"github.com/bobtfish/mayhem/grid"
-	"github.com/bobtfish/mayhem/player"
-	"github.com/bobtfish/mayhem/render"
 )
 
 type CastSpellScreen struct {
-	Grid    *grid.GameGrid
-	Players []*player.Player
+	*WithBoard
+	PlayerIdx int
 }
 
 func (screen *CastSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -19,8 +17,23 @@ func (screen *CastSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 }
 
 func (screen *CastSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
-	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
-	batch := screen.Grid.DrawBatch(sd)
-	batch.Draw(win)
+	thisPlayer := screen.Players[screen.PlayerIdx]
+	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
+
+	screen.WithBoard.DrawBoard(ss, win)
+
+	// Text ${playername} ${spellname} ${range}
+	// For spells with range = 0
+	//    Any aqwedcxzs key casts
+
+	// For spells with range > 0
+	//   Cursor not visible until first button, then starts on player
+	//   Text dissapears when cursor appears
+
+	if win.JustPressed(pixelgl.KeyS) {
+		target := screen.WithBoard.CursorPosition
+		fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.Name, spell.Range, target.X, target.Y)
+	}
+
 	return screen
 }

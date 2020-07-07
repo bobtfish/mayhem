@@ -63,6 +63,8 @@ func init() {
 		pixelgl.KeyJ: 9,
 		pixelgl.KeyK: 10,
 		pixelgl.KeyL: 11,
+		pixelgl.KeyM: 12,
+		pixelgl.KeyN: 13,
 	}
 	directionKeyMap = map[pixelgl.Button]logical.Vec{
 		pixelgl.KeyA: logical.V(-1, 0),
