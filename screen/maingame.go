@@ -1,7 +1,6 @@
 package screen
 
 import (
-	"fmt"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
@@ -18,8 +17,7 @@ type StartMainGame struct {
 // Initialize stuff for the main game
 func (screen *StartMainGame) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	for i := 0; i < len(screen.Players); i++ {
-		fmt.Printf("%v", screen.Players[i])
-		screen.Players[i].Spells = spells.AllSpells
+		screen.Players[i].Spells = spells.ChooseSpells()
 	}
 	screen.Grid = grid.MakeGameGrid(GRID_WIDTH, GRID_HEIGHT)
 	for i, pos := range player.GetStartPositions(len(screen.Players)) {

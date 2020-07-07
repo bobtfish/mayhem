@@ -1,5 +1,9 @@
 package spells
 
+import (
+	"math/rand"
+)
+
 type Spell interface {
 	GetName() string
 	GetLawRating() int
@@ -50,6 +54,16 @@ func LawRatingSymbol(s Spell) string {
 	return "^"
 }
 
+func ChooseSpells() []Spell {
+	spells := make([]Spell, 14)
+	spells[0] = AllSpells[0]
+	for i := 1; i < 14; i++ {
+		idx := rand.Intn(len(AllSpells)-2) + 1
+		spells[i] = AllSpells[idx]
+	}
+	return spells
+}
+
 var AllSpells []Spell
 
 func init() {
@@ -84,6 +98,11 @@ func init() {
 			Name:          "Magic Shield",
 			LawRating:     1,
 			CastingChance: 80,
+		}},
+		OtherSpell{ASpell{
+			Name:          "Magic Bow",
+			LawRating:     1,
+			CastingChance: 50,
 		}},
 		OtherSpell{ASpell{
 			Name:          "Shadow Form",

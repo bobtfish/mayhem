@@ -68,12 +68,10 @@ type ExamineSpellsScreen struct {
 func (screen *ExamineSpellsScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	c := captureNumKey(win)
 	if c == 0 {
-		fmt.Println("Return to main menu")
 		return screen.MainMenu
 	}
 	i := captureSpellKey(win)
 	if i >= 0 && i < len(screen.Player.Spells) {
-		fmt.Println("Examine a spell")
 		return &ExamineOneSpellScreen{
 			Spell:        screen.Player.Spells[i],
 			ReturnScreen: screen,
@@ -153,7 +151,6 @@ func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 		}
 	}
 	if c == 4 {
-		fmt.Println("Set Continue")
 		if len(screen.Players) == screen.PlayerIndex+1 {
 			return &CastSpellScreen{
 				Grid:    screen.Grid,
@@ -163,6 +160,7 @@ func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 		return &TurnMenuScreen{
 			Players:     screen.Players,
 			PlayerIndex: screen.PlayerIndex + 1,
+			Grid:        screen.Grid,
 		}
 	}
 	return screen
