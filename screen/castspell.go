@@ -32,7 +32,7 @@ func (screen *CastSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameS
 
 	if win.JustPressed(pixelgl.KeyS) {
 		target := screen.WithBoard.CursorPosition
-		fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.Name, spell.Range, target.X, target.Y)
+		fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetRange(), target.X, target.Y)
 	}
 
 	return screen

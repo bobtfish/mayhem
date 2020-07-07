@@ -1,13 +1,16 @@
 package spells
 
 import (
+	"image/color"
 	"math/rand"
+
+	"github.com/bobtfish/mayhem/render"
 )
 
 type Spell interface {
 	GetName() string
 	GetLawRating() int
-	GetCastingChance() int
+	GetCastingChance(int) int
 	GetRange() int
 }
 
@@ -25,7 +28,8 @@ func (s ASpell) GetName() string {
 func (s ASpell) GetLawRating() int {
 	return s.LawRating
 }
-func (s ASpell) GetCastingChance() int {
+func (s ASpell) GetCastingChance(lawRating int) int {
+    // FIXME - adjust casting chance based on law rating of the player
 	return s.CastingChance
 }
 func (s ASpell) GetRange() int {
@@ -52,6 +56,21 @@ func LawRatingSymbol(s Spell) string {
 		return "*"
 	}
 	return "^"
+}
+
+func CastingChanceColor(chance int) color.Color {
+	switch {
+	case chance >= 100:
+		return render.GetColor(255, 255, 255)
+	case chance >= 80:
+		return render.GetColor(255, 255, 0)
+	case chance >= 60:
+		return render.GetColor(0, 255, 255)
+	case chance >= 40:
+		return render.GetColor(0, 255, 0)
+	default:
+		return render.GetColor(255, 0, 255)
+	}
 }
 
 func ChooseSpells() []Spell {
