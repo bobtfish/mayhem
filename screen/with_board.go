@@ -34,9 +34,13 @@ func (screen *WithBoard) ShouldIDrawCursor() bool {
 	return screen.CursorFlash
 }
 
-func (screen *WithBoard) DrawBoard(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *WithBoard) DrawBoard(ss pixel.Picture, win *pixelgl.Window) *pixel.Batch {
 	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
-	batch := screen.Grid.DrawBatch(sd)
+	return screen.Grid.DrawBatch(sd)
+}
+
+func (screen *WithBoard) MoveCursor(ss pixel.Picture, win *pixelgl.Window, batch *pixel.Batch) {
+	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
 	c := captureNumKey(win)
 	if c > 0 && c <= len(screen.Players) {
 		fmt.Printf("Flash player %d characters\n", c)
@@ -56,6 +60,4 @@ func (screen *WithBoard) DrawBoard(ss pixel.Picture, win *pixelgl.Window) {
 	if screen.ShouldIDrawCursor() || objectAtCursor.IsEmpty() {
 		sd.DrawSpriteColor(cursorSprite(CURSOR_SPELL), screen.CursorPosition, cursorColor, batch)
 	}
-
-	batch.Draw(win)
 }
