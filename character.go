@@ -37,7 +37,8 @@ type CharacterType struct {
 // Individual character instance
 type Character struct {
 	CharacterType
-	SpriteIdx int
+	SpriteIdx     int
+	BoardPosition logical.Vec
 }
 
 func LoadCharacterTemplates() CharacterTypes {
@@ -105,6 +106,10 @@ func (c *Character) GetColor() color.Color {
 
 func (c *Character) Describe() string {
 	return c.Name
+}
+
+func (c *Character) SetBoardPosition(v logical.Vec) {
+	c.BoardPosition = v
 }
 
 // GameObject interface END

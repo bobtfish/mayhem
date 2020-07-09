@@ -36,10 +36,11 @@ func placeCharactersTest(grid *grid.GameGrid, ct CharacterTypes) {
 	}
 }
 
+/*
 func blowSomethingUp(grid *grid.GameGrid) {
 	x := rand.Intn(14)
 	y := rand.Intn(9)
 	fxA := []*Fx{FxWarp(), FxBlam(), FxFire(), FxBoom(), FxPop()}
 	fxn := rand.Intn(len(fxA))
 	grid.PlaceGameObject(logical.V(x, y), fxA[fxn])
-}
+}*/

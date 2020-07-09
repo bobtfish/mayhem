@@ -1,6 +1,7 @@
-package main
+package fx
 
 import (
+	"fmt"
 	"image/color"
 
 	"github.com/bobtfish/mayhem/logical"
@@ -40,14 +41,16 @@ func (f *Fx) GetColor() color.Color {
 }
 
 func (f *Fx) Describe() string {
-	return "Fx"
+	return fmt.Sprintf("Fx:%T", *f)
 }
+
+func (f *Fx) SetBoardPosition(v logical.Vec) {}
 
 // GameObject interface END
 
 // Fx Constructors
 
-func FxWarp() *Fx {
+func FxSpellCast() *Fx {
 	return &Fx{
 		SpriteVec:   logical.V(0, 28),
 		SpriteCount: 8,

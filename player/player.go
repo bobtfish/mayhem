@@ -16,6 +16,7 @@ type Player struct {
 	ChosenSpell   int
 	Color         color.Color
 	LawRating     int
+	BoardPosition logical.Vec
 }
 
 // GameObject interface
@@ -35,6 +36,10 @@ func (p *Player) GetColor() color.Color {
 
 func (p *Player) Describe() string {
 	return p.Name
+}
+
+func (p *Player) SetBoardPosition(v logical.Vec) {
+	p.BoardPosition = v
 }
 
 // GameObjectStackable interface

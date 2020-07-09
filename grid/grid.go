@@ -35,6 +35,7 @@ func MakeGameGrid(width, height int) *GameGrid {
 }
 
 func (grid *GameGrid) PlaceGameObject(v logical.Vec, c GameObjectStackable) {
+	c.SetBoardPosition(v)
 	(*grid)[v.Y][v.X].PlaceObject(c)
 }
 

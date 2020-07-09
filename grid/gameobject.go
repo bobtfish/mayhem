@@ -13,6 +13,7 @@ type GameObject interface {
 	GetColor() color.Color
 	IsEmpty() bool
 	Describe() string
+	SetBoardPosition(logical.Vec)
 }
 
 /* Object stack */
@@ -23,6 +24,10 @@ type GameObjectStackable interface {
 }
 
 type GameObjectStack []GameObjectStackable
+
+func (s *GameObjectStack) SetBoardPosition(v logical.Vec) {
+	(*s)[0].SetBoardPosition(v)
+}
 
 func (s *GameObjectStack) AnimationTick() {
 	(*s)[0].AnimationTick()
@@ -91,3 +96,6 @@ func (e EmptyObject) IsEmpty() bool {
 func (e EmptyObject) GetSpriteSheetCoordinates() logical.Vec {
 	return e.SpriteCoordinates
 }
+
+// Ignore this
+func (e EmptyObject) SetBoardPosition(v logical.Vec) {}

@@ -95,9 +95,6 @@ func init() {
 			CastingChance: 100,
 			Range:         20,
 		}},
-		CreatureSpell{ASpell{
-			Name: "Green Dragon",
-		}},
 		OtherSpell{ASpell{
 			Name:          "Raise Dead",
 			LawRating:     -1,
