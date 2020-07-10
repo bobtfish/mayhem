@@ -25,6 +25,10 @@ type GameObjectStackable interface {
 
 type GameObjectStack []GameObjectStackable
 
+func (s *GameObjectStack) TopObject() GameObject {
+	return (*s)[0]
+}
+
 func (s *GameObjectStack) SetBoardPosition(v logical.Vec) {
 	(*s)[0].SetBoardPosition(v)
 }

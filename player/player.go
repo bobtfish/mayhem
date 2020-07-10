@@ -3,6 +3,7 @@ package player
 import (
 	"image/color"
 
+	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/spells"
 )
@@ -54,7 +55,7 @@ func (p *Player) RemoveMe() bool {
 	return false
 }
 
-func (p *Player) CastSpell() bool {
+func (p *Player) CastSpell(target grid.GameObject) bool {
 	i := p.ChosenSpell
 	spell := p.Spells[i]
 	if !spell.IsReuseable() {
@@ -62,7 +63,19 @@ func (p *Player) CastSpell() bool {
 		spells = append(p.Spells[:i], p.Spells[i+1:]...)
 		p.Spells = spells
 	}
-	ret := spell.Cast(p.LawRating)
+	ret := spell.Cast(p.LawRating, target)
 	p.ChosenSpell = -1
 	return ret
+}
+
+type PlayerSpell struct {
+	spells.ASpell
+}
+
+func (s PlayerSpell) CanCast(target grid.GameObject) bool {
+	_, ok := target.(*Player)
+	if ok {
+		return true
+	}
+	return false
 }

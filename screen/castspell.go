@@ -94,7 +94,8 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScree
 	if screen.Fx.RemoveMe() {
 		// Fx for spell cast finished
 		// Work out what happened :)
-		success := screen.Players[screen.PlayerIdx].CastSpell()
+		targetVec := screen.WithBoard.CursorPosition
+		success := screen.Players[screen.PlayerIdx].CastSpell(screen.WithBoard.Grid.GetGameObject(targetVec))
 		if success {
 			fmt.Printf("Spell Succeeds\n")
 			render.NewTextDrawer(ss).DrawText("Spell Succeeds", logical.V(0, 0), win)

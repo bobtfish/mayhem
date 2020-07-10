@@ -39,15 +39,19 @@ func (grid *GameGrid) PlaceGameObject(v logical.Vec, c GameObjectStackable) {
 	(*grid)[v.Y][v.X].PlaceObject(c)
 }
 
-func (grid *GameGrid) GetGameObject(v logical.Vec) GameObject {
+func (grid *GameGrid) GetGameObjectStack(v logical.Vec) *GameObjectStack {
 	return (*grid)[v.Y][v.X]
+}
+
+func (grid *GameGrid) GetGameObject(v logical.Vec) GameObject {
+	return grid.GetGameObjectStack(v).TopObject()
 }
 
 func (grid *GameGrid) DrawBatch(sd render.SpriteDrawer) *pixel.Batch {
 	batch := sd.GetNewBatch()
 	for x := 0; x <= grid.MaxX(); x++ {
 		for y := 0; y <= grid.MaxY(); y++ {
-			c := grid.GetGameObject(logical.V(x, y))
+			c := grid.GetGameObjectStack(logical.V(x, y))
 			v := c.GetSpriteSheetCoordinates()
 			sd.DrawSpriteColor(v, logical.V(x, y), c.GetColor(), batch)
 		}
@@ -74,7 +78,7 @@ func (grid *GameGrid) MaxX() int {
 func (grid *GameGrid) AnimationTick() {
 	for x := 0; x < grid.MaxX(); x++ {
 		for y := 0; y < grid.MaxY(); y++ {
-			c := grid.GetGameObject(logical.V(x, y))
+			c := grid.GetGameObjectStack(logical.V(x, y))
 			if c != nil {
 				c.AnimationTick()
 			}
