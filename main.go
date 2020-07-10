@@ -14,6 +14,7 @@ import (
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
 	"github.com/bobtfish/mayhem/screen"
+	"github.com/bobtfish/mayhem/spells"
 )
 
 func loadSpriteSheet() io.Reader {
@@ -45,12 +46,16 @@ func run() {
 					HumanPlayer:   true,
 					CharacterIcon: logical.V(0, 23),
 					Color:         render.GetColor(255, 0, 0),
+					ChosenSpell:   -1,
+					Spells:        spells.ChooseSpells(),
 				},
 				&player.Player{
 					Name:          "bob",
 					HumanPlayer:   true,
 					CharacterIcon: logical.V(1, 23),
 					Color:         render.GetColor(255, 0, 255),
+					ChosenSpell:   -1,
+					Spells:        spells.ChooseSpells(),
 				},
 			},
 		}

@@ -29,6 +29,7 @@ func (screen *PlayerNameScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	if screen.Players == nil {
 		screen.Players = make([]*player.Player, 0)
 	}
+	screen.CurrentPlayer = player.NewPlayer()
 	td := TextDrawer(ss)
 	td.DrawText(fmt.Sprintf("PLAYER %d", screen.WizardCount), logical.V(0, 9), win)
 	td.DrawText("Enter name (12 letters max.)", logical.V(0, 8), win)
@@ -145,7 +146,7 @@ func (screen *PlayerColorScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 		screen.CurrentPlayer.Color = colors[c-1]
 		newPlayer := screen.CurrentPlayer
 		screen.Players = append(screen.Players, &newPlayer)
-		screen.CurrentPlayer = player.Player{}
+		screen.CurrentPlayer = player.NewPlayer()
 		if len(screen.Players) == screen.WizardCount {
 			// FIXME do something with ComputerDifficulty here
 

@@ -6,7 +6,6 @@ import (
 
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/player"
-	"github.com/bobtfish/mayhem/spells"
 )
 
 type StartMainGame struct {
@@ -16,9 +15,6 @@ type StartMainGame struct {
 
 // Initialize stuff for the main game
 func (screen *StartMainGame) Enter(ss pixel.Picture, win *pixelgl.Window) {
-	for i := 0; i < len(screen.Players); i++ {
-		screen.Players[i].Spells = spells.ChooseSpells()
-	}
 	screen.Grid = grid.MakeGameGrid(GRID_WIDTH, GRID_HEIGHT)
 	for i, pos := range player.GetStartPositions(len(screen.Players)) {
 		screen.Grid.PlaceGameObject(pos, screen.Players[i])

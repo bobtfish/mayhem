@@ -12,6 +12,8 @@ type Spell interface {
 	GetLawRating() int
 	GetCastingChance(int) int
 	GetRange() int
+	Cast(int) bool
+	IsReuseable() bool
 }
 
 type ASpell struct {
@@ -28,6 +30,9 @@ func (s ASpell) GetName() string {
 func (s ASpell) GetLawRating() int {
 	return s.LawRating
 }
+func (s ASpell) IsReuseable() bool {
+	return s.Reuseable
+}
 func (s ASpell) GetCastingChance(playerLawRating int) int {
 	// FIXME - adjust casting chance based on law rating
 	// of the player and of the spell
@@ -35,6 +40,12 @@ func (s ASpell) GetCastingChance(playerLawRating int) int {
 }
 func (s ASpell) GetRange() int {
 	return s.Range
+}
+func (s ASpell) Cast(playerLawRating int) bool {
+	if rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
+		return true
+	}
+	return false
 }
 
 type DisbelieveSpell struct {

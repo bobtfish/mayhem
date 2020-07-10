@@ -7,10 +7,16 @@ import (
 	"github.com/bobtfish/mayhem/spells"
 )
 
+func NewPlayer() Player {
+	return Player{
+		ChosenSpell: -1,
+		Spells:      spells.ChooseSpells(),
+	}
+}
+
 type Player struct {
 	Name          string
 	Spells        []spells.Spell
-	NextSpell     spells.Spell
 	HumanPlayer   bool
 	CharacterIcon logical.Vec
 	ChosenSpell   int
@@ -44,6 +50,19 @@ func (p *Player) SetBoardPosition(v logical.Vec) {
 
 // GameObjectStackable interface
 
-func (h *Player) RemoveMe() bool {
+func (p *Player) RemoveMe() bool {
 	return false
+}
+
+func (p *Player) CastSpell() bool {
+	i := p.ChosenSpell
+	spell := p.Spells[i]
+	if !spell.IsReuseable() {
+		spells := make([]spells.Spell, 0)
+		spells = append(p.Spells[:i], p.Spells[i+1:]...)
+		p.Spells = spells
+	}
+	ret := spell.Cast(p.LawRating)
+	p.ChosenSpell = -1
+	return ret
 }

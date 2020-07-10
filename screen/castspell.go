@@ -24,6 +24,13 @@ func (screen *CastSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 
 func (screen *CastSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	thisPlayer := screen.Players[screen.PlayerIdx]
+	if thisPlayer.ChosenSpell < 0 {
+		return &DoSpellCast{
+			WithBoard: screen.WithBoard,
+			PlayerIdx: screen.PlayerIdx,
+			Fx:        nil,
+		}
+	}
 	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
 
 	batch := screen.WithBoard.DrawBoard(ss, win)
@@ -79,11 +86,22 @@ func (screen *DoSpellCast) Enter(ss pixel.Picture, win *pixelgl.Window) {
 }
 
 func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+	if screen.Fx == nil {
+		return screen.NextSpellOrMove()
+	}
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	batch.Draw(win)
 	if screen.Fx.RemoveMe() {
 		// Fx for spell cast finished
 		// Work out what happened :)
+		success := screen.Players[screen.PlayerIdx].CastSpell()
+		if success {
+			fmt.Printf("Spell Succeeds\n")
+			render.NewTextDrawer(ss).DrawText("Spell Succeeds", logical.V(0, 0), win)
+		} else {
+			fmt.Printf("Spell failed\n")
+			render.NewTextDrawer(ss).DrawText("Spell Failed", logical.V(0, 0), win)
+		}
 		return screen.NextSpellOrMove()
 	}
 	return screen
