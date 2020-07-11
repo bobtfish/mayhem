@@ -13,7 +13,8 @@ type Spell interface {
 	GetLawRating() int
 	GetCastingChance(int) int
 	GetRange() int
-	Cast(int, grid.GameObject) bool
+	DoesCastWork(int) bool
+	Cast(grid.GameObject)
 	IsReuseable() bool
 }
 
@@ -43,7 +44,9 @@ func (s ASpell) GetRange() int {
 	return s.Range
 }
 
-func (s ASpell) Cast(playerLawRating int, target grid.GameObject) bool {
+func (s ASpell) DoesCastWork(playerLawRating int) bool {
+	// FIXME
+	return true
 	if rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
 		return true
 	}
@@ -57,12 +60,18 @@ type DisbelieveSpell struct {
 	ASpell
 }
 
+func (s DisbelieveSpell) Cast(target grid.GameObject) {
+}
+
 type CreatureSpell struct {
 	ASpell
 }
 
 type OtherSpell struct {
 	ASpell
+}
+
+func (s OtherSpell) Cast(target grid.GameObject) {
 }
 
 func LawRatingSymbol(s Spell) string {
@@ -124,34 +133,6 @@ func init() {
 		Range:         4,
 	}})
 	CreateSpell(OtherSpell{ASpell{
-		Name:          "Magic Knife",
-		LawRating:     1,
-		CastingChance: 90,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Magic Armour",
-		LawRating:     1,
-		CastingChance: 40,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Magic Shield",
-		LawRating:     1,
-		CastingChance: 80,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Magic Bow",
-		LawRating:     1,
-		CastingChance: 50,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Shadow Form",
-		CastingChance: 80,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Magic Wings",
-		CastingChance: 60,
-	}})
-	CreateSpell(OtherSpell{ASpell{
 		Name:          "Lightning",
 		CastingChance: 100,
 		Range:         4,
@@ -160,26 +141,6 @@ func init() {
 		Name:          "Magic Bolt",
 		CastingChance: 100,
 		Range:         6,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Law-1",
-		CastingChance: 100,
-		LawRating:     2,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Law-2",
-		CastingChance: 60,
-		LawRating:     4,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Chaos-1",
-		CastingChance: 80,
-		LawRating:     -2,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Chaos-2",
-		CastingChance: 60,
-		LawRating:     -4,
 	}})
 	CreateSpell(OtherSpell{ASpell{
 		Name:          "Vengence",

@@ -1,6 +1,7 @@
 package player
 
 import (
+	"fmt"
 	"image/color"
 
 	"github.com/bobtfish/mayhem/grid"
@@ -24,17 +25,26 @@ type Player struct {
 	Color         color.Color
 	LawRating     int
 	BoardPosition logical.Vec
+	IsAnimated    bool
+	SpriteIdx     int
 }
 
 // GameObject interface
-func (p *Player) AnimationTick() {}
+func (p *Player) AnimationTick() {
+	if p.IsAnimated {
+		p.SpriteIdx++
+		if p.SpriteIdx == 4 {
+			p.SpriteIdx = 0
+		}
+	}
+}
 
 func (p *Player) IsEmpty() bool {
 	return false
 }
 
 func (p *Player) GetSpriteSheetCoordinates() logical.Vec {
-	return p.CharacterIcon
+	return p.CharacterIcon.Add(logical.V(p.SpriteIdx, 0))
 }
 
 func (p *Player) GetColor() color.Color {
@@ -56,6 +66,7 @@ func (p *Player) RemoveMe() bool {
 }
 
 func (p *Player) CastSpell(target grid.GameObject) bool {
+	fmt.Printf("IN Player spell cast\n")
 	i := p.ChosenSpell
 	spell := p.Spells[i]
 	if !spell.IsReuseable() {
@@ -63,13 +74,20 @@ func (p *Player) CastSpell(target grid.GameObject) bool {
 		spells = append(p.Spells[:i], p.Spells[i+1:]...)
 		p.Spells = spells
 	}
-	ret := spell.Cast(p.LawRating, target)
+	ret := spell.DoesCastWork(p.LawRating)
+	if ret {
+		fmt.Printf("Player spell %T cast on %T\n", spell, target)
+		spell.Cast(target)
+	}
 	p.ChosenSpell = -1
 	return ret
 }
 
+// Player Spells (spells which only affect a player)
+
 type PlayerSpell struct {
 	spells.ASpell
+	MutateFunc func(*Player)
 }
 
 func (s PlayerSpell) CanCast(target grid.GameObject) bool {
@@ -78,4 +96,128 @@ func (s PlayerSpell) CanCast(target grid.GameObject) bool {
 		return true
 	}
 	return false
+}
+
+func (s PlayerSpell) Cast(target grid.GameObject) {
+	player := target.(*Player)
+	s.MutateFunc(player)
+	// May have just become not animated
+	player.SpriteIdx = 0
+}
+
+func init() {
+	spells.CreateSpell(PlayerSpell{
+		ASpell: spells.ASpell{
+			Name:          "Magic Knife",
+			LawRating:     1,
+			CastingChance: 90,
+		},
+		MutateFunc: func(p *Player) {
+			p.CharacterIcon = logical.V(4, 22)
+			p.IsAnimated = true
+		},
+	})
+	spells.CreateSpell(PlayerSpell{
+		ASpell: spells.ASpell{
+			Name:          "Magic Armour",
+			LawRating:     1,
+			CastingChance: 40,
+		},
+		MutateFunc: func(p *Player) {
+			p.CharacterIcon = logical.V(1, 20)
+			p.IsAnimated = false
+		},
+	})
+	spells.CreateSpell(PlayerSpell{
+		ASpell: spells.ASpell{
+			Name:          "Magic Shield",
+			LawRating:     1,
+			CastingChance: 80,
+		},
+		MutateFunc: func(p *Player) {
+			p.CharacterIcon = logical.V(0, 20)
+			p.IsAnimated = false
+		},
+	})
+	spells.CreateSpell(PlayerSpell{
+		ASpell: spells.ASpell{
+			Name:          "Magic Sword",
+			LawRating:     1,  // FIXME
+			CastingChance: 80, // FIXME
+		},
+		MutateFunc: func(p *Player) {
+			p.CharacterIcon = logical.V(0, 21)
+			p.IsAnimated = true
+		},
+	})
+	spells.CreateSpell(PlayerSpell{
+		ASpell: spells.ASpell{
+			Name:          "Magic Bow",
+			LawRating:     1,
+			CastingChance: 50,
+		},
+		MutateFunc: func(p *Player) {
+			p.CharacterIcon = logical.V(0, 22)
+			p.IsAnimated = true
+		},
+	})
+	spells.CreateSpell(PlayerSpell{
+		ASpell: spells.ASpell{
+			Name:          "Shadow Form",
+			CastingChance: 80,
+		},
+		MutateFunc: func(p *Player) {
+			// FIXME
+		},
+	})
+	spells.CreateSpell(PlayerSpell{
+		ASpell: spells.ASpell{
+			Name:          "Magic Wings",
+			CastingChance: 60,
+		},
+		MutateFunc: func(p *Player) {
+			p.CharacterIcon = logical.V(4, 21)
+			p.IsAnimated = true
+		},
+	})
+	spells.CreateSpell(PlayerSpell{
+		ASpell: spells.ASpell{
+			Name:          "Law-1",
+			CastingChance: 100,
+			LawRating:     2,
+		},
+		MutateFunc: func(p *Player) {
+			p.LawRating++
+		},
+	})
+	spells.CreateSpell(PlayerSpell{
+		ASpell: spells.ASpell{
+			Name:          "Law-2",
+			CastingChance: 60,
+			LawRating:     4,
+		},
+		MutateFunc: func(p *Player) {
+			p.LawRating = p.LawRating + 2
+		},
+	})
+	spells.CreateSpell(PlayerSpell{
+		ASpell: spells.ASpell{
+			Name:          "Chaos-1",
+			CastingChance: 80,
+			LawRating:     -2,
+		},
+		MutateFunc: func(p *Player) {
+			p.LawRating--
+		},
+	})
+	spells.CreateSpell(PlayerSpell{
+		ASpell: spells.ASpell{
+			Name:          "Chaos-2",
+			CastingChance: 60,
+			LawRating:     -4,
+		},
+		MutateFunc: func(p *Player) {
+			p.LawRating = p.LawRating - 2
+		},
+	})
 }
