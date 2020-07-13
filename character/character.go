@@ -60,6 +60,7 @@ func LoadCharacterTemplates() {
 			CastingChance: 100, // FIXME
 			Range:         castRange,
 			Sprite:        logical.V(v.Sprites[0][0], v.Sprites[0][1]),
+			Color:         render.GetColor(v.ColorR, v.ColorG, v.ColorB),
 		})
 	}
 }
@@ -71,6 +72,7 @@ type CharacterSpell struct {
 	CastingChance int
 	Range         int
 	Sprite        logical.Vec
+	Color         color.Color
 }
 
 // Spell interface begin
@@ -123,6 +125,7 @@ func (s CharacterSpell) CreateCharacter() *Character {
 	return &Character{
 		Name:   s.Name,
 		Sprite: s.Sprite,
+		Color:  s.Color,
 	}
 }
 
@@ -130,6 +133,7 @@ func (s CharacterSpell) CreateCharacter() *Character {
 type Character struct {
 	Name   string
 	Sprite logical.Vec
+	Color  color.Color
 
 	SpriteIdx     int
 	BoardPosition logical.Vec
@@ -160,7 +164,7 @@ func (c *Character) GetSpriteSheetCoordinates() logical.Vec {
 }
 
 func (c *Character) GetColor() color.Color {
-	return render.GetColor(255, 255, 255)
+	return c.Color
 	//    return render.GetColor(c.ColorR, c.ColorG, c.ColorB)
 }
 

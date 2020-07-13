@@ -66,6 +66,9 @@ func (screen *DisplaySpellCastScreen) Step(ss pixel.Picture, win *pixelgl.Window
 			PlayerIdx: screen.PlayerIdx,
 		}
 	}
+	if win.JustPressed(pixelgl.Key0) {
+		return NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid)
+	}
 	return screen
 }
 
@@ -115,7 +118,9 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 		}
 	}
 	batch.Draw(win)
-
+	if win.JustPressed(pixelgl.Key0) {
+		return NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid)
+	}
 	return screen
 }
 

@@ -14,6 +14,7 @@ type Fx struct {
 	SpriteVec   logical.Vec
 	SpriteCount int
 	SpriteIdx   int
+	Color       color.Color
 }
 
 // GameObject interface START
@@ -37,7 +38,7 @@ func (c *Fx) GetSpriteSheetCoordinates() logical.Vec {
 }
 
 func (f *Fx) GetColor() color.Color {
-	return render.GetColor(0, 0, 0)
+	return f.Color
 }
 
 func (f *Fx) Describe() string {
@@ -54,6 +55,7 @@ func FxSpellCast() *Fx {
 	return &Fx{
 		SpriteVec:   logical.V(0, 28),
 		SpriteCount: 8,
+		Color:       render.GetColor(0, 255, 255),
 	}
 }
 
@@ -61,6 +63,7 @@ func FxBlam() *Fx {
 	return &Fx{
 		SpriteVec:   logical.V(0, 27),
 		SpriteCount: 8,
+		Color:       render.GetColor(255, 255, 255),
 	}
 }
 
@@ -68,6 +71,7 @@ func FxFire() *Fx {
 	return &Fx{
 		SpriteVec:   logical.V(0, 26),
 		SpriteCount: 8,
+		Color:       render.GetColor(255, 255, 255),
 	}
 }
 
@@ -75,6 +79,7 @@ func FxBoom() *Fx {
 	return &Fx{
 		SpriteVec:   logical.V(0, 25),
 		SpriteCount: 7,
+		Color:       render.GetColor(255, 255, 255),
 	}
 }
 
@@ -82,5 +87,6 @@ func FxPop() *Fx {
 	return &Fx{
 		SpriteVec:   logical.V(0, 24),
 		SpriteCount: 4,
+		Color:       render.GetColor(255, 255, 255),
 	}
 }
