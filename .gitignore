@@ -1,4 +1,4 @@
-characters.go
+character/yaml.go
 sprite_sheet.go
 mayhem
 *.swp
