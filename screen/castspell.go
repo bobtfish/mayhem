@@ -105,8 +105,12 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 				render.NewTextDrawer(ss).DrawText("Out of range", logical.ZeroVec(), batch)
 				screen.OutOfRange = true
 			} else {
-				fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetRange(), target.X, target.Y)
-				return screen.AnimateAndCast()
+				if spell.CanCast(screen.WithBoard.Grid.GetGameObject(target)) {
+					fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetRange(), target.X, target.Y)
+					return screen.AnimateAndCast()
+				} else {
+					fmt.Printf("Cannot cast on non-empty square\n")
+				}
 			}
 		}
 	}

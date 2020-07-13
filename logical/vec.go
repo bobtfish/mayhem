@@ -1,6 +1,8 @@
 package logical
 
 import (
+	"math"
+
 	"github.com/faiface/pixel"
 )
 
@@ -32,11 +34,32 @@ func (v Vec) Multiply(w Vec) Vec {
 	return Vec{v.X * w.X, v.Y * w.Y}
 }
 
-// FIXME this is not how the original game considers distance
-//       as V(1,1) is only 1 square away
+func (v Vec) Abs() Vec {
+	return Vec{abs(v.X), abs(v.Y)}
+}
+
+func (v Vec) smallestSquare() int {
+	w := v.Abs()
+	if w.X < w.Y {
+		return w.X
+	}
+	return w.Y
+}
+
+// Distance of diagonal - first square is 1, second is 3, third is 4 etc
+func squareDistance(i int) int {
+	if i == 0 {
+		return 0
+	}
+	return i + int(math.Floor(float64(i)/2))
+}
+
+// D&D distance, because of course this is what the original game does...
 func (v Vec) Distance(w Vec) int {
-	x := v.Subtract(w)
-	return abs(x.X) + abs(x.Y)
+	x := v.Subtract(w).Abs()
+	ss := x.smallestSquare()
+	y := x.Subtract(V(ss, ss)) // 1 is has 0 X or 0 Y so just add X and Y 'remainder'
+	return squareDistance(ss) + y.X + y.Y
 }
 
 func (v Vec) ToPixelVec() pixel.Vec {

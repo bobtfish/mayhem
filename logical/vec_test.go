@@ -189,3 +189,82 @@ func TestToPixelRectOffsetIdentityTen(t *testing.T) {
 		t.Errorf("r.Min.Y != 25.0")
 	}
 }
+
+func TestAbs(t *testing.T) {
+	v := V(1, 1).Abs()
+	if v.X != 1 {
+		t.Errorf("v(1, 1) abs X != 1 is %d", v.X)
+	}
+	if v.Y != 1 {
+		t.Errorf("v(1, 1) abs Y != 1 is %d", v.Y)
+	}
+	v = V(-2, -3).Abs()
+	if v.X != 2 {
+		t.Errorf("v(-2, -3) abs X != 2 is %d", v.X)
+	}
+	if v.Y != 3 {
+		t.Errorf("v(-2, -3) abs Y != 3 is %d", v.Y)
+	}
+}
+
+func TestSmallestSquare(t *testing.T) {
+	l := V(1, 3).smallestSquare()
+	if l != 1 {
+		t.Errorf("v(1, 3) smallestSquare l != 1 is %d", l)
+	}
+	l = V(-1, 3).smallestSquare()
+	if l != 1 {
+		t.Errorf("v(-1, 3) smallestSquare l != 1 is %d", l)
+	}
+	l = V(1, -3).smallestSquare()
+	if l != 1 {
+		t.Errorf("v(1, -3) smallestSquare l != 1 is %d", l)
+	}
+	l = V(-26, 3).smallestSquare()
+	if l != 3 {
+		t.Errorf("v(26, 3) smallestSquare X != 26 is %d", l)
+	}
+}
+
+func TestSquareDistance(t *testing.T) {
+	table := map[int]int{
+		0: 0,
+		1: 1,
+		2: 3,
+		3: 4,
+		4: 6,
+	}
+	for l, expD := range table {
+		d := squareDistance(l)
+		if d != expD {
+			t.Errorf("squareDistance(%d) != %d is %d", l, expD, d)
+		}
+	}
+}
+
+func TestVecDistance(t *testing.T) {
+	d := ZeroVec().Distance(ZeroVec())
+	if d != 0 {
+		t.Errorf("v(0, 0) to v(0, 0) should be distance 0, not %d", d)
+	}
+	d = ZeroVec().Distance(IdentityVec())
+	if d != 1 {
+		t.Errorf("v(0, 0) to v(1, 1) should be distance 1, not %d", d)
+	}
+	d = ZeroVec().Distance(V(2, 2))
+	if d != 3 {
+		t.Errorf("v(0, 0) to v(2, 2) should be distance 3, not %d", d)
+	}
+	d = ZeroVec().Distance(V(3, 3))
+	if d != 4 {
+		t.Errorf("v(0, 0) to v(3, 3) should be distance 4, not %d", d)
+	}
+	d = ZeroVec().Distance(V(4, 4))
+	if d != 6 {
+		t.Errorf("v(0, 0) to v(4, 4) should be distance 6, not %d", d)
+	}
+	d = ZeroVec().Distance(V(10, 4))
+	if d != 12 {
+		t.Errorf("v(0, 0) to v(10, 4) should be distance 12, not %d", d)
+	}
+}

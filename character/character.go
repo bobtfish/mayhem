@@ -97,12 +97,22 @@ func (s CharacterSpell) DoesCastWork(playerLawRating int) bool {
 	}
 	return false
 }
+
+func (s CharacterSpell) CanCast(target grid.GameObject) bool {
+	if target.IsEmpty() {
+		return true
+	}
+	return false
+}
+
 func (s CharacterSpell) Cast(target logical.Vec, grid *grid.GameGrid) {
 	grid.PlaceGameObject(target, s.CreateCharacter())
 }
+
 func (s CharacterSpell) IsReuseable() bool {
 	return false
 }
+
 func (s CharacterSpell) CastFx() *fx.Fx {
 	return fx.FxSpellCast()
 }

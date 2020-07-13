@@ -16,6 +16,7 @@ type Spell interface {
 	GetCastingChance(int) int
 	GetRange() int
 	DoesCastWork(int) bool
+	CanCast(grid.GameObject) bool
 	Cast(logical.Vec, *grid.GameGrid)
 	IsReuseable() bool
 	CastFx() *fx.Fx
