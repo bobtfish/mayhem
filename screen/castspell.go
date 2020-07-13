@@ -117,15 +117,19 @@ func (screen *DoSpellCast) NextSpellOrMove() GameScreen {
 	screen.PlayerIdx++
 	if screen.PlayerIdx == len(screen.WithBoard.Players) {
 		//	panic("Not written yet")
-		return &CastSpellScreen{
-			WithBoard: &WithBoard{
-				Grid:    screen.WithBoard.Grid,
-				Players: screen.WithBoard.Players,
+		return &Pause{
+			Grid: screen.Grid,
+			NextScreen: &TurnMenuScreen{
+				Players: screen.Players,
+				Grid:    screen.Grid,
 			},
 		}
 	}
-	return &Pause{NextScreen: &CastSpellScreen{
-		WithBoard: screen.WithBoard,
-		PlayerIdx: screen.PlayerIdx,
-	}}
+	return &Pause{
+		Grid: screen.Grid,
+		NextScreen: &CastSpellScreen{
+			WithBoard: screen.WithBoard,
+			PlayerIdx: screen.PlayerIdx,
+		},
+	}
 }
