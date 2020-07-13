@@ -1,6 +1,8 @@
 package logical
 
-import "github.com/faiface/pixel"
+import (
+	"github.com/faiface/pixel"
+)
 
 type Vec struct {
 	X int
@@ -34,7 +36,7 @@ func (v Vec) Multiply(w Vec) Vec {
 //       as V(1,1) is only 1 square away
 func (v Vec) Distance(w Vec) int {
 	x := v.Subtract(w)
-	return math.Abs(x.X) + math.Abs(x.Y)
+	return abs(x.X) + abs(x.Y)
 }
 
 func (v Vec) ToPixelVec() pixel.Vec {

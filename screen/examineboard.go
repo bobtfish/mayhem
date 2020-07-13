@@ -18,7 +18,7 @@ func (screen *ExamineBoardScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 
 func (screen *ExamineBoardScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
-	screen.WithBoard.MoveCursor(ss, win, batch)
+	screen.WithBoard.MoveAndDrawCursor(ss, win, batch)
 	batch.Draw(win)
 
 	c := captureNumKey(win)

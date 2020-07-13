@@ -16,7 +16,7 @@ import (
 
 type WithBoard struct {
 	CursorPosition  logical.Vec
-	CursorFlash     bool
+	CursorShow      bool
 	CursorFlashTime time.Time
 	Grid            *grid.GameGrid
 	Players         []*player.Player
@@ -26,13 +26,13 @@ func (screen *WithBoard) ShouldIDrawCursor() bool {
 	now := time.Now()
 	if screen.CursorFlashTime.Before(now) {
 		newFlash := true
-		if screen.CursorFlash {
+		if screen.CursorShow {
 			newFlash = false
 		}
-		screen.CursorFlash = newFlash
+		screen.CursorShow = newFlash
 		screen.CursorFlashTime = now.Add(time.Second / 8)
 	}
-	return screen.CursorFlash
+	return screen.CursorShow
 }
 
 func (screen *WithBoard) DrawBoard(ss pixel.Picture, win *pixelgl.Window) *pixel.Batch {
@@ -40,8 +40,7 @@ func (screen *WithBoard) DrawBoard(ss pixel.Picture, win *pixelgl.Window) *pixel
 	return screen.Grid.DrawBatch(sd)
 }
 
-func (screen *WithBoard) MoveCursor(ss pixel.Picture, win *pixelgl.Window, batch *pixel.Batch) {
-	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
+func (screen *WithBoard) MoveCursor(win *pixelgl.Window) bool {
 	c := captureNumKey(win)
 	if c > 0 && c <= len(screen.Players) {
 		fmt.Printf("Flash player %d characters\n", c)
@@ -50,8 +49,13 @@ func (screen *WithBoard) MoveCursor(ss pixel.Picture, win *pixelgl.Window, batch
 	if !v.Equals(logical.ZeroVec()) {
 		fmt.Printf("Move cursor V(%d, %d)\n", v.X, v.Y)
 		screen.CursorPosition = screen.Grid.AsRect().Clamp(screen.CursorPosition.Add(v))
+		return true
 	}
+	return false
+}
 
+func (screen *WithBoard) DrawCursor(ss pixel.Picture, batch *pixel.Batch) {
+	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
 	objectAtCursor := screen.Grid.GetGameObject(screen.CursorPosition)
 	cursorColor := render.GetColor(0, 255, 255)
 	if !objectAtCursor.IsEmpty() {
@@ -64,4 +68,9 @@ func (screen *WithBoard) MoveCursor(ss pixel.Picture, win *pixelgl.Window, batch
 	if screen.ShouldIDrawCursor() || objectAtCursor.IsEmpty() {
 		sd.DrawSpriteColor(cursorSprite(CURSOR_SPELL), screen.CursorPosition, cursorColor, batch)
 	}
+}
+
+func (screen *WithBoard) MoveAndDrawCursor(ss pixel.Picture, win *pixelgl.Window, batch *pixel.Batch) {
+	screen.MoveCursor(win)
+	screen.DrawCursor(ss, batch)
 }

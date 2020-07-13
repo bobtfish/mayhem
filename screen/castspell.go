@@ -74,7 +74,8 @@ func (screen *DisplaySpellCastScreen) Step(ss pixel.Picture, win *pixelgl.Window
 
 type TargetSpellScreen struct {
 	*WithBoard
-	PlayerIdx int
+	PlayerIdx  int
+	OutOfRange bool
 }
 
 func (screen *TargetSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -92,13 +93,17 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 		fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetRange(), target.X, target.Y)
 		return screen.AnimateAndCast()
 	} else {
-		screen.WithBoard.MoveCursor(ss, win, batch)
+		if screen.WithBoard.MoveCursor(win) || !screen.OutOfRange {
+			screen.OutOfRange = false
+			screen.WithBoard.DrawCursor(ss, batch)
+		}
 		// FIXME does bottom bar text update when you move over something?
 		if win.JustPressed(pixelgl.KeyS) {
 			target := screen.WithBoard.CursorPosition
 			// FIXME can we cast the spell here?
 			if spell.GetRange() < target.Distance(screen.Players[screen.PlayerIdx].BoardPosition) {
-				render.NewTextDrawer(ss).DrawText("Out of range", logical.ZeroVec(), win)
+				render.NewTextDrawer(ss).DrawText("Out of range", logical.ZeroVec(), batch)
+				screen.OutOfRange = true
 			} else {
 				fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetRange(), target.X, target.Y)
 				return screen.AnimateAndCast()

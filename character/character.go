@@ -1,7 +1,6 @@
 package character
 
 import (
-	"fmt"
 	"gopkg.in/yaml.v2"
 	"image/color"
 	"math/rand"
