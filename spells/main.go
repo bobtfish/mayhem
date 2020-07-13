@@ -4,6 +4,7 @@ import (
 	"image/color"
 	"math/rand"
 
+	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/render"
 )
@@ -16,6 +17,7 @@ type Spell interface {
 	DoesCastWork(int) bool
 	Cast(grid.GameObject)
 	IsReuseable() bool
+	CastFx() *fx.Fx
 }
 
 type ASpell struct {
@@ -24,8 +26,15 @@ type ASpell struct {
 	Reuseable     bool
 	CastingChance int
 	Range         int
+	NoCastFx      bool
 }
 
+func (s ASpell) CastFx() *fx.Fx {
+	if s.NoCastFx {
+		return nil
+	}
+	return fx.FxSpellCast()
+}
 func (s ASpell) GetName() string {
 	return s.Name
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/render"
+    "github.com/bobtfish/mayhem/spells"
 )
 
 type CastSpellScreen struct {
@@ -46,7 +47,7 @@ func (screen *CastSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameS
 			if spell.GetRange() == 0 {
 				target := screen.WithBoard.CursorPosition
 				fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetRange(), target.X, target.Y)
-				return screen.Cast()
+				return screen.Cast(spell)
 			} else {
 				screen.ReadyToCast = true
 			}
@@ -57,7 +58,7 @@ func (screen *CastSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameS
 		if win.JustPressed(pixelgl.KeyS) {
 			target := screen.WithBoard.CursorPosition
 			fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetRange(), target.X, target.Y)
-			return screen.Cast()
+			return screen.Cast(spell)
 		}
 	}
 	batch.Draw(win)
@@ -65,10 +66,12 @@ func (screen *CastSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameS
 	return screen
 }
 
-func (screen *CastSpellScreen) Cast() GameScreen {
+func (screen *CastSpellScreen) Cast(spell spells.Spell) GameScreen {
 	target := screen.WithBoard.CursorPosition
-	anim := fx.FxSpellCast()
-	screen.WithBoard.Grid.PlaceGameObject(target, anim)
+	anim := spell.CastFx()
+	if anim != nil {
+		screen.WithBoard.Grid.PlaceGameObject(target, anim)
+	}
 	return &DoSpellCast{
 		WithBoard: screen.WithBoard,
 		PlayerIdx: screen.PlayerIdx,
@@ -86,12 +89,12 @@ func (screen *DoSpellCast) Enter(ss pixel.Picture, win *pixelgl.Window) {
 }
 
 func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
-	if screen.Fx == nil {
+    if screen.Players[screen.PlayerIdx].ChosenSpell < 0 {
 		return screen.NextSpellOrMove()
 	}
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	batch.Draw(win)
-	if screen.Fx.RemoveMe() {
+	if screen.Fx == nil || screen.Fx.RemoveMe() {
 		// Fx for spell cast finished
 		// Work out what happened :)
 		targetVec := screen.WithBoard.CursorPosition

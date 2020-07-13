@@ -185,6 +185,7 @@ func init() {
 			Name:          "Law-1",
 			CastingChance: 100,
 			LawRating:     2,
+			NoCastFx:      true,
 		},
 		MutateFunc: func(p *Player) {
 			p.LawRating++
@@ -195,6 +196,7 @@ func init() {
 			Name:          "Law-2",
 			CastingChance: 60,
 			LawRating:     4,
+			NoCastFx:      true,
 		},
 		MutateFunc: func(p *Player) {
 			p.LawRating = p.LawRating + 2
@@ -205,6 +207,7 @@ func init() {
 			Name:          "Chaos-1",
 			CastingChance: 80,
 			LawRating:     -2,
+			NoCastFx:      true,
 		},
 		MutateFunc: func(p *Player) {
 			p.LawRating--
@@ -215,6 +218,7 @@ func init() {
 			Name:          "Chaos-2",
 			CastingChance: 60,
 			LawRating:     -4,
+			NoCastFx:      true,
 		},
 		MutateFunc: func(p *Player) {
 			p.LawRating = p.LawRating - 2
