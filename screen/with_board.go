@@ -2,6 +2,7 @@ package screen
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/faiface/pixel"
@@ -56,7 +57,10 @@ func (screen *WithBoard) MoveCursor(ss pixel.Picture, win *pixelgl.Window, batch
 	if !objectAtCursor.IsEmpty() {
 		cursorColor = objectAtCursor.GetColor()
 	}
-	render.NewTextDrawer(ss).DrawText(objectAtCursor.Describe(), logical.V(0, 0), win)
+	description := objectAtCursor.Describe()
+	td := render.NewTextDrawer(ss)
+	td.DrawText(description, logical.V(0, 0), batch)
+	td.DrawText(strings.Repeat(" ", 32-len(description)), logical.V(len(description), 0), batch)
 	if screen.ShouldIDrawCursor() || objectAtCursor.IsEmpty() {
 		sd.DrawSpriteColor(cursorSprite(CURSOR_SPELL), screen.CursorPosition, cursorColor, batch)
 	}
