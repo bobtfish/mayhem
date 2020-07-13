@@ -7,7 +7,7 @@ import (
 )
 
 type GameObject interface {
-	AnimationTick()
+	AnimationTick(bool)
 	GetSpriteSheetCoordinates() logical.Vec
 	GetColor() color.Color
 	IsEmpty() bool
@@ -32,8 +32,8 @@ func (s *GameObjectStack) SetBoardPosition(v logical.Vec) {
 	(*s)[0].SetBoardPosition(v)
 }
 
-func (s *GameObjectStack) AnimationTick() {
-	(*s)[0].AnimationTick()
+func (s *GameObjectStack) AnimationTick(odd bool) {
+	(*s)[0].AnimationTick(odd)
 	if (*s)[0].RemoveMe() {
 		(*s) = (*s)[1:]
 	}

@@ -20,7 +20,7 @@ var EMPTY_OBJECT = EmptyObject{
 	SpriteCoordinates: logical.V(BLANK_SPRITE_X, BLANK_SPRITE_Y),
 }
 
-func (e EmptyObject) AnimationTick() {}
+func (e EmptyObject) AnimationTick(odd bool) {}
 
 func (e EmptyObject) RemoveMe() bool {
 	return false

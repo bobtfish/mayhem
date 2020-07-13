@@ -2,63 +2,107 @@ package screen
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/fx"
+	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
-	"github.com/bobtfish/mayhem/spells"
 )
 
-type CastSpellScreen struct {
-	*WithBoard
-	PlayerIdx   int
-	ReadyToCast bool
+// Move state onto next player spell cast (if there are players left)
+// or onto the movement phase if all spells have been cast
+func NextSpellCastOrMove(playerIdx int, players []*player.Player, grid *grid.GameGrid) GameScreen {
+	playerIdx++
+	if playerIdx == len(players) {
+		// All players have cast their spells, movement comes next
+		return &Pause{
+			Grid: grid,
+			NextScreen: &TurnMenuScreen{ // FIXME - skip straight to the next turn
+				Players: players,
+				Grid:    grid,
+			},
+		}
+	}
+	return &Pause{
+		Grid: grid,
+		NextScreen: &DisplaySpellCastScreen{
+			WithBoard: &WithBoard{
+				Grid:    grid,
+				Players: players,
+			},
+			PlayerIdx: playerIdx,
+		},
+	}
 }
 
-func (screen *CastSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+// Display the spell name in the bottom bar until player presses a direction key or s
+
+type DisplaySpellCastScreen struct {
+	*WithBoard
+	PlayerIdx int
+}
+
+func (screen *DisplaySpellCastScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
+}
+
+func (screen *DisplaySpellCastScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+	thisPlayer := screen.Players[screen.PlayerIdx]
+	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
+	if thisPlayer.ChosenSpell < 0 {
+		return NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid)
+	}
+	batch := screen.WithBoard.DrawBoard(ss, win)
+	render.NewTextDrawer(ss).DrawText(fmt.Sprintf("%s %s %d", thisPlayer.Name, spell.GetName(), spell.GetRange()), logical.V(0, 0), batch)
+	batch.Draw(win)
+	if win.JustPressed(pixelgl.KeyS) || !captureDirectionKey(win).Equals(logical.ZeroVec()) {
+		return &TargetSpellScreen{
+			WithBoard: screen.WithBoard,
+			PlayerIdx: screen.PlayerIdx,
+		}
+	}
+	return screen
+}
+
+// If range 0 then cast the spell straight away (on the wizard
+// If range > 0 then move cursor around to find a target until S is pressed
+
+type TargetSpellScreen struct {
+	*WithBoard
+	PlayerIdx int
+}
+
+func (screen *TargetSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+	render.NewTextDrawer(ss).DrawText(strings.Repeat(" ", 32), logical.ZeroVec(), win) // clear bottom bar
 	screen.WithBoard.CursorPosition = screen.Players[screen.PlayerIdx].BoardPosition
 }
 
-func (screen *CastSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	thisPlayer := screen.Players[screen.PlayerIdx]
-	if thisPlayer.ChosenSpell < 0 {
-		return &DoSpellCast{
-			WithBoard: screen.WithBoard,
-			PlayerIdx: screen.PlayerIdx,
-			Fx:        nil,
-		}
-	}
 	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
-
 	batch := screen.WithBoard.DrawBoard(ss, win)
 
-	/* For spells with range = 0 any key aqwedcxzs casts
-	   For spells with range > 0
-	     cursor not visible till aqwedcxzs pressed, then shown
-	     then standard move cursor till s pressed for cast */
-	if !screen.ReadyToCast {
-		render.NewTextDrawer(ss).DrawText(fmt.Sprintf("%s %s %d", thisPlayer.Name, spell.GetName(), spell.GetRange()), logical.V(0, 0), win)
-		if win.JustPressed(pixelgl.KeyS) || !captureDirectionKey(win).Equals(logical.ZeroVec()) {
-			render.NewTextDrawer(ss).DrawText("                                  ", logical.V(0, 0), win) // clear bottom bar
-			if spell.GetRange() == 0 {
-				target := screen.WithBoard.CursorPosition
-				fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetRange(), target.X, target.Y)
-				return screen.Cast(spell)
-			} else {
-				screen.ReadyToCast = true
-			}
-		}
+	if spell.GetRange() == 0 {
+		target := screen.WithBoard.CursorPosition
+		fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetRange(), target.X, target.Y)
+		return screen.AnimateAndCast()
 	} else {
 		screen.WithBoard.MoveCursor(ss, win, batch)
 		// FIXME does bottom bar text update when you move over something?
 		if win.JustPressed(pixelgl.KeyS) {
 			target := screen.WithBoard.CursorPosition
-			fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetRange(), target.X, target.Y)
-			return screen.Cast(spell)
+			// FIXME can we cast the spell here?
+			if spell.GetRange() < target.Distance(screen.Players[screen.PlayerIdx].BoardPosition) {
+				render.NewTextDrawer(ss).DrawText("Out of range", logical.ZeroVec(), win)
+			} else {
+				fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetRange(), target.X, target.Y)
+				return screen.AnimateAndCast()
+			}
 		}
 	}
 	batch.Draw(win)
@@ -66,7 +110,9 @@ func (screen *CastSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameS
 	return screen
 }
 
-func (screen *CastSpellScreen) Cast(spell spells.Spell) GameScreen {
+func (screen *TargetSpellScreen) AnimateAndCast() GameScreen {
+	thisPlayer := screen.Players[screen.PlayerIdx]
+	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
 	target := screen.WithBoard.CursorPosition
 	anim := spell.CastFx()
 	if anim != nil {
@@ -79,6 +125,9 @@ func (screen *CastSpellScreen) Cast(spell spells.Spell) GameScreen {
 	}
 }
 
+// This screen does the actual mechanics of the animation
+// and then casting the spell once animation is finished
+
 type DoSpellCast struct {
 	*WithBoard
 	Fx        *fx.Fx
@@ -89,11 +138,9 @@ func (screen *DoSpellCast) Enter(ss pixel.Picture, win *pixelgl.Window) {
 }
 
 func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
-	if screen.Players[screen.PlayerIdx].ChosenSpell < 0 {
-		return screen.NextSpellOrMove()
-	}
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	batch.Draw(win)
+	// Wait until the spell animation is finished
 	if screen.Fx == nil || screen.Fx.RemoveMe() {
 		// Fx for spell cast finished
 		// Work out what happened :)
@@ -108,28 +155,7 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScree
 			fmt.Printf("Spell failed\n")
 			render.NewTextDrawer(ss).DrawText("Spell Failed", logical.V(0, 0), win)
 		}
-		return screen.NextSpellOrMove()
+		return NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid)
 	}
 	return screen
-}
-
-func (screen *DoSpellCast) NextSpellOrMove() GameScreen {
-	screen.PlayerIdx++
-	if screen.PlayerIdx == len(screen.WithBoard.Players) {
-		//	panic("Not written yet")
-		return &Pause{
-			Grid: screen.Grid,
-			NextScreen: &TurnMenuScreen{
-				Players: screen.Players,
-				Grid:    screen.Grid,
-			},
-		}
-	}
-	return &Pause{
-		Grid: screen.Grid,
-		NextScreen: &CastSpellScreen{
-			WithBoard: screen.WithBoard,
-			PlayerIdx: screen.PlayerIdx,
-		},
-	}
 }

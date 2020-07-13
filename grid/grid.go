@@ -22,11 +22,13 @@ func MakeGameGrid(width, height int) *GameGrid {
 	grid := &gg
 
 	go func() {
-		Qsecond := time.Tick(time.Second / 4)
+		ticker := time.Tick(time.Second / 8)
+		count := 0
 		for true == true {
 			select {
-			case <-Qsecond:
-				grid.AnimationTick()
+			case <-ticker:
+				count++
+				grid.AnimationTick(count%2 != 0)
 			}
 		}
 	}()
@@ -75,13 +77,10 @@ func (grid *GameGrid) MaxX() int {
 	return len((*grid)[0]) - 1
 }
 
-func (grid *GameGrid) AnimationTick() {
+func (grid *GameGrid) AnimationTick(odd bool) {
 	for x := 0; x < grid.MaxX(); x++ {
 		for y := 0; y < grid.MaxY(); y++ {
-			c := grid.GetGameObjectStack(logical.V(x, y))
-			if c != nil {
-				c.AnimationTick()
-			}
+			grid.GetGameObjectStack(logical.V(x, y)).AnimationTick(odd)
 		}
 	}
 }

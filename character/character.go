@@ -54,7 +54,7 @@ func LoadCharacterTemplates() {
 			v.DeadSprite = make([]int, 0)
 		}
 		castRange := 1
-		fmt.Printf("Create %s range %d\n", v.Name, castRange)
+		//fmt.Printf("Create %s range %d\n", v.Name, castRange)
 		spells.CreateSpell(CharacterSpell{
 			Name:          v.Name,
 			LawRating:     v.LawChaos,
@@ -127,7 +127,10 @@ type Character struct {
 }
 
 // GameObject interface BEGIN
-func (c *Character) AnimationTick() {
+func (c *Character) AnimationTick(odd bool) {
+	if odd {
+		return
+	}
 	c.SpriteIdx++
 	if c.SpriteIdx == 4 {
 		c.SpriteIdx = 0

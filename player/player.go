@@ -30,7 +30,10 @@ type Player struct {
 }
 
 // GameObject interface
-func (p *Player) AnimationTick() {
+func (p *Player) AnimationTick(odd bool) {
+	if odd {
+		return
+	}
 	if p.IsAnimated {
 		p.SpriteIdx++
 		if p.SpriteIdx == 4 {

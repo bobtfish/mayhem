@@ -17,7 +17,7 @@ type Fx struct {
 }
 
 // GameObject interface START
-func (c *Fx) AnimationTick() {
+func (c *Fx) AnimationTick(odd bool) {
 	c.SpriteIdx++
 }
 
