@@ -9,7 +9,7 @@ import (
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/render"
-    "github.com/bobtfish/mayhem/spells"
+	"github.com/bobtfish/mayhem/spells"
 )
 
 type CastSpellScreen struct {
@@ -89,7 +89,7 @@ func (screen *DoSpellCast) Enter(ss pixel.Picture, win *pixelgl.Window) {
 }
 
 func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
-    if screen.Players[screen.PlayerIdx].ChosenSpell < 0 {
+	if screen.Players[screen.PlayerIdx].ChosenSpell < 0 {
 		return screen.NextSpellOrMove()
 	}
 	batch := screen.WithBoard.DrawBoard(ss, win)
@@ -99,7 +99,7 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScree
 		// Work out what happened :)
 		targetVec := screen.WithBoard.CursorPosition
 		fmt.Printf("About to call player CastSpell method\n")
-		success := screen.Players[screen.PlayerIdx].CastSpell(screen.WithBoard.Grid.GetGameObject(targetVec))
+		success := screen.Players[screen.PlayerIdx].CastSpell(targetVec, screen.WithBoard.Grid)
 		fmt.Printf("Finished player CastSpell method\n")
 		if success {
 			fmt.Printf("Spell Succeeds\n")
@@ -116,7 +116,13 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScree
 func (screen *DoSpellCast) NextSpellOrMove() GameScreen {
 	screen.PlayerIdx++
 	if screen.PlayerIdx == len(screen.WithBoard.Players) {
-		panic("Not written yet")
+		//	panic("Not written yet")
+		return &CastSpellScreen{
+			WithBoard: &WithBoard{
+				Grid:    screen.WithBoard.Grid,
+				Players: screen.WithBoard.Players,
+			},
+		}
 	}
 	return &Pause{NextScreen: &CastSpellScreen{
 		WithBoard: screen.WithBoard,

@@ -65,7 +65,8 @@ func (p *Player) RemoveMe() bool {
 	return false
 }
 
-func (p *Player) CastSpell(target grid.GameObject) bool {
+//targetVec, screen.WithBoard.Grid
+func (p *Player) CastSpell(target logical.Vec, grid *grid.GameGrid) bool {
 	fmt.Printf("IN Player spell cast\n")
 	i := p.ChosenSpell
 	spell := p.Spells[i]
@@ -77,7 +78,7 @@ func (p *Player) CastSpell(target grid.GameObject) bool {
 	ret := spell.DoesCastWork(p.LawRating)
 	if ret {
 		fmt.Printf("Player spell %T cast on %T\n", spell, target)
-		spell.Cast(target)
+		spell.Cast(target, grid)
 	}
 	p.ChosenSpell = -1
 	return ret
@@ -98,8 +99,9 @@ func (s PlayerSpell) CanCast(target grid.GameObject) bool {
 	return false
 }
 
-func (s PlayerSpell) Cast(target grid.GameObject) {
-	player := target.(*Player)
+func (s PlayerSpell) Cast(target logical.Vec, grid *grid.GameGrid) {
+	tile := grid.GetGameObject(target)
+	player := tile.(*Player)
 	s.MutateFunc(player)
 	// May have just become not animated
 	player.SpriteIdx = 0

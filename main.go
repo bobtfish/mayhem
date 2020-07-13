@@ -10,6 +10,7 @@ import (
 
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/bobtfish/mayhem/character"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
@@ -26,7 +27,7 @@ func loadSpriteSheet() io.Reader {
 }
 
 func run() {
-	//ct := LoadCharacterTemplates()
+	character.LoadCharacterTemplates()
 
 	quickPtr := flag.Bool("quick", false, "Skip Intro questions")
 	flag.Parse()

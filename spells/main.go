@@ -6,6 +6,7 @@ import (
 
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
+	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/render"
 )
 
@@ -15,7 +16,7 @@ type Spell interface {
 	GetCastingChance(int) int
 	GetRange() int
 	DoesCastWork(int) bool
-	Cast(grid.GameObject)
+	Cast(logical.Vec, *grid.GameGrid)
 	IsReuseable() bool
 	CastFx() *fx.Fx
 }
@@ -69,7 +70,7 @@ type DisbelieveSpell struct {
 	ASpell
 }
 
-func (s DisbelieveSpell) Cast(target grid.GameObject) {
+func (s DisbelieveSpell) Cast(target logical.Vec, grid *grid.GameGrid) {
 }
 
 type CreatureSpell struct {
@@ -80,7 +81,7 @@ type OtherSpell struct {
 	ASpell
 }
 
-func (s OtherSpell) Cast(target grid.GameObject) {
+func (s OtherSpell) Cast(target logical.Vec, grid *grid.GameGrid) {
 }
 
 func LawRatingSymbol(s Spell) string {

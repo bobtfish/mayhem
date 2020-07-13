@@ -5,7 +5,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"math/rand"
-
 )
 
 func pickColour() pixel.RGBA {
@@ -20,6 +19,7 @@ func drawHydra(ss pixel.Picture, win *pixelgl.Window) {
 	mat = mat.ScaledXY(win.Bounds().Center(), pixel.V(4, 4))
 	sprite.Draw(win, mat)
 }
+
 /*
 func placeCharactersTest(grid *grid.GameGrid, ct CharacterTypes) {
 	x := 0

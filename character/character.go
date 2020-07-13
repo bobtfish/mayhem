@@ -1,25 +1,24 @@
-package main
+package character
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"image/color"
 	"math/rand"
 
-	"github.com/faiface/pixel"
-
+	"github.com/bobtfish/mayhem/fx"
+	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/render"
+	"github.com/bobtfish/mayhem/spells"
 )
 
-// Characters on the board
-
 // Abstract character that can be created
-type CharacterTypes map[string]CharacterType
 type CharacterType struct {
 	Name              string  `yaml:"name"`
 	Combat            int     `yaml:"combat"`
 	RangedCombat      int     `yaml:"ranged_combat"`
-	Range             int     `yaml:"range"`
+	AttackRange       int     `yaml:"range"`
 	Defence           int     `yaml:"defence"`
 	Movement          int     `yaml:"movement"`
 	MagicalResistance int     `yaml:"magical_resistance"`
@@ -35,19 +34,18 @@ type CharacterType struct {
 }
 
 // Individual character instance
-type Character struct {
-	CharacterType
+/*type Character struct {
+	CharacterSpell
 	SpriteIdx     int
 	BoardPosition logical.Vec
-}
+}*/
 
-func LoadCharacterTemplates() CharacterTypes {
+func LoadCharacterTemplates() {
 	cl := make([]CharacterType, 0)
 	err := yaml.Unmarshal([]byte(character_yaml), &cl)
 	if err != nil {
 		panic(err)
 	}
-	ct := make(CharacterTypes, 0)
 	for _, v := range cl {
 		if v.Sprites == nil {
 			v.Sprites = make([][]int, 0)
@@ -55,11 +53,114 @@ func LoadCharacterTemplates() CharacterTypes {
 		if v.DeadSprite == nil {
 			v.DeadSprite = make([]int, 0)
 		}
-		ct[v.Name] = v
+		castRange := 1
+		fmt.Printf("Create %s range %d\n", v.Name, castRange)
+		spells.CreateSpell(CharacterSpell{
+			Name:          v.Name,
+			LawRating:     v.LawChaos,
+			CastingChance: 100, // FIXME
+			Range:         castRange,
+			Sprite:        logical.V(v.Sprites[0][0], v.Sprites[0][1]),
+		})
 	}
-	return ct
 }
 
+// This is the spell to create a character
+type CharacterSpell struct {
+	Name          string
+	LawRating     int
+	CastingChance int
+	Range         int
+	Sprite        logical.Vec
+}
+
+// Spell interface begin
+func (s CharacterSpell) GetName() string {
+	return s.Name
+}
+func (s CharacterSpell) GetLawRating() int {
+	return s.LawRating
+}
+func (s CharacterSpell) GetCastingChance(playerLawRating int) int {
+	// FIXME do something with playerLawRating
+	return s.CastingChance
+}
+func (s CharacterSpell) GetRange() int {
+	return s.Range
+}
+
+// FIXME this is duplicate code
+func (s CharacterSpell) DoesCastWork(playerLawRating int) bool {
+	// FIXME
+	return true
+	if rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
+		return true
+	}
+	return false
+}
+func (s CharacterSpell) Cast(target logical.Vec, grid *grid.GameGrid) {
+	grid.PlaceGameObject(target, s.CreateCharacter())
+}
+func (s CharacterSpell) IsReuseable() bool {
+	return false
+}
+func (s CharacterSpell) CastFx() *fx.Fx {
+	return fx.FxSpellCast()
+}
+
+// Spell interface end
+
+func (s CharacterSpell) CreateCharacter() *Character {
+	return &Character{
+		Name:   s.Name,
+		Sprite: s.Sprite,
+	}
+}
+
+// This is the actual character that gets created
+type Character struct {
+	Name   string
+	Sprite logical.Vec
+
+	SpriteIdx     int
+	BoardPosition logical.Vec
+}
+
+// GameObject interface BEGIN
+func (c *Character) AnimationTick() {
+	c.SpriteIdx++
+	if c.SpriteIdx == 4 {
+		c.SpriteIdx = 0
+	}
+	return
+}
+
+func (c *Character) RemoveMe() bool {
+	return false // FIXME - what about if destroyed
+}
+
+func (c *Character) IsEmpty() bool {
+	return false
+}
+
+func (c *Character) GetSpriteSheetCoordinates() logical.Vec {
+	return c.Sprite.Add(logical.V(c.SpriteIdx, 0))
+}
+
+func (c *Character) GetColor() color.Color {
+	return render.GetColor(255, 255, 255)
+	//    return render.GetColor(c.ColorR, c.ColorG, c.ColorB)
+}
+
+func (c *Character) Describe() string {
+	return c.Name
+}
+
+func (c *Character) SetBoardPosition(v logical.Vec) {
+	c.BoardPosition = v
+}
+
+/*
 func (ct CharacterTypes) NewCharacter(typeName string) *Character {
 	c := ct[typeName]
 	ch := &Character{CharacterType: c}
@@ -119,4 +220,4 @@ func (c *Character) GetColorMask() color.Color {
 		return pixel.RGB(1, 1, 1)
 	}
 	return pixel.RGB(float64(c.ColorR)/255, float64(c.ColorG)/255, float64(c.ColorB)/255)
-}
+} */
