@@ -46,13 +46,7 @@ func (screen *GrowScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	batch.Draw(win)
 
-	if screen.IterateGrowVanish() {
-		// We just grew or vanished a tile, pause for a sec
-		return &Pause{
-			Grid:       screen.WithBoard.Grid,
-			NextScreen: screen,
-		}
-	}
+	screen.IterateGrowVanish()
 
 	return &Pause{
 		Grid: screen.WithBoard.Grid,
@@ -64,29 +58,19 @@ func (screen *GrowScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen
 }
 
 // FIXME - lots of puke worthy type casting in here, should not need this special casing really....
-func (screen *GrowScreen) IterateGrowVanish() bool {
+func (screen *GrowScreen) IterateGrowVanish() {
 	for screen.Consider.X < screen.WithBoard.Grid.MaxX() && screen.Consider.Y < screen.WithBoard.Grid.MaxY() {
-		// Store current tile we're working on
-		thisTileVec := screen.Consider
-
-		// Bump tile counter as we may return early
-		screen.Consider.X = screen.Consider.X + 1
-		if screen.Consider.X == screen.WithBoard.Grid.MaxX() {
-			screen.Consider.X = 0
-			screen.Consider.Y = screen.Consider.Y + 1
-		}
-
 		// If the current tile contains a character
-		char, ok := screen.WithBoard.Grid.GetGameObject(thisTileVec).(*character.Character)
+		char, ok := screen.WithBoard.Grid.GetGameObject(screen.Consider).(*character.Character)
 		if ok {
 			for name, replace := range growable {
 				// If we're a special growable character (blob or fire)
 				if name == char.Name {
-					fmt.Printf("v(%d, %d) has %s\n", thisTileVec.X, thisTileVec.Y, char.Name)
+					fmt.Printf("v(%d, %d) has %s\n", screen.Consider.X, screen.Consider.Y, char.Name)
 					if doesItGrow() {
 						adjIdx := 0
 						adjNew := false
-						adj := screen.WithBoard.Grid.AsRect().Adjacents(thisTileVec)
+						adj := screen.WithBoard.Grid.AsRect().Adjacents(screen.Consider)
 						rand.Shuffle(len(adj), func(i, j int) { adj[i], adj[j] = adj[j], adj[i] })
 
 						// Try to grow into an uncovered square
@@ -102,7 +86,7 @@ func (screen *GrowScreen) IterateGrowVanish() bool {
 						if adjIdx == len(adj) {
 							break
 						}
-						fmt.Printf("v(%d, %d) is growing to v(%d, %d)\n", thisTileVec.X, thisTileVec.Y, adj[adjIdx].X, adj[adjIdx].Y)
+						fmt.Printf("v(%d, %d) is growing to v(%d, %d)\n", screen.Consider.X, screen.Consider.Y, adj[adjIdx].X, adj[adjIdx].Y)
 
 						// Never grow to cover a player, if we try to do that just skip the grow
 						// FIXME - should be able to grow onto players who didn't cast it
@@ -122,12 +106,10 @@ func (screen *GrowScreen) IterateGrowVanish() bool {
 							}
 						}
 						screen.WithBoard.Grid.PlaceGameObject(adj[adjIdx], c)
-						return true
 					} else {
 						if doesItVanish() {
 							fmt.Printf("v(%d, %d) has vanished\n")
-							screen.WithBoard.Grid.GetGameObjectStack(thisTileVec).RemoveTopObject()
-							return true
+							screen.WithBoard.Grid.GetGameObjectStack(screen.Consider).RemoveTopObject()
 						}
 					}
 					// Don't bother to check if we're another character type, we already matched
@@ -135,7 +117,12 @@ func (screen *GrowScreen) IterateGrowVanish() bool {
 				}
 			}
 		}
+
+		// Bump tile counter
+		screen.Consider.X = screen.Consider.X + 1
+		if screen.Consider.X == screen.WithBoard.Grid.MaxX() {
+			screen.Consider.X = 0
+			screen.Consider.Y = screen.Consider.Y + 1
+		}
 	}
-	// We covered every tile already
-	return false
 }
