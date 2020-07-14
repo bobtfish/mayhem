@@ -22,7 +22,7 @@ func NextSpellCastOrMove(playerIdx int, players []*player.Player, grid *grid.Gam
 		// All players have cast their spells, movement comes next
 		return &Pause{
 			Grid: grid,
-			NextScreen: &GrowScreen{ // FIXME - skip straight to the next turn
+			NextScreen: &MoveScreen{
 				WithBoard: &WithBoard{
 					Players: players,
 					Grid:    grid,
