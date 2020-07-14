@@ -18,6 +18,7 @@ const VANISH_CHANCE = 2
 var growable map[string]bool
 
 func init() {
+	// FIXME - this should be encoded in the characters themselves in some way, not hard coded here
 	growable = map[string]bool{
 		"Gooey Blob": false,
 		"Fire":       true,
@@ -62,6 +63,7 @@ func (screen *GrowScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen
 	}
 }
 
+// FIXME - lots of puke worthy type casting in here, should not need this special casing really....
 func (screen *GrowScreen) IterateGrowVanish() bool {
 	for screen.Consider.X < screen.WithBoard.Grid.MaxX() && screen.Consider.Y < screen.WithBoard.Grid.MaxY() {
 		// Store current tile we're working on
@@ -75,33 +77,51 @@ func (screen *GrowScreen) IterateGrowVanish() bool {
 		}
 
 		// If the current tile contains a character
-		character, ok := screen.WithBoard.Grid.GetGameObject(thisTileVec).(*character.Character)
+		char, ok := screen.WithBoard.Grid.GetGameObject(thisTileVec).(*character.Character)
 		if ok {
 			for name, replace := range growable {
 				// If we're a special growable character (blob or fire)
-				if name == character.Name {
-					fmt.Printf("v(%d, %d) has %s\n", thisTileVec.X, thisTileVec.Y, character.Name)
+				if name == char.Name {
+					fmt.Printf("v(%d, %d) has %s\n", thisTileVec.X, thisTileVec.Y, char.Name)
 					if doesItGrow() {
+						adjIdx := 0
+						adjNew := false
 						adj := screen.WithBoard.Grid.AsRect().Adjacents(thisTileVec)
 						rand.Shuffle(len(adj), func(i, j int) { adj[i], adj[j] = adj[j], adj[i] })
-						fmt.Printf("v(%d, %d) is growing to v(%d, %d)\n", thisTileVec.X, thisTileVec.Y, adj[0].X, adj[0].Y)
+
+						// Try to grow into an uncovered square
+						for !adjNew && adjIdx < len(adj) {
+							adjChar, isChar := screen.WithBoard.Grid.GetGameObject(adj[adjIdx]).(*character.Character)
+							if isChar && adjChar.Name == char.Name {
+								adjIdx++
+							} else {
+								adjNew = true
+							}
+						}
+						// Cannot grow in any direction
+						if adjIdx == len(adj) {
+							break
+						}
+						fmt.Printf("v(%d, %d) is growing to v(%d, %d)\n", thisTileVec.X, thisTileVec.Y, adj[adjIdx].X, adj[adjIdx].Y)
 
 						// Never grow to cover a player, if we try to do that just skip the grow
-						currentObj := screen.WithBoard.Grid.GetGameObject(adj[0])
+						// FIXME - should be able to grow onto players who didn't cast it
+						currentObj := screen.WithBoard.Grid.GetGameObject(adj[adjIdx])
 						_, isPlayer := currentObj.(*player.Player)
 						if isPlayer {
 							break
 						}
 
-						c := character.Clone()
-						c.BoardPosition = adj[0]
+						c := char.Clone()
+						c.BoardPosition = adj[adjIdx]
+						// FIXME - growable objects should always replace each other, so blob doesn't cover fire, it removes it
 						if replace { // Fire burns things - remove everything already stacked
-							removedObject := screen.WithBoard.Grid.GetGameObjectStack(adj[0]).RemoveTopObject()
+							removedObject := screen.WithBoard.Grid.GetGameObjectStack(adj[adjIdx]).RemoveTopObject()
 							for removedObject != nil {
-								removedObject = screen.WithBoard.Grid.GetGameObjectStack(adj[0]).RemoveTopObject()
+								removedObject = screen.WithBoard.Grid.GetGameObjectStack(adj[adjIdx]).RemoveTopObject()
 							}
 						}
-						screen.WithBoard.Grid.PlaceGameObject(adj[0], c)
+						screen.WithBoard.Grid.PlaceGameObject(adj[adjIdx], c)
 						return true
 					} else {
 						if doesItVanish() {

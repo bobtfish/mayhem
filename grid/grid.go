@@ -78,8 +78,8 @@ func (grid *GameGrid) MaxX() int {
 }
 
 func (grid *GameGrid) AnimationTick(odd bool) {
-	for x := 0; x < grid.MaxX(); x++ {
-		for y := 0; y < grid.MaxY(); y++ {
+	for x := 0; x <= grid.MaxX(); x++ {
+		for y := 0; y <= grid.MaxY(); y++ {
 			grid.GetGameObjectStack(logical.V(x, y)).AnimationTick(odd)
 		}
 	}
