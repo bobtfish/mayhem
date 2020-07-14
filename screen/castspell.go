@@ -55,10 +55,10 @@ func (screen *DisplaySpellCastScreen) Enter(ss pixel.Picture, win *pixelgl.Windo
 
 func (screen *DisplaySpellCastScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	thisPlayer := screen.Players[screen.PlayerIdx]
-	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
 	if thisPlayer.ChosenSpell < 0 {
 		return NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid)
 	}
+	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	render.NewTextDrawer(ss).DrawText(fmt.Sprintf("%s %s %d", thisPlayer.Name, spell.GetName(), spell.GetRange()), logical.V(0, 0), batch)
 	batch.Draw(win)
