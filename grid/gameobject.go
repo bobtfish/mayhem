@@ -24,7 +24,7 @@ type GameObjectStackable interface {
 
 type GameObjectStack []GameObjectStackable
 
-func (s *GameObjectStack) TopObject() GameObject {
+func (s *GameObjectStack) TopObject() GameObjectStackable {
 	return (*s)[0]
 }
 
@@ -33,9 +33,9 @@ func (s *GameObjectStack) SetBoardPosition(v logical.Vec) {
 }
 
 func (s *GameObjectStack) AnimationTick(odd bool) {
-	(*s)[0].AnimationTick(odd)
-	if (*s)[0].RemoveMe() {
-		(*s) = (*s)[1:]
+	s.TopObject().AnimationTick(odd)
+	if s.TopObject().RemoveMe() {
+		s.RemoveTopObject()
 	}
 }
 
@@ -57,6 +57,15 @@ func (s *GameObjectStack) IsEmpty() bool {
 
 func (s *GameObjectStack) PlaceObject(o GameObjectStackable) {
 	(*s) = append([]GameObjectStackable{o}, (*s)...)
+}
+
+func (s *GameObjectStack) RemoveTopObject() GameObjectStackable {
+	if s.IsEmpty() {
+		return nil
+	}
+	topObject := (*s)[0]
+	(*s) = (*s)[1:]
+	return topObject
 }
 
 func NewGameObjectStack() *GameObjectStack {

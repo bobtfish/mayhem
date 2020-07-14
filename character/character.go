@@ -134,6 +134,7 @@ type Character struct {
 	Name   string
 	Sprite logical.Vec
 	Color  color.Color
+	// Remember to add any fields you add here to the Clone method
 
 	SpriteIdx     int
 	BoardPosition logical.Vec
@@ -149,6 +150,14 @@ func (c *Character) AnimationTick(odd bool) {
 		c.SpriteIdx = 0
 	}
 	return
+}
+
+func (c *Character) Clone() *Character {
+	return &Character{
+		Name:   c.Name,
+		Sprite: c.Sprite,
+		Color:  c.Color,
+	}
 }
 
 func (c *Character) RemoveMe() bool {
