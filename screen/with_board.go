@@ -20,6 +20,7 @@ type WithBoard struct {
 	CursorFlashTime time.Time
 	Grid            *grid.GameGrid
 	Players         []*player.Player
+	CursorSprite    int // Defaults to CURSOR_SPELL
 }
 
 func (screen *WithBoard) ShouldIDrawCursor() bool {
@@ -66,7 +67,7 @@ func (screen *WithBoard) DrawCursor(ss pixel.Picture, batch *pixel.Batch) {
 	td.DrawText(description, logical.V(0, 0), batch)
 	td.DrawText(strings.Repeat(" ", 32-len(description)), logical.V(len(description), 0), batch)
 	if screen.ShouldIDrawCursor() || objectAtCursor.IsEmpty() {
-		sd.DrawSpriteColor(cursorSprite(CURSOR_SPELL), screen.CursorPosition, cursorColor, batch)
+		sd.DrawSpriteColor(cursorSprite(screen.CursorSprite), screen.CursorPosition, cursorColor, batch)
 	}
 }
 

@@ -22,7 +22,7 @@ func NextSpellCastOrMove(playerIdx int, players []*player.Player, grid *grid.Gam
 		// All players have cast their spells, movement comes next
 		return &Pause{
 			Grid: grid,
-			NextScreen: &MoveScreen{
+			NextScreen: &MoveAnnounceScreen{
 				WithBoard: &WithBoard{
 					Players: players,
 					Grid:    grid,
