@@ -28,7 +28,7 @@ func (screen *MoveScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen
 }
 
 func (screen *MoveScreen) NextMove() GameScreen {
-	if screen.PlayerIdx == len(screen.WithBoard.Players) {
+	if screen.PlayerIdx+1 == len(screen.WithBoard.Players) {
 		return &GrowScreen{
 			WithBoard: screen.WithBoard,
 		}
