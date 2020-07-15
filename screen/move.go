@@ -6,10 +6,10 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
 	"github.com/bobtfish/mayhem/render"
-    "github.com/bobtfish/mayhem/grid"
 )
 
 type MoveAnnounceScreen struct {
@@ -130,10 +130,10 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			return screen
 		}
 		screen.WithBoard.Grid.GetGameObjectStack(currentLocation).RemoveTopObject()
-        // FIXME type cast here, puke
+		// FIXME type cast here, puke
 		screen.WithBoard.Grid.PlaceGameObject(newLocation, screen.Character.(grid.GameObjectStackable))
 		screen.Character.SetBoardPosition(newLocation)
-        screen.WithBoard.CursorPosition = newLocation
+		screen.WithBoard.CursorPosition = newLocation
 
 		// Do the D&D diagonal move thing
 		if direction.IsDiagonal() {
@@ -156,9 +156,9 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 
 type MoveFlyingCharacterScreen struct {
 	*WithBoard
-	PlayerIdx     int
-	Character     movable.Movable
-	DisplayCursor bool
+	PlayerIdx  int
+	Character  movable.Movable
+	OutOfRange bool
 }
 
 func (screen *MoveFlyingCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -169,12 +169,36 @@ func (screen *MoveFlyingCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Wi
 
 func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
-	screen.WithBoard.DrawCursor(ss, batch)
-	screen.WithBoard.MoveCursor(win)
-	batch.Draw(win)
+	if screen.WithBoard.MoveCursor(win) || !screen.OutOfRange {
+		screen.OutOfRange = false
+		screen.WithBoard.DrawCursor(ss, batch)
+	}
 
 	if win.JustPressed(pixelgl.KeyS) {
-		// FIXME work out what's in this square, if nothing move to it, if something attack it
+		currentLocation := screen.Character.GetBoardPosition()
+		if screen.WithBoard.CursorPosition.Distance(currentLocation) > screen.Character.GetMovement() {
+			render.NewTextDrawer(ss).DrawText("Out of range                   ", logical.ZeroVec(), batch)
+			screen.OutOfRange = true
+		} else {
+			// FIXME work out what's in this square, if nothing move to it, if something attack it
+			target := screen.WithBoard.Grid.GetGameObject(screen.WithBoard.CursorPosition)
+			// FIXME we can move into non-empty squares to attack
+			if !target.IsEmpty() {
+				fmt.Printf("Target square is not empty\n")
+				return screen
+			}
+			screen.WithBoard.Grid.GetGameObjectStack(currentLocation).RemoveTopObject()
+			// FIXME type cast here, puke
+			screen.WithBoard.Grid.PlaceGameObject(screen.WithBoard.CursorPosition, screen.Character.(grid.GameObjectStackable))
+			screen.Character.SetBoardPosition(screen.WithBoard.CursorPosition)
+
+			return &MoveFindCharacterScreen{
+				WithBoard: screen.WithBoard,
+				PlayerIdx: screen.PlayerIdx,
+			}
+		}
+
 	}
+	batch.Draw(win)
 	return screen
 }
