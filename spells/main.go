@@ -14,7 +14,7 @@ type Spell interface {
 	GetName() string
 	GetLawRating() int
 	GetCastingChance(int) int
-	GetRange() int
+	GetCastRange() int
 	DoesCastWork(int) bool
 	CanCast(grid.GameObject) bool
 	Cast(logical.Vec, *grid.GameGrid)
@@ -51,7 +51,7 @@ func (s ASpell) GetCastingChance(playerLawRating int) int {
 	// of the player and of the spell
 	return s.CastingChance
 }
-func (s ASpell) GetRange() int {
+func (s ASpell) GetCastRange() int {
 	return s.Range
 }
 

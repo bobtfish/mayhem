@@ -21,7 +21,7 @@ func init() {
 	// FIXME - this should be encoded in the characters themselves in some way, not hard coded here
 	growable = map[string]bool{
 		"Gooey Blob": false,
-		"Fire":       true,
+		"Magic Fire": true,
 	}
 }
 

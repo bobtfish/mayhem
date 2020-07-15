@@ -20,6 +20,7 @@ type CharacterType struct {
 	AttackRange       int     `yaml:"range"`
 	Defence           int     `yaml:"defence"`
 	Movement          int     `yaml:"movement"`
+	Flying            bool    `yaml:"flying"`
 	MagicalResistance int     `yaml:"magical_resistance"`
 	Manoeuvre         int     `yaml:"manoeuvre"`
 	Unknown           int     `yaml:"unknown"`
@@ -30,14 +31,8 @@ type CharacterType struct {
 	ColorR            int     `yaml:"color_r"`
 	ColorG            int     `yaml:"color_g"`
 	ColorB            int     `yaml:"color_b"`
+	Undead            bool    `yaml:"undead"`
 }
-
-// Individual character instance
-/*type Character struct {
-	CharacterSpell
-	SpriteIdx     int
-	BoardPosition logical.Vec
-}*/
 
 func LoadCharacterTemplates() {
 	cl := make([]CharacterType, 0)
@@ -58,9 +53,12 @@ func LoadCharacterTemplates() {
 			Name:          v.Name,
 			LawRating:     v.LawChaos,
 			CastingChance: 100, // FIXME
-			Range:         castRange,
+			CastRange:     castRange,
 			Sprite:        logical.V(v.Sprites[0][0], v.Sprites[0][1]),
 			Color:         render.GetColor(v.ColorR, v.ColorG, v.ColorB),
+			Movement:      v.Movement,
+			Flying:        v.Flying,
+			Undead:        v.Undead,
 		})
 	}
 }
@@ -70,9 +68,12 @@ type CharacterSpell struct {
 	Name          string
 	LawRating     int
 	CastingChance int
-	Range         int
+	CastRange     int
 	Sprite        logical.Vec
 	Color         color.Color
+	Movement      int
+	Flying        bool
+	Undead        bool
 }
 
 // Spell interface begin
@@ -86,8 +87,8 @@ func (s CharacterSpell) GetCastingChance(playerLawRating int) int {
 	// FIXME do something with playerLawRating
 	return s.CastingChance
 }
-func (s CharacterSpell) GetRange() int {
-	return s.Range
+func (s CharacterSpell) GetCastRange() int {
+	return s.CastRange
 }
 
 // FIXME this is duplicate code
@@ -123,21 +124,39 @@ func (s CharacterSpell) CastFx() *fx.Fx {
 
 func (s CharacterSpell) CreateCharacter() *Character {
 	return &Character{
-		Name:   s.Name,
-		Sprite: s.Sprite,
-		Color:  s.Color,
+		Name:     s.Name,
+		Sprite:   s.Sprite,
+		Color:    s.Color,
+		Movement: s.Movement,
+		Flying:   s.Flying,
+		Undead:   s.Undead,
 	}
 }
 
 // This is the actual character that gets created
 type Character struct {
-	Name   string
-	Sprite logical.Vec
-	Color  color.Color
+	Name     string
+	Sprite   logical.Vec
+	Color    color.Color
+	Movement int
+	Flying   bool
+	Undead   bool
 	// Remember to add any fields you add here to the Clone method
 
+	Corpse        bool
 	SpriteIdx     int
 	BoardPosition logical.Vec
+}
+
+func (c *Character) Clone() *Character {
+	return &Character{
+		Name:     c.Name,
+		Sprite:   c.Sprite,
+		Color:    c.Color,
+		Movement: c.Movement,
+		Flying:   c.Flying,
+		Undead:   c.Undead,
+	}
 }
 
 // GameObject interface BEGIN
@@ -150,14 +169,6 @@ func (c *Character) AnimationTick(odd bool) {
 		c.SpriteIdx = 0
 	}
 	return
-}
-
-func (c *Character) Clone() *Character {
-	return &Character{
-		Name:   c.Name,
-		Sprite: c.Sprite,
-		Color:  c.Color,
-	}
 }
 
 func (c *Character) RemoveMe() bool {

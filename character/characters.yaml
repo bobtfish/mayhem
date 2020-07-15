@@ -515,6 +515,7 @@
    range: 0
    defence: 4
    movement: 5
+   flying: true
    magical_resistance: 6
    manoeuvre: 7
    unknown: 5
@@ -542,6 +543,7 @@
    range: 0
    defence: 5
    movement: 5
+   flying: true
    magical_resistance: 5
    manoeuvre: 6
    unknown: 5
@@ -569,6 +571,7 @@
    range: 3
    defence: 6
    movement: 5
+   flying: true
    magical_resistance: 6
    manoeuvre: 8
    unknown: 3
@@ -596,6 +599,7 @@
    range: 0
    defence: 1
    movement: 5
+   flying: true
    magical_resistance: 9
    manoeuvre: 4
    unknown: 7
@@ -623,6 +627,7 @@
    range: 6
    defence: 8
    movement: 3
+   flying: true
    magical_resistance: 4
    manoeuvre: 4
    unknown: 0
@@ -650,6 +655,7 @@
    range: 5
    defence: 9
    movement: 3
+   flying: true
    magical_resistance: 4
    manoeuvre: 5
    unknown: 0
@@ -677,6 +683,7 @@
    range: 4
    defence: 9
    movement: 3
+   flying: true
    magical_resistance: 5
    manoeuvre: 5
    unknown: 0
@@ -704,6 +711,7 @@
    range: 0
    defence: 2
    movement: 5
+   flying: true
    magical_resistance: 8
    manoeuvre: 5
    unknown: 5
@@ -731,6 +739,7 @@
    range: 0
    defence: 3
    movement: 6
+   flying: true
    magical_resistance: 8
    manoeuvre: 2
    unknown: 6
@@ -758,6 +767,7 @@
    range: 0
    defence: 8
    movement: 4
+   flying: true
    magical_resistance: 6
    manoeuvre: 5
    unknown: 1
@@ -766,6 +776,7 @@
    color_r: 255
    color_g: 0
    color_b: 0
+   undead: true
    sprites:
     - - 5
       - 9
@@ -785,6 +796,7 @@
    range: 0
    defence: 3
    movement: 2
+   flying: true
    magical_resistance: 9
    manoeuvre: 6
    unknown: 4
@@ -793,6 +805,7 @@
    color_r: 103
    color_g: 216
    color_b: 216
+   undead: true
    sprites:
     - - 0
       - 11
@@ -817,6 +830,7 @@
    unknown: 5
    law_chaos: -1
    strength: 15
+   undead: true
    color_r: 255
    color_g: 255
    color_b: 255
@@ -858,6 +872,7 @@
    magical_resistance: 4
    manoeuvre: 5
    unknown: 4
+   undead: true
    law_chaos: -1
    strength: 10
    color_r: 100
@@ -885,6 +900,7 @@
    magical_resistance: 3
    manoeuvre: 4
    unknown: 6
+   undead: true
    law_chaos: -1
    strength: 17
    color_r: 255
@@ -912,6 +928,7 @@
    magical_resistance: 2
    manoeuvre: 3
    unknown: 4
+   undead: true
    law_chaos: -1
    strength: 25
    color_r: 114
@@ -958,7 +975,7 @@
     - 9
     - 6
 
- - name: Fire
+ - name: Magic Fire
    combat: 0
    ranged_combat: 0
    range: 0

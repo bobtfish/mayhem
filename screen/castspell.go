@@ -60,7 +60,7 @@ func (screen *DisplaySpellCastScreen) Step(ss pixel.Picture, win *pixelgl.Window
 	}
 	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
 	batch := screen.WithBoard.DrawBoard(ss, win)
-	render.NewTextDrawer(ss).DrawText(fmt.Sprintf("%s %s %d", thisPlayer.Name, spell.GetName(), spell.GetRange()), logical.V(0, 0), batch)
+	render.NewTextDrawer(ss).DrawText(fmt.Sprintf("%s %s %d", thisPlayer.Name, spell.GetName(), spell.GetCastRange()), logical.V(0, 0), batch)
 	batch.Draw(win)
 	if win.JustPressed(pixelgl.KeyS) || !captureDirectionKey(win).Equals(logical.ZeroVec()) {
 		return &TargetSpellScreen{
@@ -93,9 +93,9 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
 	batch := screen.WithBoard.DrawBoard(ss, win)
 
-	if spell.GetRange() == 0 {
+	if spell.GetCastRange() == 0 {
 		target := screen.WithBoard.CursorPosition
-		fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetRange(), target.X, target.Y)
+		fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetCastRange(), target.X, target.Y)
 		return screen.AnimateAndCast()
 	} else {
 		if screen.WithBoard.MoveCursor(win) || !screen.OutOfRange {
@@ -106,12 +106,12 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 		if win.JustPressed(pixelgl.KeyS) {
 			target := screen.WithBoard.CursorPosition
 			// FIXME can we cast the spell here?
-			if spell.GetRange() < target.Distance(screen.Players[screen.PlayerIdx].BoardPosition) {
+			if spell.GetCastRange() < target.Distance(screen.Players[screen.PlayerIdx].BoardPosition) {
 				render.NewTextDrawer(ss).DrawText("Out of range", logical.ZeroVec(), batch)
 				screen.OutOfRange = true
 			} else {
 				if spell.CanCast(screen.WithBoard.Grid.GetGameObject(target)) {
-					fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetRange(), target.X, target.Y)
+					fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetCastRange(), target.X, target.Y)
 					return screen.AnimateAndCast()
 				} else {
 					fmt.Printf("Cannot cast on non-empty square\n")
