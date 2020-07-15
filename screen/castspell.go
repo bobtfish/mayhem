@@ -105,9 +105,8 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 		// FIXME does bottom bar text update when you move over something?
 		if win.JustPressed(pixelgl.KeyS) {
 			target := screen.WithBoard.CursorPosition
-			// FIXME can we cast the spell here?
 			if spell.GetCastRange() < target.Distance(screen.Players[screen.PlayerIdx].BoardPosition) {
-				render.NewTextDrawer(ss).DrawText("Out of range", logical.ZeroVec(), batch)
+				render.NewTextDrawer(ss).DrawText("Out of range                   ", logical.ZeroVec(), batch)
 				screen.OutOfRange = true
 			} else {
 				if spell.CanCast(screen.WithBoard.Grid.GetGameObject(target)) {
