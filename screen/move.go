@@ -57,7 +57,7 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 		return screen.NextMove()
 	}
 	if win.JustPressed(pixelgl.KeyS) {
-		// FIXME work out what's in this square, start moving it if movable and it belongs to the current player
+		// work out what's in this square, start moving it if movable and it belongs to the current player
 		ob, isMovable := screen.WithBoard.Grid.GetGameObject(screen.WithBoard.CursorPosition).(movable.Movable)
 		if isMovable {
 			fmt.Printf("Is movable\n")
@@ -67,6 +67,8 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 					fmt.Printf("Not movable (0 movement range)\n")
 					return screen
 				}
+
+				// Definitely something we can move
 				if ob.IsFlying() {
 					return &MoveFlyingCharacterScreen{
 						WithBoard: screen.WithBoard,
@@ -112,6 +114,12 @@ func (screen *MoveGroundCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Wi
 	fmt.Printf("Enter move ground character screen for player %d\n", screen.PlayerIdx+1)
 }
 
+func doCharacterMove(from, to logical.Vec, grid grid.GameGrid) {
+	character := grid.GetGameObjectStack(from).RemoveTopObject()
+	character.SetBoardPosition(to)
+	screen.WithBoard.Grid.PlaceGameObject(to, ob)
+}
+
 func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	render.NewTextDrawer(ss).DrawText(fmt.Sprintf("Movement range=%d", screen.MovementLeft), logical.V(0, 0), batch)
@@ -134,10 +142,7 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			fmt.Printf("Target square is not empty\n")
 			return screen
 		}
-		screen.WithBoard.Grid.GetGameObjectStack(currentLocation).RemoveTopObject()
-		// FIXME type cast here, puke
-		screen.WithBoard.Grid.PlaceGameObject(newLocation, screen.Character.(grid.GameObjectStackable))
-		screen.Character.SetBoardPosition(newLocation)
+		doCharacterMove(currentLocation, newLocation, screen.WithBoard.Grid)
 		screen.WithBoard.CursorPosition = newLocation
 
 		// Do the D&D diagonal move thing
@@ -202,10 +207,7 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 				return screen
 			}
 			fmt.Printf("Executing move\n")
-			screen.WithBoard.Grid.GetGameObjectStack(currentLocation).RemoveTopObject()
-			// FIXME type cast here, puke
-			screen.WithBoard.Grid.PlaceGameObject(screen.WithBoard.CursorPosition, screen.Character.(grid.GameObjectStackable))
-			screen.Character.SetBoardPosition(screen.WithBoard.CursorPosition)
+			doCharacterMove(currentLocation, newLocation, screen.WithBoard.Grid)
 
 			return &MoveFindCharacterScreen{
 				WithBoard: screen.WithBoard,
