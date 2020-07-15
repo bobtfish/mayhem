@@ -114,10 +114,10 @@ func (screen *MoveGroundCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Wi
 	fmt.Printf("Enter move ground character screen for player %d\n", screen.PlayerIdx+1)
 }
 
-func doCharacterMove(from, to logical.Vec, grid grid.GameGrid) {
+func doCharacterMove(from, to logical.Vec, grid *grid.GameGrid) {
 	character := grid.GetGameObjectStack(from).RemoveTopObject()
 	character.SetBoardPosition(to)
-	screen.WithBoard.Grid.PlaceGameObject(to, ob)
+	grid.PlaceGameObject(to, character)
 }
 
 func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
@@ -207,7 +207,7 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 				return screen
 			}
 			fmt.Printf("Executing move\n")
-			doCharacterMove(currentLocation, newLocation, screen.WithBoard.Grid)
+			doCharacterMove(currentLocation, screen.WithBoard.CursorPosition, screen.WithBoard.Grid)
 
 			return &MoveFindCharacterScreen{
 				WithBoard: screen.WithBoard,
