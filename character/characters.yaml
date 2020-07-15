@@ -958,6 +958,7 @@
    unknown: 0
    law_chaos: 0
    strength: 40
+   cast_range: 6
    color_r: 112
    color_g: 255
    color_b: 74
@@ -989,6 +990,7 @@
    color_r: 215
    color_g: 211
    color_b: 86
+   cast_range: 6
    sprites:
     - - 5
       - 5
@@ -1035,6 +1037,7 @@
    unknown: 4
    law_chaos: -2
    strength: 30
+   cast_range: 8
    sprites:
     - - 5
       - 3
@@ -1053,6 +1056,7 @@
    color_r: 0
    color_g: 255
    color_b: 255
+   cast_range: 8
 # ALTERNATE - ANIMATED
 #   color_r: 0
 #   color_g: 204
@@ -1075,6 +1079,7 @@
    color_r: 255
    color_g: 0
    color_b: 255
+   cast_range: 8 # FIXME not sure if this is right for original game, just used Magic Castle
 # ALTERNATE - ANIMATED
 #   color_r: 204
 #   color_g: 0
@@ -1097,6 +1102,7 @@
    color_r: 255
    color_g: 0
    color_b: 0
+   cast_range: 6
 # ALTERNATE - BLACK =
 #   color_r: 255
 #   color_g: 255

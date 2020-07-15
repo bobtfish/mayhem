@@ -81,7 +81,7 @@ func (p *Player) CastSpell(target logical.Vec, grid *grid.GameGrid) bool {
 	ret := spell.DoesCastWork(p.LawRating)
 	if ret {
 		fmt.Printf("Player spell %T cast on %T\n", spell, target)
-		spell.Cast(target, grid)
+		spell.Cast(target, grid, p)
 	}
 	p.ChosenSpell = -1
 	return ret
@@ -102,7 +102,7 @@ func (s PlayerSpell) CanCast(target grid.GameObject) bool {
 	return false
 }
 
-func (s PlayerSpell) Cast(target logical.Vec, grid *grid.GameGrid) {
+func (s PlayerSpell) Cast(target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) {
 	tile := grid.GetGameObject(target)
 	player := tile.(*Player)
 	s.MutateFunc(player)

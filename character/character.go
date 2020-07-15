@@ -8,6 +8,7 @@ import (
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
 	"github.com/bobtfish/mayhem/spells"
 )
@@ -32,6 +33,7 @@ type CharacterType struct {
 	ColorG            int     `yaml:"color_g"`
 	ColorB            int     `yaml:"color_b"`
 	Undead            bool    `yaml:"undead"`
+	CastRange         int     `yaml:"cast_range"`
 }
 
 func LoadCharacterTemplates() {
@@ -47,18 +49,20 @@ func LoadCharacterTemplates() {
 		if v.DeadSprite == nil {
 			v.DeadSprite = make([]int, 0)
 		}
-		castRange := 1
+		if v.CastRange == 0 {
+			v.CastRange = 1
+		}
 		//fmt.Printf("Create %s range %d\n", v.Name, castRange)
 		spells.CreateSpell(CharacterSpell{
 			Name:          v.Name,
 			LawRating:     v.LawChaos,
 			CastingChance: 100, // FIXME
-			CastRange:     castRange,
 			Sprite:        logical.V(v.Sprites[0][0], v.Sprites[0][1]),
 			Color:         render.GetColor(v.ColorR, v.ColorG, v.ColorB),
 			Movement:      v.Movement,
 			Flying:        v.Flying,
 			Undead:        v.Undead,
+			CastRange:     v.CastRange,
 		})
 	}
 }
@@ -108,8 +112,8 @@ func (s CharacterSpell) CanCast(target grid.GameObject) bool {
 	return false
 }
 
-func (s CharacterSpell) Cast(target logical.Vec, grid *grid.GameGrid) {
-	grid.PlaceGameObject(target, s.CreateCharacter())
+func (s CharacterSpell) Cast(target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) {
+	grid.PlaceGameObject(target, s.CreateCharacter(castor))
 }
 
 func (s CharacterSpell) IsReuseable() bool {
@@ -122,7 +126,7 @@ func (s CharacterSpell) CastFx() *fx.Fx {
 
 // Spell interface end
 
-func (s CharacterSpell) CreateCharacter() *Character {
+func (s CharacterSpell) CreateCharacter(castor grid.GameObject) *Character {
 	return &Character{
 		Name:     s.Name,
 		Sprite:   s.Sprite,
@@ -130,6 +134,9 @@ func (s CharacterSpell) CreateCharacter() *Character {
 		Movement: s.Movement,
 		Flying:   s.Flying,
 		Undead:   s.Undead,
+
+		// FIXME - ugh this is gross, runtime typing ;)
+		BelongsTo: castor.(*player.Player),
 	}
 }
 
@@ -141,6 +148,8 @@ type Character struct {
 	Movement int
 	Flying   bool
 	Undead   bool
+
+	BelongsTo *player.Player
 	// Remember to add any fields you add here to the Clone method
 
 	Corpse        bool
@@ -150,12 +159,13 @@ type Character struct {
 
 func (c *Character) Clone() *Character {
 	return &Character{
-		Name:     c.Name,
-		Sprite:   c.Sprite,
-		Color:    c.Color,
-		Movement: c.Movement,
-		Flying:   c.Flying,
-		Undead:   c.Undead,
+		Name:      c.Name,
+		Sprite:    c.Sprite,
+		Color:     c.Color,
+		Movement:  c.Movement,
+		Flying:    c.Flying,
+		Undead:    c.Undead,
+		BelongsTo: c.BelongsTo,
 	}
 }
 
