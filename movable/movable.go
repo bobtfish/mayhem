@@ -17,3 +17,8 @@ type Attackable interface {
 	GetDefence() int
 	CheckBelongsTo(*player.Player) bool
 }
+
+type Corpseable interface {
+	CanMakeCorpse() bool
+	MakeCorpse()
+}

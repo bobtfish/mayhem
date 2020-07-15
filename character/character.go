@@ -48,7 +48,9 @@ func LoadCharacterTemplates() {
 			v.Sprites = make([][]int, 0)
 		}
 		if v.DeadSprite == nil {
-			v.DeadSprite = make([]int, 0)
+			v.DeadSprite = make([]int, 2)
+			v.DeadSprite[0] = 0
+			v.DeadSprite[1] = 0
 		}
 		if v.CastRange == 0 {
 			v.CastRange = 1
@@ -65,6 +67,7 @@ func LoadCharacterTemplates() {
 			Undead:        v.Undead,
 			CastRange:     v.CastRange,
 			Defence:       v.Defence,
+			DeadSprite:    logical.V(v.DeadSprite[0], v.DeadSprite[1]),
 		})
 	}
 }
@@ -76,6 +79,7 @@ type CharacterSpell struct {
 	CastingChance int
 	CastRange     int
 	Sprite        logical.Vec
+	DeadSprite    logical.Vec
 	Color         color.Color
 	Movement      int
 	Flying        bool
@@ -131,13 +135,14 @@ func (s CharacterSpell) CastFx() *fx.Fx {
 
 func (s CharacterSpell) CreateCharacter(castor grid.GameObject) *Character {
 	return &Character{
-		Name:     s.Name,
-		Sprite:   s.Sprite,
-		Color:    s.Color,
-		Movement: s.Movement,
-		Flying:   s.Flying,
-		Undead:   s.Undead,
-		Defence:  s.Defence,
+		Name:       s.Name,
+		Sprite:     s.Sprite,
+		Color:      s.Color,
+		Movement:   s.Movement,
+		Flying:     s.Flying,
+		Undead:     s.Undead,
+		Defence:    s.Defence,
+		DeadSprite: s.DeadSprite,
 
 		// FIXME - ugh this is gross, runtime typing ;)
 		BelongsTo: castor.(*player.Player),
@@ -146,13 +151,15 @@ func (s CharacterSpell) CreateCharacter(castor grid.GameObject) *Character {
 
 // This is the actual character that gets created
 type Character struct {
-	Name     string
-	Sprite   logical.Vec
-	Color    color.Color
-	Movement int
-	Flying   bool
-	Undead   bool
-	Defence  int
+	Name       string
+	Sprite     logical.Vec
+	Color      color.Color
+	Movement   int
+	Flying     bool
+	Undead     bool
+	Defence    int
+	DeadSprite logical.Vec
+	IsDead     bool
 
 	BelongsTo *player.Player
 	// Remember to add any fields you add here to the Clone method
@@ -192,6 +199,9 @@ func (c *Character) IsEmpty() bool {
 }
 
 func (c *Character) GetSpriteSheetCoordinates() logical.Vec {
+	if c.IsDead {
+		return c.DeadSprite
+	}
 	return c.Sprite.Add(logical.V(c.SpriteIdx, 0))
 }
 
@@ -218,6 +228,9 @@ func (c *Character) RemoveMe() bool {
 // Movable interface BEGIN
 
 func (c *Character) GetMovement() int {
+	if c.IsDead {
+		return 0
+	}
 	return c.Movement
 }
 
@@ -246,3 +259,19 @@ func (c *Character) GetDefence() int {
 // SetBoardPosition is in GameObject interface also
 
 // Attackable interface END
+
+// Corpseable interface BEGIN
+
+func (c *Character) CanMakeCorpse() bool {
+	if c.Undead {
+		return false
+	}
+	if c.DeadSprite.Equals(logical.ZeroVec()) {
+		return false
+	}
+	return true
+}
+
+func (c *Character) MakeCorpse() {
+	c.IsDead = true
+}
