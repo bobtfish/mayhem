@@ -27,6 +27,15 @@ func (screen *MoveAnnounceScreen) Step(ss pixel.Picture, win *pixelgl.Window) Ga
 	render.NewTextDrawer(ss).DrawText(fmt.Sprintf("%s's turn", screen.Players[screen.PlayerIdx].Name), logical.V(0, 0), batch)
 	batch.Draw(win)
 
+	// 0 skips movement turn
+	if win.JustPressed(pixelgl.Key0) {
+		return &MoveAnnounceScreen{
+			WithBoard: screen.WithBoard,
+			PlayerIdx: screen.PlayerIdx + 1,
+		}
+	}
+
+	// any other key displays the cursor
 	if win.JustPressed(pixelgl.KeyS) || captureDirectionKey(win) != logical.ZeroVec() {
 		return &MoveFindCharacterScreen{
 			WithBoard: screen.WithBoard,
@@ -144,7 +153,7 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			if attackable {
 				fmt.Printf("Target square is attackable\n")
 				if !ob.CheckBelongsTo(screen.Players[screen.PlayerIdx]) {
-					fmt.Printf("Target square belongs to a different player, do attack\n")
+					fmt.Printf("Target square belongs to a different player do attack\n")
 					return &DoAttack{
 						AttackerV: currentLocation,
 						DefenderV: newLocation,
