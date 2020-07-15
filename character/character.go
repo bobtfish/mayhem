@@ -68,6 +68,7 @@ func LoadCharacterTemplates() {
 			CastRange:     v.CastRange,
 			Defence:       v.Defence,
 			DeadSprite:    logical.V(v.DeadSprite[0], v.DeadSprite[1]),
+			Combat:        v.Combat,
 		})
 	}
 }
@@ -85,6 +86,7 @@ type CharacterSpell struct {
 	Flying        bool
 	Undead        bool
 	Defence       int
+	Combat        int
 }
 
 // Spell interface begin
@@ -143,8 +145,9 @@ func (s CharacterSpell) CreateCharacter(castor grid.GameObject) *Character {
 		Undead:     s.Undead,
 		Defence:    s.Defence,
 		DeadSprite: s.DeadSprite,
+		Combat:     s.Combat,
 
-		// FIXME - ugh this is gross, runtime typing ;)
+		// FIXME - ugh this is gross - would it be better done up a level?
 		BelongsTo: castor.(*player.Player),
 	}
 }
@@ -158,27 +161,30 @@ type Character struct {
 	Flying     bool
 	Undead     bool
 	Defence    int
+	Combat     int
 	DeadSprite logical.Vec
 	IsDead     bool
 
 	BelongsTo *player.Player
 	// Remember to add any fields you add here to the Clone method
 
-	Corpse        bool
 	SpriteIdx     int
 	BoardPosition logical.Vec
 }
 
 func (c *Character) Clone() *Character {
 	return &Character{
-		Name:      c.Name,
-		Sprite:    c.Sprite,
-		Color:     c.Color,
-		Movement:  c.Movement,
-		Flying:    c.Flying,
-		Undead:    c.Undead,
-		Defence:   c.Defence,
-		BelongsTo: c.BelongsTo,
+		Name:       c.Name,
+		Sprite:     c.Sprite,
+		Color:      c.Color,
+		Movement:   c.Movement,
+		Flying:     c.Flying,
+		Undead:     c.Undead,
+		Defence:    c.Defence,
+		Combat:     c.Combat,
+		DeadSprite: c.DeadSprite,
+		IsDead:     c.IsDead,
+		BelongsTo:  c.BelongsTo,
 	}
 }
 
