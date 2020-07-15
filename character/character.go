@@ -170,7 +170,7 @@ func (c *Character) Clone() *Character {
 	}
 }
 
-// GameObject interface BEGIN
+// GameObject + GameObjectStackable interface BEGIN
 func (c *Character) AnimationTick(odd bool) {
 	if odd {
 		return
@@ -180,10 +180,6 @@ func (c *Character) AnimationTick(odd bool) {
 		c.SpriteIdx = 0
 	}
 	return
-}
-
-func (c *Character) RemoveMe() bool {
-	return false // FIXME - what about if destroyed
 }
 
 func (c *Character) IsEmpty() bool {
@@ -196,7 +192,6 @@ func (c *Character) GetSpriteSheetCoordinates() logical.Vec {
 
 func (c *Character) GetColor() color.Color {
 	return c.Color
-	//    return render.GetColor(c.ColorR, c.ColorG, c.ColorB)
 }
 
 func (c *Character) Describe() string {
@@ -207,64 +202,26 @@ func (c *Character) SetBoardPosition(v logical.Vec) {
 	c.BoardPosition = v
 }
 
-/*
-func (ct CharacterTypes) NewCharacter(typeName string) *Character {
-	c := ct[typeName]
-	ch := &Character{CharacterType: c}
-
-	spriteCount := len(ch.Sprites)
-	if spriteCount > 1 {
-		ch.SpriteIdx = rand.Intn(spriteCount - 1)
-	}
-
-	return ch
-}
-
-// GameObject interface BEGIN
-func (c *Character) AnimationTick() {
-	if c.Sprites == nil {
-		return
-	}
-	spriteCount := len(c.Sprites)
-	if spriteCount == 0 {
-		return
-	}
-	c.SpriteIdx++
-	if c.SpriteIdx == spriteCount {
-		c.SpriteIdx = 0
-	}
-	return
-}
-
-func (c *Character) RemoveMe() bool {
-	return false
-}
-
-func (c *Character) IsEmpty() bool {
-	return false
-}
-
-func (c *Character) GetSpriteSheetCoordinates() logical.Vec {
-	return logical.V(c.Sprites[c.SpriteIdx][0], c.Sprites[c.SpriteIdx][1])
-}
-
-func (c *Character) GetColor() color.Color {
-	return render.GetColor(c.ColorR, c.ColorG, c.ColorB)
-}
-
-func (c *Character) Describe() string {
-	return c.Name
-}
-
-func (c *Character) SetBoardPosition(v logical.Vec) {
-	c.BoardPosition = v
-}
-
 // GameObject interface END
 
-func (c *Character) GetColorMask() color.Color {
-	if c.ColorR == 0 && c.ColorG == 0 && c.ColorB == 0 {
-		return pixel.RGB(1, 1, 1)
-	}
-	return pixel.RGB(float64(c.ColorR)/255, float64(c.ColorG)/255, float64(c.ColorB)/255)
-} */
+func (c *Character) RemoveMe() bool {
+	return false // FIXME - what about if destroyed
+}
+
+// GameObjectStackable interface END
+
+// Movable interface BEGIN
+
+func (c *Character) GetMovement() int {
+	return c.Movement
+}
+
+func (c *Character) IsFlying() bool {
+	return c.Flying
+}
+
+func (c *Character) CheckBelongsTo(player *player.Player) bool {
+	return player == c.BelongsTo
+}
+
+// Movable interface END

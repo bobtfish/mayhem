@@ -27,6 +27,8 @@ type Player struct {
 	BoardPosition logical.Vec
 	IsAnimated    bool
 	SpriteIdx     int
+
+	Flying bool // If the player has magic wings
 }
 
 // GameObject interface
@@ -68,7 +70,27 @@ func (p *Player) RemoveMe() bool {
 	return false
 }
 
-//targetVec, screen.WithBoard.Grid
+// End GameObjectStackable interface
+
+// Movable interface BEGIN
+
+func (p *Player) GetMovement() int {
+	if p.Flying {
+		return 6 // FIXME - is this right?
+	}
+	return 1
+}
+
+func (p *Player) IsFlying() bool {
+	return p.Flying
+}
+
+func (p *Player) CheckBelongsTo(player *Player) bool {
+	return player == p
+}
+
+// Movable interface END
+
 func (p *Player) CastSpell(target logical.Vec, grid *grid.GameGrid) bool {
 	fmt.Printf("IN Player spell cast\n")
 	i := p.ChosenSpell

@@ -8,6 +8,7 @@ import (
 
 	"github.com/bobtfish/mayhem/character"
 	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/movable"
 	"github.com/bobtfish/mayhem/render"
 )
 
@@ -57,6 +58,13 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 	}
 	if win.JustPressed(pixelgl.KeyS) {
 		// FIXME work out what's in this square, start moving it if movable and it belongs to the current player
+		ob, isMovable := screen.WithBoard.Grid.GetGameObject(screen.WithBoard.CursorPosition).(movable.Movable)
+		if isMovable {
+			fmt.Printf("Is movable\n")
+			if ob.CheckBelongsTo(screen.Players[screen.PlayerIdx]) {
+				fmt.Printf("Belongs to this player\n")
+			}
+		}
 	}
 
 	return screen
