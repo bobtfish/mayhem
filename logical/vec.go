@@ -76,3 +76,11 @@ func (v Vec) ToPixelRect(scale Vec, offsets ...Vec) pixel.Rect {
 		Max: min.Add(scale).ToPixelVec(),
 	}
 }
+
+func (v Vec) IsDiagonal() bool {
+	a := v.Abs()
+	if a.X > 0 && a.Y > 0 {
+		return true
+	}
+	return false
+}

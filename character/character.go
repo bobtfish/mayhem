@@ -224,4 +224,10 @@ func (c *Character) CheckBelongsTo(player *player.Player) bool {
 	return player == c.BelongsTo
 }
 
+// SetBoardPosition is in GameObject interface also
+
+func (c *Character) GetBoardPosition() logical.Vec {
+	return c.BoardPosition
+}
+
 // Movable interface END

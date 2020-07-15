@@ -6,10 +6,10 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/bobtfish/mayhem/character"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
 	"github.com/bobtfish/mayhem/render"
+    "github.com/bobtfish/mayhem/grid"
 )
 
 type MoveAnnounceScreen struct {
@@ -63,6 +63,19 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 			fmt.Printf("Is movable\n")
 			if ob.CheckBelongsTo(screen.Players[screen.PlayerIdx]) {
 				fmt.Printf("Belongs to this player\n")
+				if ob.IsFlying() {
+					return &MoveFlyingCharacterScreen{
+						WithBoard: screen.WithBoard,
+						PlayerIdx: screen.PlayerIdx,
+						Character: ob,
+					}
+				}
+				return &MoveGroundCharacterScreen{
+					WithBoard:    screen.WithBoard,
+					PlayerIdx:    screen.PlayerIdx,
+					Character:    ob,
+					MovementLeft: ob.GetMovement(),
+				}
 			}
 		}
 	}
@@ -85,8 +98,9 @@ func (screen *MoveFindCharacterScreen) NextMove() GameScreen {
 type MoveGroundCharacterScreen struct {
 	*WithBoard
 	PlayerIdx    int
-	Character    *character.Character // FIXME needs to be able to be a player
+	Character    movable.Movable
 	MovementLeft int
+	NumDiagonals int
 }
 
 func (screen *MoveGroundCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -96,21 +110,55 @@ func (screen *MoveGroundCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Wi
 
 func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
-	screen.WithBoard.DrawCursor(ss, batch)
-	screen.WithBoard.MoveCursor(win)
+	render.NewTextDrawer(ss).DrawText(fmt.Sprintf("Movement range=%d", screen.MovementLeft), logical.V(0, 0), batch)
 	batch.Draw(win)
 
 	direction := captureDirectionKey(win)
 	if direction != logical.ZeroVec() {
-		// FIXME work out if we can move to this square at all - if not ignore, if nothing move to it, if something attack it if owned by other player
+		fmt.Printf("Try to move in v(%d, %d)\n", direction.X, direction.Y)
+		// work out if we can move to this square at all - if not ignore, if nothing move to it, if something attack it if owned by other player
+		currentLocation := screen.Character.GetBoardPosition()
+		newLocation := currentLocation.Add(direction)
+		if !screen.WithBoard.Grid.AsRect().Contains(newLocation) {
+			fmt.Printf("Cannot move out of screen\n")
+			return screen
+		}
+		target := screen.WithBoard.Grid.GetGameObject(newLocation)
+		// FIXME we can move into non-empty squares to attack
+		if !target.IsEmpty() {
+			fmt.Printf("Target square is not empty\n")
+			return screen
+		}
+		screen.WithBoard.Grid.GetGameObjectStack(currentLocation).RemoveTopObject()
+        // FIXME type cast here, puke
+		screen.WithBoard.Grid.PlaceGameObject(newLocation, screen.Character.(grid.GameObjectStackable))
+		screen.Character.SetBoardPosition(newLocation)
+        screen.WithBoard.CursorPosition = newLocation
+
+		// Do the D&D diagonal move thing
+		if direction.IsDiagonal() {
+			screen.NumDiagonals++
+			if screen.NumDiagonals%2 == 0 {
+				screen.MovementLeft--
+			}
+		}
+		screen.MovementLeft--
+
+		if screen.MovementLeft <= 0 {
+			return &MoveFindCharacterScreen{
+				WithBoard: screen.WithBoard,
+				PlayerIdx: screen.PlayerIdx,
+			}
+		}
 	}
 	return screen
 }
 
 type MoveFlyingCharacterScreen struct {
 	*WithBoard
-	PlayerIdx int
-	Character *character.Character // FIXME needs to be able to be a player
+	PlayerIdx     int
+	Character     movable.Movable
+	DisplayCursor bool
 }
 
 func (screen *MoveFlyingCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {

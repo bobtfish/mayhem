@@ -268,3 +268,27 @@ func TestVecDistance(t *testing.T) {
 		t.Errorf("v(0, 0) to v(10, 4) should be distance 12, not %d", d)
 	}
 }
+
+func TestIsDiagonal(t *testing.T) {
+	if ZeroVec().IsDiagonal() {
+		t.Errorf("v(0, 0) is diagonal")
+	}
+	if !IdentityVec().IsDiagonal() {
+		t.Errorf("v(1, 1) is not diagonal")
+	}
+	if V(1, 0).IsDiagonal() {
+		t.Errorf("v(1, 0) is diagonal")
+	}
+	if V(0, 1).IsDiagonal() {
+		t.Errorf("v(0, 1) is diagonal")
+	}
+	if V(-1, 0).IsDiagonal() {
+		t.Errorf("v(-1, 0) is diagonal")
+	}
+	if V(0, -1).IsDiagonal() {
+		t.Errorf("v(0, -1) is diagonal")
+	}
+	if !V(-1, -1).IsDiagonal() {
+		t.Errorf("v(-1, -1) is not diagonal")
+	}
+}

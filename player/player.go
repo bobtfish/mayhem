@@ -60,10 +60,6 @@ func (p *Player) Describe() string {
 	return p.Name
 }
 
-func (p *Player) SetBoardPosition(v logical.Vec) {
-	p.BoardPosition = v
-}
-
 // GameObjectStackable interface
 
 func (p *Player) RemoveMe() bool {
@@ -87,6 +83,14 @@ func (p *Player) IsFlying() bool {
 
 func (p *Player) CheckBelongsTo(player *Player) bool {
 	return player == p
+}
+
+func (p *Player) SetBoardPosition(v logical.Vec) {
+	p.BoardPosition = v
+}
+
+func (p *Player) GetBoardPosition() logical.Vec {
+	return p.BoardPosition
 }
 
 // Movable interface END
