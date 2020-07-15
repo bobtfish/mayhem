@@ -160,21 +160,28 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 
 type MoveFlyingCharacterScreen struct {
 	*WithBoard
-	PlayerIdx  int
-	Character  movable.Movable
-	OutOfRange bool
+	PlayerIdx    int
+	Character    movable.Movable
+	OutOfRange   bool
+	DisplayRange bool
 }
 
 func (screen *MoveFlyingCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
 	screen.WithBoard.CursorSprite = CURSOR_FLY
 	fmt.Printf("Enter move flying character screen for player %d\n", screen.PlayerIdx+1)
+	screen.DisplayRange = true // Set this to start to supress cursor till we move it
 }
 
 func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
-	if screen.WithBoard.MoveCursor(win) || !screen.OutOfRange {
+	if screen.DisplayRange {
+		render.NewTextDrawer(ss).DrawText(fmt.Sprintf("Movement range=%d (flying)", screen.Character.GetMovement()), logical.ZeroVec(), batch)
+	}
+	cursorMoved := screen.WithBoard.MoveCursor(win)
+	if cursorMoved || (!screen.OutOfRange && !screen.DisplayRange) {
 		screen.OutOfRange = false
+		screen.DisplayRange = false
 		screen.WithBoard.DrawCursor(ss, batch)
 	}
 
