@@ -140,6 +140,19 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 		// FIXME we can move into non-empty squares to attack
 		if !target.IsEmpty() {
 			fmt.Printf("Target square is not empty\n")
+			ob, attackable := target.(movable.Attackable)
+			if attackable {
+				fmt.Printf("Target square is attackable\n")
+				if !ob.CheckBelongsTo(screen.Players[screen.PlayerIdx]) {
+					fmt.Printf("Target square belongs to a different player, do attack\n")
+					fx := fx.FxAttack()
+					screen.WithBoard.Grid.PlaceObject(newLocation, fx)
+					return &DoAttack{
+						Fx:        fx,
+						WithBoard: screen.WithBoard,
+					}
+				}
+			}
 			return screen
 		}
 		doCharacterMove(currentLocation, newLocation, screen.WithBoard.Grid)

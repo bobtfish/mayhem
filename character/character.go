@@ -64,6 +64,7 @@ func LoadCharacterTemplates() {
 			Flying:        v.Flying,
 			Undead:        v.Undead,
 			CastRange:     v.CastRange,
+			Defence:       v.Defence,
 		})
 	}
 }
@@ -79,6 +80,7 @@ type CharacterSpell struct {
 	Movement      int
 	Flying        bool
 	Undead        bool
+	Defence       int
 }
 
 // Spell interface begin
@@ -135,6 +137,7 @@ func (s CharacterSpell) CreateCharacter(castor grid.GameObject) *Character {
 		Movement: s.Movement,
 		Flying:   s.Flying,
 		Undead:   s.Undead,
+		Defence:  s.Defence,
 
 		// FIXME - ugh this is gross, runtime typing ;)
 		BelongsTo: castor.(*player.Player),
@@ -149,6 +152,7 @@ type Character struct {
 	Movement int
 	Flying   bool
 	Undead   bool
+	Defence  int
 
 	BelongsTo *player.Player
 	// Remember to add any fields you add here to the Clone method
@@ -166,6 +170,7 @@ func (c *Character) Clone() *Character {
 		Movement:  c.Movement,
 		Flying:    c.Flying,
 		Undead:    c.Undead,
+		Defence:   c.Defence,
 		BelongsTo: c.BelongsTo,
 	}
 }
@@ -231,3 +236,13 @@ func (c *Character) GetBoardPosition() logical.Vec {
 }
 
 // Movable interface END
+
+// Attackable interface BEGIN
+
+func (c *Character) GetDefence() int {
+	return c.Defence
+}
+
+// SetBoardPosition is in GameObject interface also
+
+// Attackable interface END

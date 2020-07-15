@@ -15,11 +15,17 @@ type Fx struct {
 	SpriteCount int
 	SpriteIdx   int
 	Color       color.Color
+	RepeatIdx   int
+	RepeatCount int
 }
 
 // GameObject interface START
 func (c *Fx) AnimationTick(odd bool) {
 	c.SpriteIdx++
+	if c.SpriteIdx == c.SpriteCount && c.RepeatIdx < c.RepeatCount {
+		c.RepeatIdx++
+		c.SpriteIdx = 0
+	}
 }
 
 func (c *Fx) RemoveMe() bool {
@@ -83,10 +89,11 @@ func FxBoom() *Fx {
 	}
 }
 
-func FxPop() *Fx {
+func FxAttack() *Fx {
 	return &Fx{
 		SpriteVec:   logical.V(0, 24),
 		SpriteCount: 4,
 		Color:       render.GetColor(255, 255, 255),
+		RepeatCount: 3,
 	}
 }

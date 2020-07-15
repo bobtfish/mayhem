@@ -95,6 +95,16 @@ func (p *Player) GetBoardPosition() logical.Vec {
 
 // Movable interface END
 
+// Attackable interface BEGIN
+
+func (p *Player) GetDefence() int {
+	return 3
+}
+
+// SetBoardPosition is in GameObject interface also
+
+// Attackable interface END
+
 func (p *Player) CastSpell(target logical.Vec, grid *grid.GameGrid) bool {
 	fmt.Printf("IN Player spell cast\n")
 	i := p.ChosenSpell
