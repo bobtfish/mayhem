@@ -1,6 +1,7 @@
 package character
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"image/color"
 	"math/rand"
@@ -199,7 +200,7 @@ func (c *Character) GetColor() color.Color {
 }
 
 func (c *Character) Describe() string {
-	return c.Name
+	return fmt.Sprintf("%s (%s)", c.Name, c.BelongsTo.Name)
 }
 
 func (c *Character) SetBoardPosition(v logical.Vec) {
