@@ -106,6 +106,7 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 		if win.JustPressed(pixelgl.KeyS) {
 			target := screen.WithBoard.CursorPosition
 			if spell.GetCastRange() < target.Distance(screen.Players[screen.PlayerIdx].BoardPosition) {
+				fmt.Printf("Out of range! Spell cast range %d but distance to target is %d\n", spell.GetCastRange(), target.Distance(screen.Players[screen.PlayerIdx].BoardPosition))
 				render.NewTextDrawer(ss).DrawText("Out of range                   ", logical.ZeroVec(), batch)
 				screen.OutOfRange = true
 			} else {

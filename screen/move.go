@@ -63,6 +63,10 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 			fmt.Printf("Is movable\n")
 			if ob.CheckBelongsTo(screen.Players[screen.PlayerIdx]) {
 				fmt.Printf("Belongs to this player\n")
+				if ob.GetMovement() == 0 {
+					fmt.Printf("Not movable (0 movement range)\n")
+					return screen
+				}
 				if ob.IsFlying() {
 					return &MoveFlyingCharacterScreen{
 						WithBoard: screen.WithBoard,
@@ -175,8 +179,10 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 	}
 
 	if win.JustPressed(pixelgl.KeyS) {
+		fmt.Printf("Try flying move\n")
 		currentLocation := screen.Character.GetBoardPosition()
 		if screen.WithBoard.CursorPosition.Distance(currentLocation) > screen.Character.GetMovement() {
+			fmt.Printf("Out of range\n")
 			render.NewTextDrawer(ss).DrawText("Out of range                   ", logical.ZeroVec(), batch)
 			screen.OutOfRange = true
 		} else {
@@ -187,6 +193,7 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 				fmt.Printf("Target square is not empty\n")
 				return screen
 			}
+			fmt.Printf("Executing move\n")
 			screen.WithBoard.Grid.GetGameObjectStack(currentLocation).RemoveTopObject()
 			// FIXME type cast here, puke
 			screen.WithBoard.Grid.PlaceGameObject(screen.WithBoard.CursorPosition, screen.Character.(grid.GameObjectStackable))
