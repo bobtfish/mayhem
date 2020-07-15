@@ -6,7 +6,6 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
@@ -146,11 +145,9 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 				fmt.Printf("Target square is attackable\n")
 				if !ob.CheckBelongsTo(screen.Players[screen.PlayerIdx]) {
 					fmt.Printf("Target square belongs to a different player, do attack\n")
-					fx := fx.FxAttack()
 					return &DoAttack{
 						AttackerV: currentLocation,
 						DefenderV: newLocation,
-						Fx:        fx,
 						WithBoard: screen.WithBoard,
 						PlayerIdx: screen.PlayerIdx,
 					}
