@@ -117,11 +117,12 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 	render.NewTextDrawer(ss).DrawText(fmt.Sprintf("Movement range=%d", screen.MovementLeft), logical.V(0, 0), batch)
 	batch.Draw(win)
 
+	currentLocation := screen.Character.GetBoardPosition()
+
 	direction := captureDirectionKey(win)
 	if direction != logical.ZeroVec() {
 		fmt.Printf("Try to move in v(%d, %d)\n", direction.X, direction.Y)
 		// work out if we can move to this square at all - if not ignore, if nothing move to it, if something attack it if owned by other player
-		currentLocation := screen.Character.GetBoardPosition()
 		newLocation := currentLocation.Add(direction)
 		if !screen.WithBoard.Grid.AsRect().Contains(newLocation) {
 			fmt.Printf("Cannot move out of screen\n")
