@@ -201,6 +201,9 @@ func (c *Character) AnimationTick(odd bool) {
 }
 
 func (c *Character) IsEmpty() bool {
+	if c.IsDead {
+		return true
+	}
 	return false
 }
 
@@ -266,6 +269,14 @@ func (c *Character) GetDefence() int {
 
 // Attackable interface END
 
+// Attackerable interface BEGIN
+
+func (c *Character) GetCombat() int {
+	return c.Combat
+}
+
+// Attackerable interface END
+
 // Corpseable interface BEGIN
 
 func (c *Character) CanMakeCorpse() bool {
@@ -281,3 +292,5 @@ func (c *Character) CanMakeCorpse() bool {
 func (c *Character) MakeCorpse() {
 	c.IsDead = true
 }
+
+// Corpsable interface END

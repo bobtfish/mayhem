@@ -11,6 +11,8 @@ import (
 
 func NewPlayer() Player {
 	return Player{
+		Defence:     3,
+		Combat:      3,
 		ChosenSpell: -1,
 		Spells:      spells.ChooseSpells(),
 	}
@@ -27,6 +29,8 @@ type Player struct {
 	BoardPosition logical.Vec
 	IsAnimated    bool
 	SpriteIdx     int
+	Defence       int
+	Combat        int
 
 	Flying bool // If the player has magic wings
 }
@@ -98,12 +102,20 @@ func (p *Player) GetBoardPosition() logical.Vec {
 // Attackable interface BEGIN
 
 func (p *Player) GetDefence() int {
-	return 3
+	return p.Defence
 }
 
 // SetBoardPosition is in GameObject interface also
 
 // Attackable interface END
+
+// Attackerable interface BEGIN
+
+func (p *Player) GetCombat() int {
+	return p.Combat
+}
+
+// Attackerable interface END
 
 func (p *Player) CastSpell(target logical.Vec, grid *grid.GameGrid) bool {
 	fmt.Printf("IN Player spell cast\n")

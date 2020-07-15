@@ -2,6 +2,7 @@ package screen
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -33,11 +34,15 @@ func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 
 	// Run animation till attack is finished
 	if screen.Fx.RemoveMe() {
-		// Work out what happened :)
+
+		// Work out what happened. This is overly simple, but equivalent to what the original game does :)
 		defender := screen.WithBoard.Grid.GetGameObject(screen.DefenderV)
-		//        defenceRating := attacked.GetDefence()
-		attackSucceeds := true // FIXME
-		if attackSucceeds {
+		defenceRating := defender.(movable.Attackable).GetDefence() + rand.Intn(9)
+		attacker := screen.WithBoard.Grid.GetGameObject(screen.AttackerV)
+		attackRating := attacker.(movable.Attackerable).GetCombat() + rand.Intn(9)
+
+		fmt.Printf("Attack rating %d defence rating %d\n", attackRating, defenceRating)
+		if attackRating > defenceRating {
 			// If the defender can be killed, kill them. Otherwise remove them
 			ob, corpsable := defender.(movable.Corpseable)
 			fmt.Printf("Defender is %T corpsable %v ob %T(%v)\n", defender, corpsable, ob, ob)
@@ -49,6 +54,7 @@ func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 				fmt.Printf("remove defender as no corpse\n")
 				screen.WithBoard.Grid.GetGameObjectStack(screen.DefenderV).RemoveTopObject()
 			}
+
 			doCharacterMove(screen.AttackerV, screen.DefenderV, screen.WithBoard.Grid)
 		}
 		return &MoveFindCharacterScreen{
