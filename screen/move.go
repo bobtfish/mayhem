@@ -47,12 +47,16 @@ func (screen *MoveAnnounceScreen) Step(ss pixel.Picture, win *pixelgl.Window) Ga
 
 type MoveFindCharacterScreen struct {
 	*WithBoard
-	PlayerIdx int
+	PlayerIdx       int
+	MovedCharacters map[movable.Movable]bool
 }
 
 func (screen *MoveFindCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
 	screen.WithBoard.CursorSprite = CURSOR_BOX
+	if screen.MovedCharacters == nil {
+		screen.MovedCharacters = make(map[movable.Movable]bool, 0)
+	}
 	fmt.Printf("Enter move find character screen for player %d\n", screen.PlayerIdx+1)
 }
 
@@ -77,19 +81,28 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 					return screen
 				}
 
+				if _, movedAlready := screen.MovedCharacters[ob]; movedAlready {
+					fmt.Printf("Not movable (has moved already)\n")
+					return screen
+				} else {
+					screen.MovedCharacters[ob] = true
+				}
+
 				// Definitely something we can move
 				if ob.IsFlying() {
 					return &MoveFlyingCharacterScreen{
-						WithBoard: screen.WithBoard,
-						PlayerIdx: screen.PlayerIdx,
-						Character: ob,
+						WithBoard:       screen.WithBoard,
+						PlayerIdx:       screen.PlayerIdx,
+						Character:       ob,
+						MovedCharacters: screen.MovedCharacters,
 					}
 				}
 				return &MoveGroundCharacterScreen{
-					WithBoard:    screen.WithBoard,
-					PlayerIdx:    screen.PlayerIdx,
-					Character:    ob,
-					MovementLeft: ob.GetMovement(),
+					WithBoard:       screen.WithBoard,
+					PlayerIdx:       screen.PlayerIdx,
+					Character:       ob,
+					MovementLeft:    ob.GetMovement(),
+					MovedCharacters: screen.MovedCharacters,
 				}
 			}
 		}
@@ -112,10 +125,11 @@ func (screen *MoveFindCharacterScreen) NextMove() GameScreen {
 
 type MoveGroundCharacterScreen struct {
 	*WithBoard
-	PlayerIdx    int
-	Character    movable.Movable
-	MovementLeft int
-	NumDiagonals int
+	PlayerIdx       int
+	Character       movable.Movable
+	MovementLeft    int
+	NumDiagonals    int
+	MovedCharacters map[movable.Movable]bool
 }
 
 func (screen *MoveGroundCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -178,8 +192,9 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 
 		if screen.MovementLeft <= 0 {
 			return &MoveFindCharacterScreen{
-				WithBoard: screen.WithBoard,
-				PlayerIdx: screen.PlayerIdx,
+				WithBoard:       screen.WithBoard,
+				PlayerIdx:       screen.PlayerIdx,
+				MovedCharacters: screen.MovedCharacters,
 			}
 		}
 	}
@@ -188,10 +203,11 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 
 type MoveFlyingCharacterScreen struct {
 	*WithBoard
-	PlayerIdx    int
-	Character    movable.Movable
-	OutOfRange   bool
-	DisplayRange bool
+	PlayerIdx       int
+	Character       movable.Movable
+	OutOfRange      bool
+	DisplayRange    bool
+	MovedCharacters map[movable.Movable]bool
 }
 
 func (screen *MoveFlyingCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
