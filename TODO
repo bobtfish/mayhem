@@ -1,7 +1,10 @@
 Bug / missing feature list:
    Press number to flash characters of one player
    Flash characters of one player at start of move turn
-   Flying creature movement
+   Flying creature attack
+   Only allow things to move once per turn
+   Cancel movement
+   Ranged combat
    Illusion spells / creatures
    Player movement/attack/defence spells changing stats
    Raise dead spell
@@ -11,10 +14,13 @@ Bug / missing feature list:
    Castle/Citadel spells
    Mounts
    If no spells chosen, still a long pause before move phase
-   Engage enemies
+   Engage enemies if next to and get extra combat
+   Breakaway from engagement (maybe)
    Killing wizards
    Combat spells
-   Law/Chaos rating doing anything
+   Law/Chaos rating doing anything + being global
    Board inspect character
    Examine spell screen
    AI Players
+   Gooey blob / Fire character and player interactions
+   Justice/Vengence/etc spells
