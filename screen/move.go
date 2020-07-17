@@ -247,24 +247,24 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			fmt.Printf("Executing move\n")
 			doCharacterMove(currentLocation, screen.WithBoard.CursorPosition, screen.WithBoard.Grid)
 
-			return &MoveFindCharacterScreen{
-				WithBoard:       screen.WithBoard,
-				PlayerIdx:       screen.PlayerIdx,
-				MovedCharacters: screen.MovedCharacters,
-			}
+			return screen.MoveFlyingCharacterScreenFinished()
 		}
 
 	}
 
 	// Allow you to cancel movement, but that character then counts as moved
 	if win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) {
-		return &MoveFindCharacterScreen{
-			WithBoard:       screen.WithBoard,
-			PlayerIdx:       screen.PlayerIdx,
-			MovedCharacters: screen.MovedCharacters,
-		}
+		return screen.MoveFlyingCharacterScreenFinished()
 	}
 
 	batch.Draw(win)
 	return screen
+}
+
+func (screen *MoveFlyingCharacterScreen) MoveFlyingCharacterScreenFinished() GameScreen {
+	return &MoveFindCharacterScreen{
+		WithBoard:       screen.WithBoard,
+		PlayerIdx:       screen.PlayerIdx,
+		MovedCharacters: screen.MovedCharacters,
+	}
 }
