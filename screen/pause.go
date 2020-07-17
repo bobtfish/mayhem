@@ -14,6 +14,7 @@ type Pause struct {
 	NextScreen GameScreen
 	Started    time.Time
 	Grid       *grid.GameGrid
+	Skip       bool
 }
 
 func (screen *Pause) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -21,6 +22,9 @@ func (screen *Pause) Enter(ss pixel.Picture, win *pixelgl.Window) {
 }
 
 func (screen *Pause) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+	if screen.Skip {
+		return screen.NextScreen
+	}
 	if screen.Grid != nil {
 		screen.Grid.DrawBatch(render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())).Draw(win)
 	}

@@ -134,12 +134,6 @@ func (screen *MoveGroundCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Wi
 	fmt.Printf("Enter move ground character screen for player %d\n", screen.PlayerIdx+1)
 }
 
-func doCharacterMove(from, to logical.Vec, grid *grid.GameGrid) {
-	character := grid.GetGameObjectStack(from).RemoveTopObject()
-	character.SetBoardPosition(to)
-	grid.PlaceGameObject(to, character)
-}
-
 func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	render.NewTextDrawer(ss).DrawText(fmt.Sprintf("Movement range=%d", screen.MovementLeft), logical.V(0, 0), batch)
@@ -156,27 +150,15 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			fmt.Printf("Cannot move out of screen\n")
 			return screen
 		}
-		target := screen.WithBoard.Grid.GetGameObject(newLocation)
-		// FIXME we can move into non-empty squares to attack
-		if !target.IsEmpty() {
-			fmt.Printf("Target square is not empty\n")
-			ob, attackable := target.(movable.Attackable)
-			if attackable {
-				fmt.Printf("Target square is attackable\n")
-				if !ob.CheckBelongsTo(screen.Players[screen.PlayerIdx]) {
-					fmt.Printf("Target square belongs to a different player do attack\n")
-					return &DoAttack{
-						AttackerV:       currentLocation,
-						DefenderV:       newLocation,
-						WithBoard:       screen.WithBoard,
-						PlayerIdx:       screen.PlayerIdx,
-						MovedCharacters: screen.MovedCharacters,
-					}
-				}
-			}
+
+		newScreen, didMove := MoveDoAttackMaybe(currentLocation, newLocation, screen.PlayerIdx, screen.WithBoard, screen.MovedCharacters)
+		if newScreen != nil {
+			return newScreen
+		}
+		if !didMove {
 			return screen
 		}
-		doCharacterMove(currentLocation, newLocation, screen.WithBoard.Grid)
+
 		screen.WithBoard.CursorPosition = newLocation
 
 		// Do the D&D diagonal move thing
@@ -196,6 +178,42 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 		return screen.MoveGroundCharacterScreenFinished()
 	}
 	return screen
+}
+
+// If moving to an empty square does the move then returns true allowing progress to continue (and ground/air specific logic to follow)
+// If moving to a square which can be attacked, returns the attack screen to make the attack happen
+// If moving to a square with something that cannot be moved into or attacked, return false
+func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, movedCharacters map[movable.Movable]bool) (GameScreen, bool) {
+	target := withBoard.Grid.GetGameObject(to)
+	if !target.IsEmpty() {
+		fmt.Printf("Target square is not empty\n")
+		ob, attackable := target.(movable.Attackable)
+		if attackable {
+			fmt.Printf("Target square is attackable\n")
+			if !ob.CheckBelongsTo(withBoard.Players[playerIdx]) {
+				fmt.Printf("Target square belongs to a different player do attack\n")
+				return &DoAttack{
+					AttackerV:       from,
+					DefenderV:       to,
+					WithBoard:       withBoard,
+					PlayerIdx:       playerIdx,
+					MovedCharacters: movedCharacters,
+				}, true
+			}
+		}
+		return nil, false
+	}
+
+	doCharacterMove(from, to, withBoard.Grid)
+
+	return nil, true
+}
+
+// this gets reused from screen/attack.go
+func doCharacterMove(from, to logical.Vec, grid *grid.GameGrid) {
+	character := grid.GetGameObjectStack(from).RemoveTopObject()
+	character.SetBoardPosition(to)
+	grid.PlaceGameObject(to, character)
 }
 
 func (screen *MoveGroundCharacterScreen) MoveGroundCharacterScreenFinished() GameScreen {
@@ -243,28 +261,13 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			screen.OutOfRange = true
 		} else {
 			// work out what's in this square, if nothing move to it, if something attack it
-			target := screen.WithBoard.Grid.GetGameObject(screen.WithBoard.CursorPosition)
-			if !target.IsEmpty() {
-				fmt.Printf("Target square is not empty\n")
-				// FIXME copy from above
-				ob, attackable := target.(movable.Attackable)
-				if attackable {
-					fmt.Printf("Target square is attackable\n")
-					if !ob.CheckBelongsTo(screen.Players[screen.PlayerIdx]) {
-						fmt.Printf("Target square belongs to a different player do attack\n")
-						return &DoAttack{
-							AttackerV:       currentLocation,
-							DefenderV:       screen.WithBoard.CursorPosition,
-							WithBoard:       screen.WithBoard,
-							PlayerIdx:       screen.PlayerIdx,
-							MovedCharacters: screen.MovedCharacters,
-						}
-					}
-				}
+			newScreen, didMove := MoveDoAttackMaybe(currentLocation, screen.WithBoard.CursorPosition, screen.PlayerIdx, screen.WithBoard, screen.MovedCharacters)
+			if newScreen != nil {
+				return newScreen
+			}
+			if !didMove {
 				return screen
 			}
-			fmt.Printf("Executing move\n")
-			doCharacterMove(currentLocation, screen.WithBoard.CursorPosition, screen.WithBoard.Grid)
 
 			return screen.MoveFlyingCharacterScreenFinished()
 		}
