@@ -1,7 +1,6 @@
 Bug / missing feature list:
    Press number to flash characters of one player
    Flash characters of one player at start of move turn
-   Flying creature attack
    Ranged combat
    Illusion spells / creatures
    Player movement/attack/defence spells changing stats
@@ -12,7 +11,7 @@ Bug / missing feature list:
    Castle/Citadel spells
    Mounts
    If no spells chosen, still a long pause before move phase
-   Engage enemies if next to and get extra combat
+   Engage enemies if next to and get extra combat even if at end of move turn
    Breakaway from engagement (maybe)
    Killing wizards
    Combat spells

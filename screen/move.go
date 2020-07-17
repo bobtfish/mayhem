@@ -29,10 +29,7 @@ func (screen *MoveAnnounceScreen) Step(ss pixel.Picture, win *pixelgl.Window) Ga
 
 	// 0 skips movement turn
 	if win.JustPressed(pixelgl.Key0) {
-		return &MoveAnnounceScreen{
-			WithBoard: screen.WithBoard,
-			PlayerIdx: screen.PlayerIdx + 1,
-		}
+		return NextPlayerMove(screen.PlayerIdx, screen.WithBoard)
 	}
 
 	// any other key displays the cursor
@@ -67,7 +64,7 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 	batch.Draw(win)
 
 	if win.JustPressed(pixelgl.Key0) {
-		return screen.NextMove()
+		return NextPlayerMove(screen.PlayerIdx, screen.WithBoard)
 	}
 	if win.JustPressed(pixelgl.KeyS) {
 		// work out what's in this square, start moving it if movable and it belongs to the current player
@@ -111,15 +108,15 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 	return screen
 }
 
-func (screen *MoveFindCharacterScreen) NextMove() GameScreen {
-	if screen.PlayerIdx+1 == len(screen.WithBoard.Players) {
+func NextPlayerMove(playerIdx int, withBoard *WithBoard) GameScreen {
+	if playerIdx+1 == len(withBoard.Players) {
 		return &GrowScreen{
-			WithBoard: screen.WithBoard,
+			WithBoard: withBoard,
 		}
 	}
 	return &MoveAnnounceScreen{
-		WithBoard: screen.WithBoard,
-		PlayerIdx: screen.PlayerIdx + 1,
+		WithBoard: withBoard,
+		PlayerIdx: playerIdx + 1,
 	}
 }
 
@@ -169,10 +166,11 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 				if !ob.CheckBelongsTo(screen.Players[screen.PlayerIdx]) {
 					fmt.Printf("Target square belongs to a different player do attack\n")
 					return &DoAttack{
-						AttackerV: currentLocation,
-						DefenderV: newLocation,
-						WithBoard: screen.WithBoard,
-						PlayerIdx: screen.PlayerIdx,
+						AttackerV:       currentLocation,
+						DefenderV:       newLocation,
+						WithBoard:       screen.WithBoard,
+						PlayerIdx:       screen.PlayerIdx,
+						MovedCharacters: screen.MovedCharacters,
 					}
 				}
 			}
@@ -190,15 +188,22 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 		}
 		screen.MovementLeft--
 
-		if screen.MovementLeft <= 0 || win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) {
-			return &MoveFindCharacterScreen{
-				WithBoard:       screen.WithBoard,
-				PlayerIdx:       screen.PlayerIdx,
-				MovedCharacters: screen.MovedCharacters,
-			}
+		if screen.MovementLeft <= 0 {
+			return screen.MoveGroundCharacterScreenFinished()
 		}
 	}
+	if win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) {
+		return screen.MoveGroundCharacterScreenFinished()
+	}
 	return screen
+}
+
+func (screen *MoveGroundCharacterScreen) MoveGroundCharacterScreenFinished() GameScreen {
+	return &MoveFindCharacterScreen{
+		WithBoard:       screen.WithBoard,
+		PlayerIdx:       screen.PlayerIdx,
+		MovedCharacters: screen.MovedCharacters,
+	}
 }
 
 type MoveFlyingCharacterScreen struct {
@@ -237,11 +242,25 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			render.NewTextDrawer(ss).DrawText("Out of range                   ", logical.ZeroVec(), batch)
 			screen.OutOfRange = true
 		} else {
-			// FIXME work out what's in this square, if nothing move to it, if something attack it
+			// work out what's in this square, if nothing move to it, if something attack it
 			target := screen.WithBoard.Grid.GetGameObject(screen.WithBoard.CursorPosition)
-			// FIXME we can move into non-empty squares to attack
 			if !target.IsEmpty() {
 				fmt.Printf("Target square is not empty\n")
+				// FIXME copy from above
+				ob, attackable := target.(movable.Attackable)
+				if attackable {
+					fmt.Printf("Target square is attackable\n")
+					if !ob.CheckBelongsTo(screen.Players[screen.PlayerIdx]) {
+						fmt.Printf("Target square belongs to a different player do attack\n")
+						return &DoAttack{
+							AttackerV:       currentLocation,
+							DefenderV:       screen.WithBoard.CursorPosition,
+							WithBoard:       screen.WithBoard,
+							PlayerIdx:       screen.PlayerIdx,
+							MovedCharacters: screen.MovedCharacters,
+						}
+					}
+				}
 				return screen
 			}
 			fmt.Printf("Executing move\n")

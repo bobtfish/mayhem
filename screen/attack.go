@@ -14,10 +14,11 @@ import (
 
 type DoAttack struct {
 	*WithBoard
-	Fx        *fx.Fx
-	AttackerV logical.Vec
-	DefenderV logical.Vec
-	PlayerIdx int
+	Fx              *fx.Fx
+	AttackerV       logical.Vec
+	DefenderV       logical.Vec
+	PlayerIdx       int
+	MovedCharacters map[movable.Movable]bool
 }
 
 func (screen *DoAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -58,8 +59,9 @@ func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 			doCharacterMove(screen.AttackerV, screen.DefenderV, screen.WithBoard.Grid)
 		}
 		return &MoveFindCharacterScreen{
-			WithBoard: screen.WithBoard,
-			PlayerIdx: screen.PlayerIdx,
+			WithBoard:       screen.WithBoard,
+			PlayerIdx:       screen.PlayerIdx,
+			MovedCharacters: screen.MovedCharacters,
 		}
 	}
 	return screen
