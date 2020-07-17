@@ -190,7 +190,7 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 		}
 		screen.MovementLeft--
 
-		if screen.MovementLeft <= 0 {
+		if screen.MovementLeft <= 0 || win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) {
 			return &MoveFindCharacterScreen{
 				WithBoard:       screen.WithBoard,
 				PlayerIdx:       screen.PlayerIdx,
@@ -248,12 +248,23 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			doCharacterMove(currentLocation, screen.WithBoard.CursorPosition, screen.WithBoard.Grid)
 
 			return &MoveFindCharacterScreen{
-				WithBoard: screen.WithBoard,
-				PlayerIdx: screen.PlayerIdx,
+				WithBoard:       screen.WithBoard,
+				PlayerIdx:       screen.PlayerIdx,
+				MovedCharacters: screen.MovedCharacters,
 			}
 		}
 
 	}
+
+	// Allow you to cancel movement, but that character then counts as moved
+	if win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) {
+		return &MoveFindCharacterScreen{
+			WithBoard:       screen.WithBoard,
+			PlayerIdx:       screen.PlayerIdx,
+			MovedCharacters: screen.MovedCharacters,
+		}
+	}
+
 	batch.Draw(win)
 	return screen
 }
