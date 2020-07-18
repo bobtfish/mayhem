@@ -50,6 +50,7 @@ func run() {
 					Color:         render.GetColor(255, 0, 0),
 					ChosenSpell:   -1,
 					Spells:        spells.ChooseSpells(),
+					Alive:         true,
 				},
 				&player.Player{
 					Name:          "bob",
@@ -58,6 +59,7 @@ func run() {
 					Color:         render.GetColor(255, 0, 255),
 					ChosenSpell:   -1,
 					Spells:        spells.ChooseSpells(),
+					Alive:         true,
 				},
 			},
 		}

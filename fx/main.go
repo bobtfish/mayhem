@@ -65,7 +65,7 @@ func FxSpellCast() *Fx {
 	}
 }
 
-func FxBlam() *Fx {
+func FxPlayerKilled() *Fx {
 	return &Fx{
 		SpriteVec:   logical.V(0, 27),
 		SpriteCount: 8,

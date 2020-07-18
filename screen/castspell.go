@@ -17,29 +17,30 @@ import (
 // Move state onto next player spell cast (if there are players left)
 // or onto the movement phase if all spells have been cast
 func NextSpellCastOrMove(playerIdx int, players []*player.Player, grid *grid.GameGrid, skipPause bool) GameScreen {
+	var nextScreen GameScreen
 	nextIdx := NextPlayerIdx(playerIdx, players)
+	nextScreen = &DisplaySpellCastScreen{
+		WithBoard: &WithBoard{
+			Grid:    grid,
+			Players: players,
+		},
+		PlayerIdx: nextIdx,
+	}
+
 	if nextIdx == len(players) {
 		// All players have cast their spells, movement comes next
-		return &Pause{
-			Skip: skipPause,
-			Grid: grid,
-			NextScreen: &MoveAnnounceScreen{
-				WithBoard: &WithBoard{
-					Players: players,
-					Grid:    grid,
-				},
+		nextScreen = &MoveAnnounceScreen{
+			WithBoard: &WithBoard{
+				Players: players,
+				Grid:    grid,
 			},
 		}
 	}
 	return &Pause{
-		Skip: skipPause,
-		Grid: grid,
-		NextScreen: &DisplaySpellCastScreen{
-			WithBoard: &WithBoard{
-				Grid:    grid,
-				Players: players,
-			},
-			PlayerIdx: nextIdx,
+		WaitFor: &WaitFor{
+			Skip:       skipPause,
+			Grid:       grid,
+			NextScreen: nextScreen,
 		},
 	}
 }

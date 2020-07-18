@@ -94,7 +94,14 @@ func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 				ob.MakeCorpse()
 			} else {
 				fmt.Printf("remove defender as no corpse\n")
-				KillIfPlayer(screen.WithBoard.Grid.GetGameObjectStack(screen.DefenderV).RemoveTopObject())
+				died := screen.WithBoard.Grid.GetGameObjectStack(screen.DefenderV).RemoveTopObject()
+				if KillIfPlayer(died, screen.WithBoard.Grid) {
+					if WeHaveAWinner(screen.WithBoard.Players) {
+						return &WinnerScreen{
+							WithBoard: screen.WithBoard,
+						}
+					}
+				}
 			}
 
 			doCharacterMove(screen.AttackerV, screen.DefenderV, screen.WithBoard.Grid)
@@ -106,12 +113,4 @@ func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 		}
 	}
 	return screen
-}
-
-func KillIfPlayer(g grid.GameObject) {
-	player, isPlayer := g.(*player.Player)
-	if isPlayer {
-		fmt.Printf("You killed a player\n")
-		player.Alive = false
-	}
 }

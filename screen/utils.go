@@ -1,11 +1,43 @@
 package screen
 
 import (
+	"fmt"
+
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/bobtfish/mayhem/fx"
+	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/movable"
+	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
 )
+
+func KillIfPlayer(g grid.GameObject, grid *grid.GameGrid) bool {
+	player, isPlayer := g.(*player.Player)
+	if isPlayer {
+		fmt.Printf("You killed a player\n")
+		player.Alive = false
+		for x := 0; x < grid.Width(); x++ {
+			for y := 0; y < grid.Height(); y++ {
+				vec := logical.V(x, y)
+				g := grid.GetGameObject(vec)
+				if !g.IsEmpty() {
+					ob, at := g.(movable.Attackable)
+					if at {
+						if ob.CheckBelongsTo(player) {
+							stack := grid.GetGameObjectStack(vec)
+							stack.RemoveTopObject()
+							stack.PlaceObject(fx.FxPlayerKilled())
+						}
+					}
+				}
+			}
+		}
+		return true
+	}
+	return false
+}
 
 func NextPlayerIdx(playerIdx int, players []*player.Player) int {
 	playerIdx++
@@ -16,6 +48,19 @@ func NextPlayerIdx(playerIdx int, players []*player.Player) int {
 		return NextPlayerIdx(playerIdx, players)
 	}
 	return playerIdx
+}
+
+func WeHaveAWinner(players []*player.Player) bool {
+	c := 0
+	for i := 0; i < len(players); i++ {
+		if players[i].Alive {
+			c++
+		}
+	}
+	if c == 1 {
+		return true
+	}
+	return false
 }
 
 var numKeyMap map[pixelgl.Button]int

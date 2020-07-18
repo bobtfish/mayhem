@@ -49,12 +49,15 @@ func (screen *GrowScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen
 	screen.IterateGrowVanish()
 
 	firstAlivePlayerIdx := NextPlayerIdx(-1, screen.WithBoard.Players)
+	fmt.Printf("First alive player index %d\n", firstAlivePlayerIdx)
 	return &Pause{
-		Grid: screen.WithBoard.Grid,
-		NextScreen: &TurnMenuScreen{
-			Players:   screen.WithBoard.Players,
-			Grid:      screen.WithBoard.Grid,
-			PlayerIdx: firstAlivePlayerIdx,
+		WaitFor: &WaitFor{
+			Grid: screen.WithBoard.Grid,
+			NextScreen: &TurnMenuScreen{
+				Players:   screen.WithBoard.Players,
+				Grid:      screen.WithBoard.Grid,
+				PlayerIdx: firstAlivePlayerIdx,
+			},
 		},
 	}
 }
