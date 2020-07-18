@@ -64,7 +64,7 @@ func (screen *EngagedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScr
 		return &RangedCombat{
 			WithBoard:       screen.WithBoard,
 			PlayerIdx:       screen.PlayerIdx,
-			Charatcer:       screen.Character,
+			Character:       screen.Character,
 			MovedCharacters: screen.MovedCharacters,
 		}
 	}
@@ -111,11 +111,12 @@ func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 		}
 
 		doCharacterMove(screen.AttackerV, screen.DefenderV, screen.WithBoard.Grid)
+		screen.AttackerV = screen.DefenderV
 	}
 	return &RangedCombat{
 		WithBoard:       screen.WithBoard,
 		PlayerIdx:       screen.PlayerIdx,
-		Charatcer:       screen.Character,
+		Character:       screen.WithBoard.Grid.GetGameObject(screen.AttackerV).(movable.Movable),
 		MovedCharacters: screen.MovedCharacters,
 	}
 }

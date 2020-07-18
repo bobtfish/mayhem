@@ -283,7 +283,7 @@ func (screen *MoveGroundCharacterScreen) MoveGroundCharacterScreenFinished() Gam
 	return &RangedCombat{
 		WithBoard:       screen.WithBoard,
 		PlayerIdx:       screen.PlayerIdx,
-		Charatcer:       screen.Character,
+		Character:       screen.Character,
 		MovedCharacters: screen.MovedCharacters,
 	}
 }
@@ -351,7 +351,7 @@ func (screen *MoveFlyingCharacterScreen) MoveFlyingCharacterScreenFinished() Gam
 	return &RangedCombat{
 		WithBoard:       screen.WithBoard,
 		PlayerIdx:       screen.PlayerIdx,
-		Charatcer:       screen.Character,
+		Character:       screen.Character,
 		MovedCharacters: screen.MovedCharacters,
 	}
 }
