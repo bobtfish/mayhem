@@ -256,7 +256,7 @@ func (c *Character) CheckBelongsTo(player *player.Player) bool {
 }
 
 func (c *Character) BreakEngagement() bool {
-	if rand.IntN(9) >= c.Manoeuvre {
+	if rand.Intn(9) >= c.Manoeuvre {
 		return true
 	}
 	return false

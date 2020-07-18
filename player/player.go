@@ -3,6 +3,7 @@ package player
 import (
 	"fmt"
 	"image/color"
+    "math/rand"
 
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
@@ -100,7 +101,7 @@ func (p *Player) GetBoardPosition() logical.Vec {
 }
 
 func (p *Player) BreakEngagement() bool {
-	if rand.IntN(9) >= p.Manoeuvre {
+	if rand.Intn(9) >= p.Manoeuvre {
 		return true
 	}
 	return false
