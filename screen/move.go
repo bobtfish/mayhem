@@ -77,7 +77,9 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 					fmt.Printf("Not movable (0 movement range)\n")
 					return screen
 				}
+				// Definitely something we can move
 
+				// Skip if already moved
 				if _, movedAlready := screen.MovedCharacters[ob]; movedAlready {
 					fmt.Printf("Not movable (has moved already)\n")
 					return screen
@@ -85,7 +87,19 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 					screen.MovedCharacters[ob] = true
 				}
 
-				// Definitely something we can move
+				// Is it engaged?
+				if IsNextToEngageable(screen.WithBoard.CursorPosition, screen.PlayerIdx, screen.WithBoard) {
+					if !ob.BreakEngagement() {
+						return &EngagedAttack{
+							WithBoard:       screen.WithBoard,
+							PlayerIdx:       screen.PlayerIdx,
+							Character:       ob,
+							MovedCharacters: screen.MovedCharacters,
+						}
+					}
+				}
+
+				// Not engaged, so move
 				if ob.IsFlying() {
 					return &MoveFlyingCharacterScreen{
 						WithBoard:       screen.WithBoard,
