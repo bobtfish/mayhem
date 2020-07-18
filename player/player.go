@@ -17,6 +17,7 @@ func NewPlayer() Player {
 		Manoeuvre:   4,
 		ChosenSpell: -1,
 		Spells:      spells.ChooseSpells(),
+		Alive:       true,
 	}
 }
 
@@ -36,6 +37,8 @@ type Player struct {
 	Manoeuvre     int
 
 	Flying bool // If the player has magic wings
+
+	Alive bool
 }
 
 // GameObject interface

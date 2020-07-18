@@ -114,17 +114,17 @@ func (screen *SelectSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 
 // Begin main turn menu screen
 type TurnMenuScreen struct {
-	Players     []*player.Player
-	PlayerIndex int
-	Grid        *grid.GameGrid
+	Players   []*player.Player
+	PlayerIdx int
+	Grid      *grid.GameGrid
 }
 
 func (screen *TurnMenuScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
-	fmt.Println(fmt.Sprintf("index %d", screen.PlayerIndex))
+	fmt.Println(fmt.Sprintf("index %d", screen.PlayerIdx))
 	render.NewTextDrawer(ss).DrawText("      Press Keys 1 to 4", logical.V(0, 0), win)
 	td := TextDrawer(ss)
-	td.DrawText(screen.Players[screen.PlayerIndex].Name, logical.V(3, 7), win)
+	td.DrawText(screen.Players[screen.PlayerIdx].Name, logical.V(3, 7), win)
 	td.DrawText("1. Examine Spells", logical.V(3, 5), win)
 	td.DrawText("2. Select Spell", logical.V(3, 4), win)
 	td.DrawText("3. Examine Board", logical.V(3, 3), win)
@@ -137,7 +137,7 @@ func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 		return &ExamineSpellsScreen{
 			SpellListScreen: SpellListScreen{
 				MainMenu: screen,
-				Player:   screen.Players[screen.PlayerIndex],
+				Player:   screen.Players[screen.PlayerIdx],
 			},
 		}
 	}
@@ -145,7 +145,7 @@ func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 		return &SelectSpellScreen{
 			SpellListScreen: SpellListScreen{
 				MainMenu: screen,
-				Player:   screen.Players[screen.PlayerIndex],
+				Player:   screen.Players[screen.PlayerIdx],
 			},
 		}
 	}
@@ -159,7 +159,7 @@ func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 		}
 	}
 	if c == 4 {
-		if len(screen.Players) == screen.PlayerIndex+1 {
+		if len(screen.Players) == screen.PlayerIdx+1 {
 			return &DisplaySpellCastScreen{
 				WithBoard: &WithBoard{
 					Grid:    screen.Grid,
@@ -168,9 +168,9 @@ func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 			}
 		}
 		return &TurnMenuScreen{
-			Players:     screen.Players,
-			PlayerIndex: screen.PlayerIndex + 1,
-			Grid:        screen.Grid,
+			Players:   screen.Players,
+			PlayerIdx: screen.PlayerIdx + 1,
+			Grid:      screen.Grid,
 		}
 	}
 	return screen

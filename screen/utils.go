@@ -7,6 +7,17 @@ import (
 	"github.com/bobtfish/mayhem/render"
 )
 
+func NextPlayerIdx(playerIdx int, players []*player.Player) int {
+	playerIdx++
+	if playerIdx == len(players) {
+		return playerIdx
+	}
+	if !players[playerIdx].Alive {
+		return NextPlayerIdx(playerIdx, players)
+	}
+	return playerIdx
+}
+
 var numKeyMap map[pixelgl.Button]int
 var spellKeyMap map[pixelgl.Button]int
 var directionKeyMap map[pixelgl.Button]logical.Vec

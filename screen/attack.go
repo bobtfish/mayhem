@@ -42,13 +42,13 @@ func (screen *EngagedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScr
 		}
 	}
 
-    if win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) {
-        return &MoveFindCharacterScreen{
-            WithBoard:       screen.WithBoard,
-            PlayerIdx:       screen.PlayerIdx,
-            MovedCharacters: screen.MovedCharacters,
-        }
-    }
+	if win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) {
+		return &MoveFindCharacterScreen{
+			WithBoard:       screen.WithBoard,
+			PlayerIdx:       screen.PlayerIdx,
+			MovedCharacters: screen.MovedCharacters,
+		}
+	}
 
 	return screen
 }
@@ -94,7 +94,7 @@ func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 				ob.MakeCorpse()
 			} else {
 				fmt.Printf("remove defender as no corpse\n")
-				screen.WithBoard.Grid.GetGameObjectStack(screen.DefenderV).RemoveTopObject()
+				KillIfPlayer(screen.WithBoard.Grid.GetGameObjectStack(screen.DefenderV).RemoveTopObject())
 			}
 
 			doCharacterMove(screen.AttackerV, screen.DefenderV, screen.WithBoard.Grid)
@@ -106,4 +106,12 @@ func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 		}
 	}
 	return screen
+}
+
+func KillIfPlayer(g grid.GameObject) {
+	player, isPlayer := g.(*player.Player)
+	if isPlayer {
+		fmt.Printf("You killed a player\n")
+		player.Alive = false
+	}
 }

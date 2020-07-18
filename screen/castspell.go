@@ -17,8 +17,8 @@ import (
 // Move state onto next player spell cast (if there are players left)
 // or onto the movement phase if all spells have been cast
 func NextSpellCastOrMove(playerIdx int, players []*player.Player, grid *grid.GameGrid, skipPause bool) GameScreen {
-	playerIdx++
-	if playerIdx == len(players) {
+	nextIdx := NextPlayerIdx(playerIdx, players)
+	if nextIdx == len(players) {
 		// All players have cast their spells, movement comes next
 		return &Pause{
 			Skip: skipPause,
@@ -39,7 +39,7 @@ func NextSpellCastOrMove(playerIdx int, players []*player.Player, grid *grid.Gam
 				Grid:    grid,
 				Players: players,
 			},
-			PlayerIdx: playerIdx,
+			PlayerIdx: nextIdx,
 		},
 	}
 }

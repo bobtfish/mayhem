@@ -29,7 +29,7 @@ func (screen *MoveAnnounceScreen) Step(ss pixel.Picture, win *pixelgl.Window) Ga
 
 	// 0 skips movement turn
 	if win.JustPressed(pixelgl.Key0) {
-		return NextPlayerMove(screen.PlayerIdx, screen.WithBoard)
+		return NextPlayerMove(screen.PlayerIdx, screen.Players, screen.WithBoard)
 	}
 
 	// any other key displays the cursor
@@ -64,7 +64,7 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 	batch.Draw(win)
 
 	if win.JustPressed(pixelgl.Key0) {
-		return NextPlayerMove(screen.PlayerIdx, screen.WithBoard)
+		return NextPlayerMove(screen.PlayerIdx, screen.Players, screen.WithBoard)
 	}
 	if win.JustPressed(pixelgl.KeyS) {
 		// work out what's in this square, start moving it if movable and it belongs to the current player
@@ -122,15 +122,16 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 	return screen
 }
 
-func NextPlayerMove(playerIdx int, withBoard *WithBoard) GameScreen {
-	if playerIdx+1 == len(withBoard.Players) {
+func NextPlayerMove(playerIdx int, players []*player.Player, withBoard *WithBoard) GameScreen {
+	nextIdx := NextPlayerIdx(playerIdx, players)
+	if nextIdx == len(withBoard.Players) {
 		return &GrowScreen{
 			WithBoard: withBoard,
 		}
 	}
 	return &MoveAnnounceScreen{
 		WithBoard: withBoard,
-		PlayerIdx: playerIdx + 1,
+		PlayerIdx: nextIdx,
 	}
 }
 
