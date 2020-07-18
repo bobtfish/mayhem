@@ -70,6 +70,8 @@ func LoadCharacterTemplates() {
 			DeadSprite:    logical.V(v.DeadSprite[0], v.DeadSprite[1]),
 			Combat:        v.Combat,
 			Manoeuvre:     v.Manoeuvre,
+			RangedCombat:  v.RangedCombat,
+			AttackRange:   v.AttackRange,
 		})
 	}
 }
@@ -88,6 +90,8 @@ type CharacterSpell struct {
 	Undead        bool
 	Defence       int
 	Combat        int
+	RangedCombat  int
+	AttackRange   int
 	Manoeuvre     int
 }
 
@@ -139,16 +143,18 @@ func (s CharacterSpell) CastFx() *fx.Fx {
 
 func (s CharacterSpell) CreateCharacter(castor grid.GameObject) *Character {
 	return &Character{
-		Name:       s.Name,
-		Sprite:     s.Sprite,
-		Color:      s.Color,
-		Movement:   s.Movement,
-		Flying:     s.Flying,
-		Undead:     s.Undead,
-		Defence:    s.Defence,
-		DeadSprite: s.DeadSprite,
-		Combat:     s.Combat,
-		Manoeuvre:  s.Manoeuvre,
+		Name:         s.Name,
+		Sprite:       s.Sprite,
+		Color:        s.Color,
+		Movement:     s.Movement,
+		Flying:       s.Flying,
+		Undead:       s.Undead,
+		Defence:      s.Defence,
+		DeadSprite:   s.DeadSprite,
+		Combat:       s.Combat,
+		Manoeuvre:    s.Manoeuvre,
+		RangedCombat: s.RangedCombat,
+		AttackRange:  s.AttackRange,
 
 		// FIXME - ugh this is gross - would it be better done up a level?
 		BelongsTo: castor.(*player.Player),
@@ -157,17 +163,19 @@ func (s CharacterSpell) CreateCharacter(castor grid.GameObject) *Character {
 
 // This is the actual character that gets created
 type Character struct {
-	Name       string
-	Sprite     logical.Vec
-	Color      color.Color
-	Movement   int
-	Flying     bool
-	Undead     bool
-	Defence    int
-	Combat     int
-	Manoeuvre  int
-	DeadSprite logical.Vec
-	IsDead     bool
+	Name         string
+	Sprite       logical.Vec
+	Color        color.Color
+	Movement     int
+	Flying       bool
+	Undead       bool
+	Defence      int
+	Combat       int
+	RangedCombat int
+	AttackRange  int
+	Manoeuvre    int
+	DeadSprite   logical.Vec
+	IsDead       bool
 
 	BelongsTo *player.Player
 	// Remember to add any fields you add here to the Clone method
@@ -178,17 +186,20 @@ type Character struct {
 
 func (c *Character) Clone() *Character {
 	return &Character{
-		Name:       c.Name,
-		Sprite:     c.Sprite,
-		Color:      c.Color,
-		Movement:   c.Movement,
-		Flying:     c.Flying,
-		Undead:     c.Undead,
-		Defence:    c.Defence,
-		Combat:     c.Combat,
-		DeadSprite: c.DeadSprite,
-		IsDead:     c.IsDead,
-		BelongsTo:  c.BelongsTo,
+		Name:         c.Name,
+		Sprite:       c.Sprite,
+		Color:        c.Color,
+		Movement:     c.Movement,
+		Flying:       c.Flying,
+		Undead:       c.Undead,
+		Defence:      c.Defence,
+		Combat:       c.Combat,
+		AttackRange:  c.AttackRange,
+		RangedCombat: c.RangedCombat,
+		Manoeuvre:    c.Manoeuvre,
+		DeadSprite:   c.DeadSprite,
+		IsDead:       c.IsDead,
+		BelongsTo:    c.BelongsTo,
 	}
 }
 
