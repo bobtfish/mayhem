@@ -3,7 +3,7 @@ package player
 import (
 	"fmt"
 	"image/color"
-    "math/rand"
+	"math/rand"
 
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"

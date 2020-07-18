@@ -249,11 +249,13 @@ func DoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, mo
 func IsNextToEngageable(location logical.Vec, playerIdx int, withBoard *WithBoard) bool {
 	for _, adjVec := range withBoard.Grid.AsRect().Adjacents(location) {
 		adj := withBoard.Grid.GetGameObject(adjVec)
-		ob, attackable := adj.(movable.Attackable)
-		if attackable {
-			if !ob.CheckBelongsTo(withBoard.Players[playerIdx]) {
-				if ob.Engageable() {
-					return true
+		if !adj.IsEmpty() {
+			ob, attackable := adj.(movable.Attackable)
+			if attackable {
+				if !ob.CheckBelongsTo(withBoard.Players[playerIdx]) {
+					if ob.Engageable() {
+						return true
+					}
 				}
 			}
 		}
