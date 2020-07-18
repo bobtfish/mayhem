@@ -7,7 +7,6 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
@@ -37,11 +36,9 @@ func NextSpellCastOrMove(playerIdx int, players []*player.Player, grid *grid.Gam
 		}
 	}
 	return &Pause{
-		WaitFor: &WaitFor{
-			Skip:       skipPause,
-			Grid:       grid,
-			NextScreen: nextScreen,
-		},
+		Skip:       skipPause,
+		Grid:       grid,
+		NextScreen: nextScreen,
 	}
 }
 
@@ -137,10 +134,13 @@ func (screen *TargetSpellScreen) AnimateAndCast() GameScreen {
 	if anim != nil {
 		screen.WithBoard.Grid.PlaceGameObject(target, anim)
 	}
-	return &DoSpellCast{
-		WithBoard: screen.WithBoard,
-		PlayerIdx: screen.PlayerIdx,
-		Fx:        anim,
+	return &WaitForFx{
+		NextScreen: &DoSpellCast{
+			WithBoard: screen.WithBoard,
+			PlayerIdx: screen.PlayerIdx,
+		},
+		Grid: screen.WithBoard.Grid,
+		Fx:   anim,
 	}
 }
 
@@ -149,7 +149,6 @@ func (screen *TargetSpellScreen) AnimateAndCast() GameScreen {
 
 type DoSpellCast struct {
 	*WithBoard
-	Fx        *fx.Fx
 	PlayerIdx int
 }
 
@@ -159,22 +158,18 @@ func (screen *DoSpellCast) Enter(ss pixel.Picture, win *pixelgl.Window) {
 func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	batch.Draw(win)
-	// Wait until the spell animation is finished
-	if screen.Fx == nil || screen.Fx.RemoveMe() {
-		// Fx for spell cast finished
-		// Work out what happened :)
-		targetVec := screen.WithBoard.CursorPosition
-		fmt.Printf("About to call player CastSpell method\n")
-		success := screen.Players[screen.PlayerIdx].CastSpell(targetVec, screen.WithBoard.Grid)
-		fmt.Printf("Finished player CastSpell method\n")
-		if success {
-			fmt.Printf("Spell Succeeds\n")
-			render.NewTextDrawer(ss).DrawText("Spell Succeeds", logical.V(0, 0), win)
-		} else {
-			fmt.Printf("Spell failed\n")
-			render.NewTextDrawer(ss).DrawText("Spell Failed", logical.V(0, 0), win)
-		}
-		return NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid, false)
+	// Fx for spell cast finished
+	// Work out what happened :)
+	targetVec := screen.WithBoard.CursorPosition
+	fmt.Printf("About to call player CastSpell method\n")
+	success := screen.Players[screen.PlayerIdx].CastSpell(targetVec, screen.WithBoard.Grid)
+	fmt.Printf("Finished player CastSpell method\n")
+	if success {
+		fmt.Printf("Spell Succeeds\n")
+		render.NewTextDrawer(ss).DrawText("Spell Succeeds", logical.V(0, 0), win)
+	} else {
+		fmt.Printf("Spell failed\n")
+		render.NewTextDrawer(ss).DrawText("Spell Failed", logical.V(0, 0), win)
 	}
-	return screen
+	return NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid, false)
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
@@ -234,12 +235,18 @@ func DoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, mo
 			fmt.Printf("Target square is attackable\n")
 			if !ob.CheckBelongsTo(withBoard.Players[playerIdx]) {
 				fmt.Printf("Target square belongs to a different player do attack\n")
-				return &DoAttack{
-					AttackerV:       from,
-					DefenderV:       to,
-					WithBoard:       withBoard,
-					PlayerIdx:       playerIdx,
-					MovedCharacters: movedCharacters,
+				fx := fx.FxAttack()
+				withBoard.Grid.PlaceGameObject(to, fx)
+				return &WaitForFx{
+					NextScreen: &DoAttack{
+						AttackerV:       from,
+						DefenderV:       to,
+						WithBoard:       withBoard,
+						PlayerIdx:       playerIdx,
+						MovedCharacters: movedCharacters,
+					},
+					Grid: withBoard.Grid,
+					Fx:   fx,
 				}, true
 			}
 		}

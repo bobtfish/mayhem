@@ -1,6 +1,7 @@
 package screen
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/faiface/pixel"
@@ -14,13 +15,14 @@ import (
 type WaitFor struct {
 	NextScreen GameScreen
 	Grid       *grid.GameGrid
-	Skip       bool
+	FinishedF  func() bool
 }
 
 func (screen *WaitFor) Enter(ss pixel.Picture, win *pixelgl.Window) {}
 
 func (screen *WaitFor) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
-	if screen.Skip {
+	if screen.FinishedF() {
+		fmt.Printf("Waitfor Skip to next screen\n")
 		return screen.NextScreen
 	}
 	if screen.Grid != nil {
@@ -30,29 +32,38 @@ func (screen *WaitFor) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 }
 
 type Pause struct {
-	*WaitFor
-	Started time.Time
+	NextScreen GameScreen
+	Grid       *grid.GameGrid
+	Skip       bool
 }
 
-func (screen *Pause) Enter(ss pixel.Picture, win *pixelgl.Window) {
-	screen.Started = time.Now()
-}
+func (screen *Pause) Enter(ss pixel.Picture, win *pixelgl.Window) {}
 
 func (screen *Pause) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
-	if screen.Started.Add(time.Second).Before(time.Now()) {
-		screen.WaitFor.Skip = true
+	started := time.Now()
+	return &WaitFor{
+		NextScreen: screen.NextScreen,
+		Grid:       screen.Grid,
+		FinishedF: func() bool {
+			return screen.Skip || started.Add(time.Second).Before(time.Now())
+		},
 	}
-	return screen.WaitFor.Step(ss, win)
 }
 
 type WaitForFx struct {
-	Fx *fx.Fx
-	*WaitFor
+	Fx         *fx.Fx
+	NextScreen GameScreen
+	Grid       *grid.GameGrid
 }
 
+func (screen *WaitForFx) Enter(ss pixel.Picture, win *pixelgl.Window) {}
+
 func (screen *WaitForFx) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
-	if screen.Fx.RemoveMe() {
-		screen.WaitFor.Skip = true
+	return &WaitFor{
+		NextScreen: screen.NextScreen,
+		Grid:       screen.Grid,
+		FinishedF: func() bool {
+			return screen.Fx == nil || screen.Fx.RemoveMe()
+		},
 	}
-	return screen.WaitFor.Step(ss, win)
 }
