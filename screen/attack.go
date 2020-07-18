@@ -10,7 +10,7 @@ import (
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
-    "github.com/bobtfish/mayhem/render"
+	"github.com/bobtfish/mayhem/render"
 )
 
 type EngagedAttack struct {
@@ -21,12 +21,12 @@ type EngagedAttack struct {
 }
 
 func (screen *EngagedAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {
-    fmt.Printf("In engaged attack state\n")
+	fmt.Printf("In engaged attack state\n")
 }
 
 func (screen *EngagedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
-    render.NewTextDrawer(ss).DrawText("Engaged to enemy                        ", logical.ZeroVec(), batch)
+	render.NewTextDrawer(ss).DrawText("Engaged to enemy                        ", logical.ZeroVec(), batch)
 	batch.Draw(win)
 
 	direction := captureDirectionKey(win)

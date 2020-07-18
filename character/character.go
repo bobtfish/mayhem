@@ -69,6 +69,7 @@ func LoadCharacterTemplates() {
 			Defence:       v.Defence,
 			DeadSprite:    logical.V(v.DeadSprite[0], v.DeadSprite[1]),
 			Combat:        v.Combat,
+			Manoeuvre:     v.Manoeuvre,
 		})
 	}
 }
@@ -87,6 +88,7 @@ type CharacterSpell struct {
 	Undead        bool
 	Defence       int
 	Combat        int
+	Manoeuvre     int
 }
 
 // Spell interface begin
@@ -146,6 +148,7 @@ func (s CharacterSpell) CreateCharacter(castor grid.GameObject) *Character {
 		Defence:    s.Defence,
 		DeadSprite: s.DeadSprite,
 		Combat:     s.Combat,
+		Manoeuvre:  s.Manoeuvre,
 
 		// FIXME - ugh this is gross - would it be better done up a level?
 		BelongsTo: castor.(*player.Player),
@@ -162,6 +165,7 @@ type Character struct {
 	Undead     bool
 	Defence    int
 	Combat     int
+	Manoeuvre  int
 	DeadSprite logical.Vec
 	IsDead     bool
 
@@ -249,6 +253,13 @@ func (c *Character) IsFlying() bool {
 
 func (c *Character) CheckBelongsTo(player *player.Player) bool {
 	return player == c.BelongsTo
+}
+
+func (c *Character) BreakEngagement() bool {
+	if rand.IntN(9) >= c.Manoeuvre {
+		return true
+	}
+	return false
 }
 
 // SetBoardPosition is in GameObject interface also

@@ -11,6 +11,7 @@ type Movable interface {
 	CheckBelongsTo(*player.Player) bool
 	GetBoardPosition() logical.Vec
 	SetBoardPosition(logical.Vec)
+	BreakEngagement() bool
 }
 
 type Attackable interface {

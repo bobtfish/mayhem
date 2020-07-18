@@ -13,6 +13,7 @@ func NewPlayer() Player {
 	return Player{
 		Defence:     3,
 		Combat:      3,
+		Manoeuvre:   4,
 		ChosenSpell: -1,
 		Spells:      spells.ChooseSpells(),
 	}
@@ -31,6 +32,7 @@ type Player struct {
 	SpriteIdx     int
 	Defence       int
 	Combat        int
+	Manoeuvre     int
 
 	Flying bool // If the player has magic wings
 }
@@ -95,6 +97,13 @@ func (p *Player) SetBoardPosition(v logical.Vec) {
 
 func (p *Player) GetBoardPosition() logical.Vec {
 	return p.BoardPosition
+}
+
+func (p *Player) BreakEngagement() bool {
+	if rand.IntN(9) >= p.Manoeuvre {
+		return true
+	}
+	return false
 }
 
 // Movable interface END
