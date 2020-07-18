@@ -42,7 +42,7 @@ func (screen *EngagedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScr
 		}
 	}
 
-    if win.JustPressed(pixelgl.Key0) || if win.JustPressed(pixelgl.KeyK) {
+    if win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) {
         return &MoveFindCharacterScreen{
             WithBoard:       screen.WithBoard,
             PlayerIdx:       screen.PlayerIdx,
