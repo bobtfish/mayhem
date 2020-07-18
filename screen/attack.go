@@ -10,7 +10,39 @@ import (
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
+    "github.com/bobtfish/mayhem/render"
 )
+
+type EngagedAttack struct {
+	*WithBoard
+	PlayerIdx       int
+	Character       movable.Movable
+	MovedCharacters map[movable.Movable]bool
+}
+
+func (screen *EngagedAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {
+    fmt.Printf("In engaged attack state\n")
+}
+
+func (screen *EngagedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+	batch := screen.WithBoard.DrawBoard(ss, win)
+    render.NewTextDrawer(ss).DrawText("Engaged to enemy                        ", logical.ZeroVec(), batch)
+	batch.Draw(win)
+
+	direction := captureDirectionKey(win)
+	if direction != logical.ZeroVec() {
+		fmt.Printf("Try to move in v(%d, %d)\n", direction.X, direction.Y)
+		currentLocation := screen.Character.GetBoardPosition()
+		newLocation := currentLocation.Add(direction)
+
+		attackScreen, _ := DoAttackMaybe(currentLocation, newLocation, screen.PlayerIdx, screen.WithBoard, screen.MovedCharacters)
+		if attackScreen != nil {
+			fmt.Printf("Can attack in that direction")
+			return attackScreen
+		}
+	}
+	return screen
+}
 
 type DoAttack struct {
 	*WithBoard

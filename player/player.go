@@ -105,6 +105,10 @@ func (p *Player) GetDefence() int {
 	return p.Defence
 }
 
+func (p *Player) Engageable() bool {
+	return true
+}
+
 // SetBoardPosition is in GameObject interface also
 
 // Attackable interface END

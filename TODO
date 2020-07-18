@@ -20,3 +20,6 @@ Bug / missing feature list:
    AI Players
    Gooey blob / Fire character and player interactions
    Justice/Vengence/etc spells
+
+Tidy ups:
+   Make rendering in the bottom panel be easier, and automatically clear the panel to 32 chars

@@ -16,6 +16,7 @@ type Movable interface {
 type Attackable interface {
 	GetDefence() int
 	CheckBelongsTo(*player.Player) bool
+	Engageable() bool
 }
 
 type Attackerable interface {

@@ -184,6 +184,32 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 // If moving to a square which can be attacked, returns the attack screen to make the attack happen
 // If moving to a square with something that cannot be moved into or attacked, return false
 func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, movedCharacters map[movable.Movable]bool) (GameScreen, bool) {
+	newScreen, notEmpty := DoAttackMaybe(from, to, playerIdx, withBoard, movedCharacters)
+	if notEmpty {
+		if newScreen != nil {
+			return newScreen, true
+		}
+		return nil, false
+	}
+
+	// Is an empty square, move to it
+	doCharacterMove(from, to, withBoard.Grid)
+
+	// If you move next to an engageable character, you always become engaged in combat
+	if IsNextToEngageable(to, playerIdx, withBoard) {
+		fmt.Printf("Has moved next to engageable character, should be engaged\n")
+		return &EngagedAttack{
+			WithBoard:       withBoard,
+			PlayerIdx:       playerIdx,
+			Character:       withBoard.Grid.GetGameObject(to).(movable.Movable),
+			MovedCharacters: movedCharacters,
+		}, true
+	}
+
+	return nil, true
+}
+
+func DoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, movedCharacters map[movable.Movable]bool) (GameScreen, bool) {
 	target := withBoard.Grid.GetGameObject(to)
 	if !target.IsEmpty() {
 		fmt.Printf("Target square is not empty\n")
@@ -201,12 +227,24 @@ func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard
 				}, true
 			}
 		}
-		return nil, false
+		return nil, true
 	}
+	return nil, false
+}
 
-	doCharacterMove(from, to, withBoard.Grid)
-
-	return nil, true
+func IsNextToEngageable(location logical.Vec, playerIdx int, withBoard *WithBoard) bool {
+	for _, adjVec := range withBoard.Grid.AsRect().Adjacents(location) {
+		adj := withBoard.Grid.GetGameObject(adjVec)
+		ob, attackable := adj.(movable.Attackable)
+		if attackable {
+			if !ob.CheckBelongsTo(withBoard.Players[playerIdx]) {
+				if ob.Engageable() {
+					return true
+				}
+			}
+		}
+	}
+	return false
 }
 
 // this gets reused from screen/attack.go
