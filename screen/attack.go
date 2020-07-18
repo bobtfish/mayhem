@@ -12,6 +12,25 @@ import (
 	"github.com/bobtfish/mayhem/render"
 )
 
+type RangedCombat struct {
+	*WithBoard
+	PlayerIdx       int
+	Character       movable.Movable
+	MovedCharacters map[movable.Movable]bool
+}
+
+func (screen *RangedCombat) Enter(ss pixel.Picture, win *pixelgl.Window) {
+	fmt.Printf("In ranged combat state\n")
+}
+
+func (screen *RangedCombat) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+	return &MoveFindCharacterScreen{
+		WithBoard:       screen.WithBoard,
+		PlayerIdx:       screen.PlayerIdx,
+		MovedCharacters: screen.MovedCharacters,
+	}
+}
+
 type EngagedAttack struct {
 	*WithBoard
 	PlayerIdx       int
@@ -42,9 +61,10 @@ func (screen *EngagedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScr
 	}
 
 	if win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) {
-		return &MoveFindCharacterScreen{
+		return &RangedCombat{
 			WithBoard:       screen.WithBoard,
 			PlayerIdx:       screen.PlayerIdx,
+			Charatcer:       screen.Character,
 			MovedCharacters: screen.MovedCharacters,
 		}
 	}
@@ -92,9 +112,10 @@ func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 
 		doCharacterMove(screen.AttackerV, screen.DefenderV, screen.WithBoard.Grid)
 	}
-	return &MoveFindCharacterScreen{
+	return &RangedCombat{
 		WithBoard:       screen.WithBoard,
 		PlayerIdx:       screen.PlayerIdx,
+		Charatcer:       screen.Character,
 		MovedCharacters: screen.MovedCharacters,
 	}
 }

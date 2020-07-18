@@ -280,9 +280,10 @@ func doCharacterMove(from, to logical.Vec, grid *grid.GameGrid) {
 }
 
 func (screen *MoveGroundCharacterScreen) MoveGroundCharacterScreenFinished() GameScreen {
-	return &MoveFindCharacterScreen{
+	return &RangedCombat{
 		WithBoard:       screen.WithBoard,
 		PlayerIdx:       screen.PlayerIdx,
+		Charatcer:       screen.Character,
 		MovedCharacters: screen.MovedCharacters,
 	}
 }
@@ -347,9 +348,10 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 }
 
 func (screen *MoveFlyingCharacterScreen) MoveFlyingCharacterScreenFinished() GameScreen {
-	return &MoveFindCharacterScreen{
+	return &RangedCombat{
 		WithBoard:       screen.WithBoard,
 		PlayerIdx:       screen.PlayerIdx,
+		Charatcer:       screen.Character,
 		MovedCharacters: screen.MovedCharacters,
 	}
 }
