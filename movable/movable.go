@@ -31,4 +31,5 @@ type Attackerable interface {
 type Corpseable interface {
 	CanMakeCorpse() bool
 	MakeCorpse()
+	GetBoardPosition() logical.Vec
 }

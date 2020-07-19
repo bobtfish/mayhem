@@ -7,6 +7,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
 	"github.com/bobtfish/mayhem/render"
@@ -108,24 +109,9 @@ func (screen *DoRangedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 			fmt.Printf("Attack rating %d defence rating %d\n", attackRating, defenceRating)
 			if attackRating > defenceRating {
 				fmt.Printf("Attack kills defender\n")
-				// FIXME this is super duplicate logic
-				// If the defender can be killed, kill them. Otherwise remove them
-				ob, corpsable := target.(movable.Corpseable)
-				fmt.Printf("Defender is %T corpsable %v ob %T(%v)\n", target, corpsable, ob, ob)
-				makesCorpse := corpsable && ob.CanMakeCorpse()
-				if makesCorpse {
-					fmt.Printf("make corpse\n")
-					ob.MakeCorpse()
-				} else {
-					fmt.Printf("remove defender as no corpse\n")
-					died := screen.WithBoard.Grid.GetGameObjectStack(screen.WithBoard.CursorPosition).RemoveTopObject()
-					if KillIfPlayer(died, screen.WithBoard.Grid) {
-						if WeHaveAWinner(screen.WithBoard.Players) {
-							return &WinnerScreen{
-								WithBoard: screen.WithBoard,
-							}
-						}
-					}
+				newScreen := PostSuccessfulAttack(target, screen.WithBoard)
+				if newScreen != nil {
+					return newScreen
 				}
 			}
 		}
@@ -189,6 +175,29 @@ type DoAttack struct {
 
 func (screen *DoAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {}
 
+func PostSuccessfulAttack(target grid.GameObject, withBoard *WithBoard) GameScreen {
+	// If the defender can be killed, kill them. Otherwise remove them
+	ob, corpsable := target.(movable.Corpseable)
+	fmt.Printf("Defender is %T corpsable %v ob %T(%v)\n", target, corpsable, ob, ob)
+	makesCorpse := corpsable && ob.CanMakeCorpse()
+	if makesCorpse {
+		fmt.Printf("make corpse\n")
+		ob.MakeCorpse()
+	} else {
+		fmt.Printf("remove defender as no corpse\n")
+		// FIXME is this needed, or can we just pass target or ob?
+		died := withBoard.Grid.GetGameObjectStack(ob.GetBoardPosition()).RemoveTopObject()
+		if KillIfPlayer(died, withBoard.Grid) {
+			if WeHaveAWinner(withBoard.Players) {
+				return &WinnerScreen{
+					WithBoard: withBoard,
+				}
+			}
+		}
+	}
+	return nil
+}
+
 func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	// Work out what happened. This is overly simple, but equivalent to what the original game does :)
 	defender := screen.WithBoard.Grid.GetGameObject(screen.DefenderV)
@@ -198,23 +207,9 @@ func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 
 	fmt.Printf("Attack rating %d defence rating %d\n", attackRating, defenceRating)
 	if attackRating > defenceRating {
-		// If the defender can be killed, kill them. Otherwise remove them
-		ob, corpsable := defender.(movable.Corpseable)
-		fmt.Printf("Defender is %T corpsable %v ob %T(%v)\n", defender, corpsable, ob, ob)
-		makesCorpse := corpsable && ob.CanMakeCorpse()
-		if makesCorpse {
-			fmt.Printf("make corpse\n")
-			ob.MakeCorpse()
-		} else {
-			fmt.Printf("remove defender as no corpse\n")
-			died := screen.WithBoard.Grid.GetGameObjectStack(screen.DefenderV).RemoveTopObject()
-			if KillIfPlayer(died, screen.WithBoard.Grid) {
-				if WeHaveAWinner(screen.WithBoard.Players) {
-					return &WinnerScreen{
-						WithBoard: screen.WithBoard,
-					}
-				}
-			}
+		newScreen := PostSuccessfulAttack(defender, screen.WithBoard)
+		if newScreen != nil {
+			return newScreen
 		}
 
 		doCharacterMove(screen.AttackerV, screen.DefenderV, screen.WithBoard.Grid)
