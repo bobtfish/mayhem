@@ -78,6 +78,42 @@ func LoadCharacterTemplates() {
 			CanBeIllusion:      v.CanBeIllusion,
 		})
 	}
+
+	// We know that the spells array is initialised now, add the disbelieve spell
+	// This is done here as character depends on spells, and so we can't have spell depend on character
+	spells.AllSpells[0] = DisbelieveSpell{spells.ASpell{
+		Name:          "Disbelieve",
+		LawRating:     0,
+		Reuseable:     true,
+		CastingChance: 100,
+		CastRange:     20,
+	}}
+}
+
+type DisbelieveSpell struct {
+	spells.ASpell
+}
+
+func (s DisbelieveSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
+	if illusion {
+		panic("DisbelieveSpell cannot be illusion")
+	}
+	character := grid.GetGameObject(target).(*Character)
+	if character.IsIllusion {
+		grid.GetGameObjectStack(target).RemoveTopObject()
+		anim := fx.FxDisbelieve()
+		grid.PlaceGameObject(target, anim)
+		return true, anim
+	}
+	return false, nil
+}
+
+func (s DisbelieveSpell) CanCast(target grid.GameObject) bool {
+	_, isCharacter := target.(*Character)
+	if isCharacter {
+		return true
+	}
+	return false
 }
 
 // This is the spell to create a character
@@ -116,16 +152,6 @@ func (s CharacterSpell) GetCastRange() int {
 	return s.CastRange
 }
 
-// FIXME this is duplicate code
-func (s CharacterSpell) DoesCastWork(playerLawRating int) bool {
-	// FIXME
-	return true
-	if rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
-		return true
-	}
-	return false
-}
-
 func (s CharacterSpell) CanCast(target grid.GameObject) bool {
 	if target.IsEmpty() {
 		return true
@@ -133,9 +159,12 @@ func (s CharacterSpell) CanCast(target grid.GameObject) bool {
 	return false
 }
 
-func (s CharacterSpell) Cast(illusion bool, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) *fx.Fx {
-	grid.PlaceGameObject(target, s.CreateCharacter(illusion, castor))
-	return nil
+func (s CharacterSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
+	if rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
+		grid.PlaceGameObject(target, s.CreateCharacter(illusion, castor))
+		return true, nil
+	}
+	return false, nil
 }
 
 func (s CharacterSpell) IsReuseable() bool {

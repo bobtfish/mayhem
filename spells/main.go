@@ -15,10 +15,9 @@ type Spell interface {
 	GetLawRating() int
 	GetCastingChance(int) int
 	GetCastRange() int
-	DoesCastWork(int) bool
 	CanCast(grid.GameObject) bool
 	CanCastAsIllusion() bool
-	Cast(bool, logical.Vec, *grid.GameGrid, grid.GameObject) *fx.Fx
+	Cast(bool, int, logical.Vec, *grid.GameGrid, grid.GameObject) (bool, *fx.Fx)
 	IsReuseable() bool
 	CastFx() *fx.Fx
 }
@@ -56,32 +55,11 @@ func (s ASpell) GetCastRange() int {
 	return s.CastRange
 }
 
-func (s ASpell) DoesCastWork(playerLawRating int) bool {
-	// FIXME
-	return true
-	if rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
-		return true
-	}
-	return false
-}
 func (s ASpell) CanCast(target grid.GameObject) bool {
 	return true
 }
 func (s ASpell) CanCastAsIllusion() bool {
 	return false
-}
-
-type DisbelieveSpell struct {
-	ASpell
-}
-
-func (s DisbelieveSpell) Cast(illusion bool, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) *fx.Fx {
-	if illusion {
-		panic("DisbelieveSpell cannot be illusion")
-	}
-	anim := fx.FxDisbelieve()
-	grid.PlaceGameObject(target, anim)
-	return anim
 }
 
 type CreatureSpell struct {
@@ -92,11 +70,14 @@ type OtherSpell struct {
 	ASpell
 }
 
-func (s OtherSpell) Cast(illusion bool, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) *fx.Fx {
+func (s OtherSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
 	if illusion {
 		panic("OtherSpell cannot be illusion")
 	}
-	return nil
+	if rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
+		return true, nil
+	}
+	return false, nil
 }
 
 func LawRatingSymbol(s Spell) string {
@@ -138,14 +119,7 @@ var AllSpells []Spell
 
 func CreateSpell(s Spell) {
 	if AllSpells == nil {
-		AllSpells = make([]Spell, 1)
-		AllSpells[0] = DisbelieveSpell{ASpell{
-			Name:          "Disbelieve",
-			LawRating:     0,
-			Reuseable:     true,
-			CastingChance: 100,
-			CastRange:     20,
-		}}
+		AllSpells = make([]Spell, 1) // Deliberately leave room for disbelieve spell as number 0
 	}
 	AllSpells = append(AllSpells, s)
 }

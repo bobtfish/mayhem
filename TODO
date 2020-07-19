@@ -1,8 +1,8 @@
 Bug / missing feature list:
+   Character spells have hard coded casting chance of 100%
    Press number to flash characters of one player
    Flash characters of one player at start of move turn
    Ranged combat + spells - animation on way to target square
-   Illusion spells / creatures
    Player movement/attack/defence spells changing stats
    Raise dead spell
    Subversion
@@ -20,5 +20,3 @@ Bug / missing feature list:
    AI Players
    Gooey blob / Fire character and player interactions
 
-Tidy ups:
-   Make rendering in the bottom panel be easier, and automatically clear the panel to 32 chars

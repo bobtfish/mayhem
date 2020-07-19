@@ -162,11 +162,8 @@ func (p *Player) CastSpell(target logical.Vec, grid *grid.GameGrid) (bool, *fx.F
 		spells = append(p.Spells[:i], p.Spells[i+1:]...)
 		p.Spells = spells
 	}
-	ret := spell.DoesCastWork(p.LawRating)
-	if ret || p.CastIllusion {
-		fmt.Printf("Player spell %T cast on %T\n", spell, target)
-		anim = spell.Cast(p.CastIllusion, target, grid, p)
-	}
+	fmt.Printf("Player spell %T cast on %T\n", spell, target)
+	ret, anim := spell.Cast(p.CastIllusion, p.LawRating, target, grid, p)
 	p.ChosenSpell = -1
 	return ret, anim
 }
@@ -186,16 +183,19 @@ func (s PlayerSpell) CanCast(target grid.GameObject) bool {
 	return false
 }
 
-func (s PlayerSpell) Cast(illusion bool, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) *fx.Fx {
+func (s PlayerSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
 	if illusion {
 		panic("PlayerSpell cannot be illusion")
 	}
-	tile := grid.GetGameObject(target)
-	player := tile.(*Player)
-	s.MutateFunc(player)
-	// May have just become not animated
-	player.SpriteIdx = 0
-	return nil
+	if rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
+		tile := grid.GetGameObject(target)
+		player := tile.(*Player)
+		s.MutateFunc(player)
+		// May have just become not animated
+		player.SpriteIdx = 0
+		return true, nil
+	}
+	return false, nil
 }
 
 func init() {
