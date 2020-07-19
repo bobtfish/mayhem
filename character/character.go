@@ -304,6 +304,14 @@ func (c *Character) GetCombat() int {
 	return c.Combat
 }
 
+func (c *Character) GetRangedCombat() int {
+	return c.RangedCombat
+}
+
+func (c *Character) GetAttackRange() int {
+	return c.AttackRange
+}
+
 // Attackerable interface END
 
 // Corpseable interface BEGIN

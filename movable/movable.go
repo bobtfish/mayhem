@@ -22,6 +22,8 @@ type Attackable interface {
 
 type Attackerable interface {
 	GetCombat() int
+	GetRangedCombat() int
+	GetAttackRange() int
 }
 
 type Corpseable interface {

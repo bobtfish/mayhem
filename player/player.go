@@ -34,6 +34,8 @@ type Player struct {
 	SpriteIdx     int
 	Defence       int
 	Combat        int
+	RangedCombat  int
+	AttackRange   int
 	Manoeuvre     int
 
 	Flying bool // If the player has magic wings
@@ -130,6 +132,14 @@ func (p *Player) Engageable() bool {
 
 func (p *Player) GetCombat() int {
 	return p.Combat
+}
+
+func (p *Player) GetRangedCombat() int {
+	return p.RangedCombat
+}
+
+func (p *Player) GetAttackRange() int {
+	return p.AttackRange
 }
 
 // Attackerable interface END
