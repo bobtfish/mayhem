@@ -91,14 +91,19 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 
 				// Is it engaged?
 				if IsNextToEngageable(screen.WithBoard.CursorPosition, screen.PlayerIdx, screen.WithBoard) {
+					fmt.Printf("Is next to engageable character\n")
 					if !ob.BreakEngagement() {
+						fmt.Printf("Did not break engagement, must do engaged attack\n")
 						return &EngagedAttack{
 							WithBoard:       screen.WithBoard,
 							PlayerIdx:       screen.PlayerIdx,
 							Character:       ob,
 							MovedCharacters: screen.MovedCharacters,
 						}
+					} else {
+						fmt.Printf("Broke engagement, can move normally\n")
 					}
+
 				}
 
 				// Not engaged, so move
