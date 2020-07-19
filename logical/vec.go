@@ -84,3 +84,35 @@ func (v Vec) IsDiagonal() bool {
 	}
 	return false
 }
+
+func (v Vec) Path() []Vec {
+	var Xstep, Ystep, Xcurrent, Ycurrent float64
+	Xsign, Ysign := 1, 1
+	if v.X < 0 {
+		Xsign = -1
+	}
+	if v.Y < 0 {
+		Ysign = -1
+	}
+	w := v.Abs()
+	if w.X == w.Y {
+		Xstep = 1.0
+		Ystep = 1.0
+	} else {
+		if w.X > w.Y {
+			Xstep = 1.0
+			Ystep = float64(w.Y) / float64(w.X)
+		} else {
+			Ystep = 1.0
+			Xstep = float64(w.X) / float64(w.Y)
+		}
+	}
+	Xcurrent, Ycurrent = Xstep, Ystep
+	path := make([]Vec, 0)
+	for Xcurrent < float64(w.X) || Ycurrent < float64(w.Y) {
+		path = append(path, V(int(Xcurrent)*Xsign, int(Ycurrent)*Ysign))
+		Xcurrent = Xcurrent + Xstep
+		Ycurrent = Ycurrent + Ystep
+	}
+	return path
+}

@@ -19,7 +19,7 @@ type ExamineOneSpellScreen struct {
 
 func (screen *ExamineOneSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
-	textBottom("Press any key to continue", ss, win)
+	textBottom("   Press any key to continue", ss, win)
 	td := TextDrawer(ss)
 	td.DrawText(screen.Spell.GetName(), logical.V(0, 9), win)
 	td.DrawText("FIXME add stuff per spell", logical.V(0, 7), win)

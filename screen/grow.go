@@ -111,7 +111,6 @@ func (screen *GrowScreen) IterateGrowVanish() {
 						screen.WithBoard.Grid.PlaceGameObject(adj[adjIdx], c)
 					} else {
 						if doesItVanish() {
-							fmt.Printf("v(%d, %d) has vanished\n")
 							screen.WithBoard.Grid.GetGameObjectStack(screen.Consider).RemoveTopObject()
 						}
 					}

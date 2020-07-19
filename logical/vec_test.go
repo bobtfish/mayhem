@@ -292,3 +292,145 @@ func TestIsDiagonal(t *testing.T) {
 		t.Errorf("v(-1, -1) is not diagonal")
 	}
 }
+
+func TestPathZero(t *testing.T) {
+	path := V(0, 0).Path()
+	if len(path) != 0 {
+		t.Errorf("Path len != 0 is %d: %v", len(path), path)
+	}
+}
+
+func TestPathOne(t *testing.T) {
+	path := IdentityVec().Path()
+	if len(path) != 0 {
+		t.Errorf("Path len != 0 is %d: %v", len(path), path)
+	}
+}
+
+func TestPathXOnly(t *testing.T) {
+	path := V(4, 0).Path()
+	if len(path) != 3 {
+		t.Errorf("Path len != 3 is %d: %v", len(path), path)
+	}
+	if path[0].X != 1 || path[0].Y != 0 {
+		t.Errorf("Path[0] not v(1, 0) is v(%d, %d)", path[0].X, path[0].Y)
+	}
+	if path[1].X != 2 || path[1].Y != 0 {
+		t.Errorf("Path[1] not v(2, 0) is v(%d, %d)", path[1].X, path[1].Y)
+	}
+	if path[2].X != 3 || path[2].Y != 0 {
+		t.Errorf("Path[2] not v(3, 0) is v(%d, %d)", path[2].X, path[2].Y)
+	}
+}
+
+func TestPathYOnly(t *testing.T) {
+	path := V(0, 4).Path()
+	if len(path) != 3 {
+		t.Errorf("Path len != 3 is %d: %v", len(path), path)
+	}
+	if path[0].X != 0 || path[0].Y != 1 {
+		t.Errorf("Path[0] not v(0, 1) is v(%d, %d)", path[0].X, path[0].Y)
+	}
+	if path[1].X != 0 || path[1].Y != 2 {
+		t.Errorf("Path[1] not v(0, 2) is v(%d, %d)", path[1].X, path[1].Y)
+	}
+	if path[2].X != 0 || path[2].Y != 3 {
+		t.Errorf("Path[2] not v(0, 3) is v(%d, %d)", path[2].X, path[2].Y)
+	}
+}
+
+func TestPathDiagonal(t *testing.T) {
+	path := V(4, 4).Path()
+	if len(path) != 3 {
+		t.Errorf("Path len != 3 is %d: %v", len(path), path)
+	}
+	if path[0].X != 1 || path[0].Y != 1 {
+		t.Errorf("Path[0] not v(1, 1) is v(%d, %d)", path[0].X, path[0].Y)
+	}
+	if path[1].X != 2 || path[1].Y != 2 {
+		t.Errorf("Path[1] not v(2, 2) is v(%d, %d)", path[1].X, path[1].Y)
+	}
+	if path[2].X != 3 || path[2].Y != 3 {
+		t.Errorf("Path[2] not v(3, 3) is v(%d, %d)", path[2].X, path[2].Y)
+	}
+}
+
+func TestPathHalfDiagonal(t *testing.T) {
+	path := V(4, 2).Path()
+	if len(path) != 3 {
+		t.Errorf("Path len != 3 is %d: %v", len(path), path)
+	}
+	if path[0].X != 1 || path[0].Y != 0 {
+		t.Errorf("Path[0] not v(1, 0) is v(%d, %d)", path[0].X, path[0].Y)
+	}
+	if path[1].X != 2 || path[1].Y != 1 {
+		t.Errorf("Path[1] not v(2, 1) is v(%d, %d)", path[1].X, path[1].Y)
+	}
+	if path[2].X != 3 || path[2].Y != 1 {
+		t.Errorf("Path[2] not v(3, 1) is v(%d, %d)", path[2].X, path[2].Y)
+	}
+}
+
+func TestPathXOnlyReverse(t *testing.T) {
+	path := V(-4, 0).Path()
+	if len(path) != 3 {
+		t.Errorf("Path len != 3 is %d: %v", len(path), path)
+	}
+	if path[0].X != -1 || path[0].Y != 0 {
+		t.Errorf("Path[0] not v(-1, 0) is v(%d, %d)", path[0].X, path[0].Y)
+	}
+	if path[1].X != -2 || path[1].Y != 0 {
+		t.Errorf("Path[1] not v(2, 0) is v(%d, %d)", path[1].X, path[1].Y)
+	}
+	if path[2].X != -3 || path[2].Y != 0 {
+		t.Errorf("Path[2] not v(3, 0) is v(%d, %d)", path[2].X, path[2].Y)
+	}
+}
+
+func TestPathYOnlyReverse(t *testing.T) {
+	path := V(0, -4).Path()
+	if len(path) != 3 {
+		t.Errorf("Path len != 3 is %d: %v", len(path), path)
+	}
+	if path[0].X != 0 || path[0].Y != -1 {
+		t.Errorf("Path[0] not v(0, -1) is v(%d, %d)", path[0].X, path[0].Y)
+	}
+	if path[1].X != 0 || path[1].Y != -2 {
+		t.Errorf("Path[1] not v(0, -2) is v(%d, %d)", path[1].X, path[1].Y)
+	}
+	if path[2].X != 0 || path[2].Y != -3 {
+		t.Errorf("Path[2] not v(0, -3) is v(%d, %d)", path[2].X, path[2].Y)
+	}
+}
+
+func TestPathDiagonalReverse(t *testing.T) {
+	path := V(-4, -4).Path()
+	if len(path) != 3 {
+		t.Errorf("Path len != 3 is %d: %v", len(path), path)
+	}
+	if path[0].X != -1 || path[0].Y != -1 {
+		t.Errorf("Path[0] not v(-1, -1) is v(%d, %d)", path[0].X, path[0].Y)
+	}
+	if path[1].X != -2 || path[1].Y != -2 {
+		t.Errorf("Path[1] not v(-2, -2) is v(%d, %d)", path[1].X, path[1].Y)
+	}
+	if path[2].X != -3 || path[2].Y != -3 {
+		t.Errorf("Path[2] not v(-3, -3) is v(%d, %d)", path[2].X, path[2].Y)
+	}
+}
+
+func TestPathHalfDiagonalReverse(t *testing.T) {
+	path := V(-4, -2).Path()
+	if len(path) != 3 {
+		t.Errorf("Path len != 3 is %d: %v", len(path), path)
+	}
+	if path[0].X != -1 || path[0].Y != 0 {
+		t.Errorf("Path[0] not v(-1, 0) is v(%d, %d)", path[0].X, path[0].Y)
+	}
+	if path[1].X != -2 || path[1].Y != -1 {
+		t.Errorf("Path[1] not v(-2, -1) is v(%d, %d)", path[1].X, path[1].Y)
+	}
+	if path[2].X != -3 || path[2].Y != -1 {
+		t.Errorf("Path[2] not v(-3, -1) is v(%d, %d)", path[2].X, path[2].Y)
+	}
+}

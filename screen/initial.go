@@ -21,15 +21,21 @@ func (screen *InitialScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	td.DrawText("         By bobtfish", logical.V(0, 8), win)
 	td.DrawText("How many wizards?", logical.V(0, 6), win)
 	td.DrawText("(Press 2 to 8)", logical.V(0, 5), win)
+	textBottom("       Press H for help", ss, win)
 }
 
 func (screen *InitialScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+	if win.JustPressed(pixelgl.KeyH) {
+		return &HelpScreenMenu{}
+	}
+
 	c := captureNumKey(win)
 	if c >= 2 && c <= 8 {
 		td := TextDrawer(ss)
 		td.DrawText(fmt.Sprintf("%d", c), logical.V(18, 6), win)
 		td.DrawText("Level of computer wizards?", logical.V(0, 3), win)
 		td.DrawText("(Press 1 to 8)", logical.V(0, 2), win)
+		textBottom("", ss, win)
 		return &ComputerDifficultyScreen{WizardCount: c}
 	}
 	return screen
