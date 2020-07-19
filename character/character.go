@@ -36,6 +36,7 @@ type CharacterType struct {
 	ColorB             int     `yaml:"color_b"`
 	Undead             bool    `yaml:"undead"`
 	CastRange          int     `yaml:"cast_range"`
+	CanBeIllusion      bool    `yaml:"can_be_illusion"`
 }
 
 func LoadCharacterTemplates() {
@@ -74,6 +75,7 @@ func LoadCharacterTemplates() {
 			RangedCombat:       v.RangedCombat,
 			AttackRange:        v.AttackRange,
 			RangedAttackIsFire: v.RangedAttackIsFire,
+			CanBeIllusion:      v.CanBeIllusion,
 		})
 	}
 }
@@ -96,6 +98,7 @@ type CharacterSpell struct {
 	AttackRange        int
 	RangedAttackIsFire bool
 	Manoeuvre          int
+	CanBeIllusion      bool
 }
 
 // Spell interface begin
@@ -142,9 +145,14 @@ func (s CharacterSpell) CastFx() *fx.Fx {
 	return fx.FxSpellCast()
 }
 
+func (s CharacterSpell) CanCastAsIllusion() bool {
+	return s.CanBeIllusion
+}
+
 // Spell interface end
 
 func (s CharacterSpell) CreateCharacter(castor grid.GameObject) *Character {
+	isIllusion := false
 	return &Character{
 		Name:               s.Name,
 		Sprite:             s.Sprite,
@@ -159,6 +167,7 @@ func (s CharacterSpell) CreateCharacter(castor grid.GameObject) *Character {
 		RangedCombat:       s.RangedCombat,
 		RangedAttackIsFire: s.RangedAttackIsFire,
 		AttackRange:        s.AttackRange,
+		IsIllusion:         isIllusion,
 
 		// FIXME - ugh this is gross - would it be better done up a level?
 		BelongsTo: castor.(*player.Player),
@@ -181,6 +190,7 @@ type Character struct {
 	Manoeuvre          int
 	DeadSprite         logical.Vec
 	IsDead             bool
+	IsIllusion         bool
 
 	BelongsTo *player.Player
 	// Remember to add any fields you add here to the Clone method
@@ -206,6 +216,7 @@ func (c *Character) Clone() *Character {
 		DeadSprite:         c.DeadSprite,
 		IsDead:             c.IsDead,
 		BelongsTo:          c.BelongsTo,
+		IsIllusion:         c.IsIllusion,
 	}
 }
 

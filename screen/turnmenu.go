@@ -104,12 +104,36 @@ func (screen *SelectSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 	i := captureSpellKey(win)
 	if i >= 0 && i < len(screen.Player.Spells) {
 		screen.Player.ChosenSpell = i
+		if screen.Player.Spells[i].CanCastAsIllusion() {
+			return &IsIllusionScreen{
+				SpellListScreen: screen.SpellListScreen,
+			}
+		}
 		return screen.MainMenu
 	}
 	return screen
 }
 
 // End
+
+type IsIllusionScreen struct {
+	SpellListScreen
+}
+
+func (screen *IsIllusionScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+	textBottom("Illusion? (Press Y or N)", ss, win)
+	screen.Player.CastIllusion = false
+}
+
+func (screen *IsIllusionScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+	if win.JustPressed(pixelgl.KeyY) {
+		screen.Player.CastIllusion = true
+	}
+	if win.JustPressed(pixelgl.KeyY) || win.JustPressed(pixelgl.KeyN) {
+		return screen.MainMenu
+	}
+	return screen
+}
 
 // Begin main turn menu screen
 type TurnMenuScreen struct {

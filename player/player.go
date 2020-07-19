@@ -29,6 +29,7 @@ type Player struct {
 	HumanPlayer     bool
 	CharacterIcon   logical.Vec
 	ChosenSpell     int
+	CastIllusion    bool
 	Color           color.Color
 	LawRating       int
 	BoardPosition   logical.Vec

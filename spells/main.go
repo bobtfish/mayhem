@@ -17,6 +17,7 @@ type Spell interface {
 	GetCastRange() int
 	DoesCastWork(int) bool
 	CanCast(grid.GameObject) bool
+	CanCastAsIllusion() bool
 	Cast(logical.Vec, *grid.GameGrid, grid.GameObject)
 	IsReuseable() bool
 	CastFx() *fx.Fx
@@ -65,6 +66,9 @@ func (s ASpell) DoesCastWork(playerLawRating int) bool {
 }
 func (s ASpell) CanCast(target grid.GameObject) bool {
 	return true
+}
+func (s ASpell) CanCastAsIllusion() bool {
+	return false
 }
 
 type DisbelieveSpell struct {
