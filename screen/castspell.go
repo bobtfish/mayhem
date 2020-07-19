@@ -159,12 +159,11 @@ func (screen *DoSpellCast) Enter(ss pixel.Picture, win *pixelgl.Window) {
 
 func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
-	batch.Draw(win)
 	// Fx for spell cast finished
 	// Work out what happened :)
 	targetVec := screen.WithBoard.CursorPosition
 	fmt.Printf("About to call player CastSpell method\n")
-	success := screen.Players[screen.PlayerIdx].CastSpell(targetVec, screen.WithBoard.Grid)
+	success, fx := screen.Players[screen.PlayerIdx].CastSpell(targetVec, screen.WithBoard.Grid)
 	fmt.Printf("Finished player CastSpell method\n")
 	if success {
 		fmt.Printf("Spell Succeeds\n")
@@ -174,5 +173,9 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScree
 		textBottom("Spell Failed", ss, batch)
 	}
 	batch.Draw(win)
-	return NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid, false)
+	return &WaitForFx{
+		NextScreen: NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid, false),
+		Grid:       screen.Grid,
+		Fx:         fx,
+	}
 }

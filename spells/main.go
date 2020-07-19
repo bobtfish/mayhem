@@ -18,7 +18,7 @@ type Spell interface {
 	DoesCastWork(int) bool
 	CanCast(grid.GameObject) bool
 	CanCastAsIllusion() bool
-	Cast(logical.Vec, *grid.GameGrid, grid.GameObject)
+	Cast(bool, logical.Vec, *grid.GameGrid, grid.GameObject) *fx.Fx
 	IsReuseable() bool
 	CastFx() *fx.Fx
 }
@@ -75,7 +75,13 @@ type DisbelieveSpell struct {
 	ASpell
 }
 
-func (s DisbelieveSpell) Cast(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) {
+func (s DisbelieveSpell) Cast(illusion bool, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) *fx.Fx {
+	if illusion {
+		panic("DisbelieveSpell cannot be illusion")
+	}
+	anim := fx.FxDisbelieve()
+	grid.PlaceGameObject(target, anim)
+	return anim
 }
 
 type CreatureSpell struct {
@@ -86,7 +92,11 @@ type OtherSpell struct {
 	ASpell
 }
 
-func (s OtherSpell) Cast(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) {
+func (s OtherSpell) Cast(illusion bool, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) *fx.Fx {
+	if illusion {
+		panic("OtherSpell cannot be illusion")
+	}
+	return nil
 }
 
 func LawRatingSymbol(s Spell) string {

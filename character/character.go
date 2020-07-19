@@ -133,8 +133,9 @@ func (s CharacterSpell) CanCast(target grid.GameObject) bool {
 	return false
 }
 
-func (s CharacterSpell) Cast(target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) {
-	grid.PlaceGameObject(target, s.CreateCharacter(castor))
+func (s CharacterSpell) Cast(illusion bool, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) *fx.Fx {
+	grid.PlaceGameObject(target, s.CreateCharacter(illusion, castor))
+	return nil
 }
 
 func (s CharacterSpell) IsReuseable() bool {
@@ -151,8 +152,7 @@ func (s CharacterSpell) CanCastAsIllusion() bool {
 
 // Spell interface end
 
-func (s CharacterSpell) CreateCharacter(castor grid.GameObject) *Character {
-	isIllusion := false
+func (s CharacterSpell) CreateCharacter(isIllusion bool, castor grid.GameObject) *Character {
 	return &Character{
 		Name:               s.Name,
 		Sprite:             s.Sprite,

@@ -81,7 +81,7 @@ func FxFire() *Fx {
 	}
 }
 
-func FxBoom() *Fx {
+func FxDisbelieve() *Fx {
 	return &Fx{
 		SpriteVec:   logical.V(0, 25),
 		SpriteCount: 7,

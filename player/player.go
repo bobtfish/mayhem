@@ -152,7 +152,8 @@ func (p *Player) GetAttackFx() *fx.Fx {
 
 // Attackerable interface END
 
-func (p *Player) CastSpell(target logical.Vec, grid *grid.GameGrid) bool {
+func (p *Player) CastSpell(target logical.Vec, grid *grid.GameGrid) (bool, *fx.Fx) {
+	var anim *fx.Fx
 	fmt.Printf("IN Player spell cast\n")
 	i := p.ChosenSpell
 	spell := p.Spells[i]
@@ -162,12 +163,12 @@ func (p *Player) CastSpell(target logical.Vec, grid *grid.GameGrid) bool {
 		p.Spells = spells
 	}
 	ret := spell.DoesCastWork(p.LawRating)
-	if ret {
+	if ret || p.CastIllusion {
 		fmt.Printf("Player spell %T cast on %T\n", spell, target)
-		spell.Cast(target, grid, p)
+		anim = spell.Cast(p.CastIllusion, target, grid, p)
 	}
 	p.ChosenSpell = -1
-	return ret
+	return ret, anim
 }
 
 // Player Spells (spells which only affect a player)
@@ -185,12 +186,16 @@ func (s PlayerSpell) CanCast(target grid.GameObject) bool {
 	return false
 }
 
-func (s PlayerSpell) Cast(target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) {
+func (s PlayerSpell) Cast(illusion bool, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) *fx.Fx {
+	if illusion {
+		panic("PlayerSpell cannot be illusion")
+	}
 	tile := grid.GetGameObject(target)
 	player := tile.(*Player)
 	s.MutateFunc(player)
 	// May have just become not animated
 	player.SpriteIdx = 0
+	return nil
 }
 
 func init() {
