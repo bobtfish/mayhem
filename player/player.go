@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"math/rand"
 
+	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/spells"
@@ -140,6 +141,10 @@ func (p *Player) GetRangedCombat() int {
 
 func (p *Player) GetAttackRange() int {
 	return p.AttackRange
+}
+
+func (p *Player) GetAttackFx() *fx.Fx {
+	return fx.FxRemoteAttack()
 }
 
 // Attackerable interface END

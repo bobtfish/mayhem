@@ -61,11 +61,18 @@ func (screen *RangedCombat) Step(ss pixel.Picture, win *pixelgl.Window) GameScre
 				screen.OutOfRange = true
 			} else {
 				// Do ranged attack
-				//target := screen.WithBoard.Grid.GetGameObject(screen.WithBoard.CursorPosition)
-				return &DoRangedAttack{
-					WithBoard:       screen.WithBoard,
-					PlayerIdx:       screen.PlayerIdx,
-					MovedCharacters: screen.MovedCharacters,
+				fx := attacker.GetAttackFx()
+				screen.WithBoard.Grid.PlaceGameObject(screen.WithBoard.CursorPosition, fx)
+
+				return &WaitForFx{
+					Fx:   fx,
+					Grid: screen.WithBoard.Grid,
+					NextScreen: &DoRangedAttack{
+						WithBoard:       screen.WithBoard,
+						PlayerIdx:       screen.PlayerIdx,
+						MovedCharacters: screen.MovedCharacters,
+						Attacker:        attacker,
+					},
 				}
 			}
 		}
@@ -79,6 +86,7 @@ type DoRangedAttack struct {
 	*WithBoard
 	PlayerIdx       int
 	MovedCharacters map[movable.Movable]bool
+	Attacker        movable.Attackerable
 }
 
 func (screen *DoRangedAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -86,6 +94,43 @@ func (screen *DoRangedAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {
 }
 
 func (screen *DoRangedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+	target := screen.WithBoard.Grid.GetGameObject(screen.WithBoard.CursorPosition)
+	if !target.IsEmpty() {
+		fmt.Printf("Target square is not empty\n")
+		ob, attackable := target.(movable.Attackable)
+		if attackable {
+			fmt.Printf("Target square is attackable\n")
+
+			// FIXME this is duplicate logic
+			defenceRating := ob.GetDefence() + rand.Intn(9)
+			attackRating := screen.Attacker.GetRangedCombat() + rand.Intn(9)
+
+			fmt.Printf("Attack rating %d defence rating %d\n", attackRating, defenceRating)
+			if attackRating > defenceRating {
+				fmt.Printf("Attack kills defender\n")
+				// FIXME this is super duplicate logic
+				// If the defender can be killed, kill them. Otherwise remove them
+				ob, corpsable := target.(movable.Corpseable)
+				fmt.Printf("Defender is %T corpsable %v ob %T(%v)\n", target, corpsable, ob, ob)
+				makesCorpse := corpsable && ob.CanMakeCorpse()
+				if makesCorpse {
+					fmt.Printf("make corpse\n")
+					ob.MakeCorpse()
+				} else {
+					fmt.Printf("remove defender as no corpse\n")
+					died := screen.WithBoard.Grid.GetGameObjectStack(screen.WithBoard.CursorPosition).RemoveTopObject()
+					if KillIfPlayer(died, screen.WithBoard.Grid) {
+						if WeHaveAWinner(screen.WithBoard.Players) {
+							return &WinnerScreen{
+								WithBoard: screen.WithBoard,
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	return &MoveFindCharacterScreen{
 		WithBoard:       screen.WithBoard,
 		PlayerIdx:       screen.PlayerIdx,

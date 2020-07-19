@@ -65,7 +65,7 @@ func FxSpellCast() *Fx {
 	}
 }
 
-func FxPlayerKilled() *Fx {
+func FxRemoteAttack() *Fx {
 	return &Fx{
 		SpriteVec:   logical.V(0, 27),
 		SpriteCount: 8,

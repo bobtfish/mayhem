@@ -3,6 +3,9 @@ Bug / missing feature list:
    Press number to flash characters of one player
    Flash characters of one player at start of move turn
    Ranged combat
+     - Does fire leave corpses?
+     - Animation before target square
+     - Line of sight
    Illusion spells / creatures
    Player movement/attack/defence spells changing stats
    Raise dead spell
@@ -13,13 +16,13 @@ Bug / missing feature list:
    Mounts
    Killing wizard animation
    Nicer end screen
-   Combat spells
+   Combat spells (Magic bolt, lightning)
+   Justice/Vengence/etc spells
    Law/Chaos rating doing anything + being global
    Board inspect character
    Examine spell screen
    AI Players
    Gooey blob / Fire character and player interactions
-   Justice/Vengence/etc spells
 
 Tidy ups:
    Make rendering in the bottom panel be easier, and automatically clear the panel to 32 chars
