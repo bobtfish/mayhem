@@ -100,7 +100,6 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 			screen.OutOfRange = false
 			screen.WithBoard.DrawCursor(ss, batch)
 		}
-		// FIXME does bottom bar text update when you move over something?
 		if win.JustPressed(pixelgl.KeyS) {
 			target := screen.WithBoard.CursorPosition
 			if spell.GetCastRange() < target.Distance(screen.Players[screen.PlayerIdx].BoardPosition) {
@@ -108,11 +107,16 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 				fmt.Printf("Out of range! Spell cast range %d but distance to target is %d\n", spell.GetCastRange(), target.Distance(screen.Players[screen.PlayerIdx].BoardPosition))
 				screen.OutOfRange = true
 			} else {
-				if spell.CanCast(screen.WithBoard.Grid.GetGameObject(target)) {
-					fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetCastRange(), target.X, target.Y)
-					return screen.AnimateAndCast()
+				if !HaveLineOfSight(screen.Players[screen.PlayerIdx].BoardPosition, screen.WithBoard.CursorPosition, screen.WithBoard.Grid) {
+					textBottom("No line of sight", ss, batch)
+					screen.OutOfRange = true
 				} else {
-					fmt.Printf("Cannot cast on non-empty square\n")
+					if spell.CanCast(screen.WithBoard.Grid.GetGameObject(target)) {
+						fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetCastRange(), target.X, target.Y)
+						return screen.AnimateAndCast()
+					} else {
+						fmt.Printf("Cannot cast on non-empty square\n")
+					}
 				}
 			}
 		}
