@@ -9,7 +9,6 @@ import (
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
-	"github.com/bobtfish/mayhem/render"
 	"github.com/bobtfish/mayhem/spells"
 )
 
@@ -20,7 +19,7 @@ type ExamineOneSpellScreen struct {
 
 func (screen *ExamineOneSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
-	render.NewTextDrawer(ss).DrawText("Press any key to continue", logical.V(0, 0), win)
+	textBottom("Press any key to continue", ss, win)
 	td := TextDrawer(ss)
 	td.DrawText(screen.Spell.GetName(), logical.V(0, 9), win)
 	td.DrawText("FIXME add stuff per spell", logical.V(0, 7), win)
@@ -41,7 +40,7 @@ type SpellListScreen struct {
 
 func (screen *SpellListScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
-	render.NewTextDrawer(ss).DrawText("Press 0 to return to main menu", logical.V(0, 0), win)
+	textBottom("Press 0 to return to main menu", ss, win)
 	td := TextDrawer(ss)
 	td.DrawText(fmt.Sprintf("%s's spells", screen.Player.Name), logical.V(0, 9), win)
 	for i := 0; i < len(screen.Player.Spells); i++ {
@@ -122,7 +121,7 @@ type TurnMenuScreen struct {
 func (screen *TurnMenuScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
 	fmt.Println(fmt.Sprintf("index %d", screen.PlayerIdx))
-	render.NewTextDrawer(ss).DrawText("      Press Keys 1 to 4", logical.V(0, 0), win)
+	textBottom("      Press Keys 1 to 4", ss, win)
 	td := TextDrawer(ss)
 	td.DrawText(screen.Players[screen.PlayerIdx].Name, logical.V(3, 7), win)
 	td.DrawText("1. Examine Spells", logical.V(3, 5), win)

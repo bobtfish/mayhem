@@ -2,7 +2,6 @@ package screen
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -10,7 +9,6 @@ import (
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
-	"github.com/bobtfish/mayhem/render"
 )
 
 // Move state onto next player spell cast (if there are players left)
@@ -60,7 +58,7 @@ func (screen *DisplaySpellCastScreen) Step(ss pixel.Picture, win *pixelgl.Window
 	}
 	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
 	batch := screen.WithBoard.DrawBoard(ss, win)
-	render.NewTextDrawer(ss).DrawText(fmt.Sprintf("%s %s %d", thisPlayer.Name, spell.GetName(), spell.GetCastRange()), logical.V(0, 0), batch)
+	textBottom(fmt.Sprintf("%s %s %d", thisPlayer.Name, spell.GetName(), spell.GetCastRange()), ss, batch)
 	batch.Draw(win)
 	if win.JustPressed(pixelgl.KeyS) || !captureDirectionKey(win).Equals(logical.ZeroVec()) {
 		return &TargetSpellScreen{
@@ -84,7 +82,7 @@ type TargetSpellScreen struct {
 }
 
 func (screen *TargetSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
-	render.NewTextDrawer(ss).DrawText(strings.Repeat(" ", 32), logical.ZeroVec(), win) // clear bottom bar
+	textBottom("", ss, win) // clear bottom bar
 	screen.WithBoard.CursorPosition = screen.Players[screen.PlayerIdx].BoardPosition
 }
 
@@ -106,8 +104,8 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 		if win.JustPressed(pixelgl.KeyS) {
 			target := screen.WithBoard.CursorPosition
 			if spell.GetCastRange() < target.Distance(screen.Players[screen.PlayerIdx].BoardPosition) {
+				textBottom("Out of range", ss, batch)
 				fmt.Printf("Out of range! Spell cast range %d but distance to target is %d\n", spell.GetCastRange(), target.Distance(screen.Players[screen.PlayerIdx].BoardPosition))
-				render.NewTextDrawer(ss).DrawText("Out of range                   ", logical.ZeroVec(), batch)
 				screen.OutOfRange = true
 			} else {
 				if spell.CanCast(screen.WithBoard.Grid.GetGameObject(target)) {
@@ -166,10 +164,11 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScree
 	fmt.Printf("Finished player CastSpell method\n")
 	if success {
 		fmt.Printf("Spell Succeeds\n")
-		render.NewTextDrawer(ss).DrawText("Spell Succeeds", logical.V(0, 0), win)
+		textBottom("Spell Succeeds", ss, batch)
 	} else {
 		fmt.Printf("Spell failed\n")
-		render.NewTextDrawer(ss).DrawText("Spell Failed", logical.V(0, 0), win)
+		textBottom("Spell Failed", ss, batch)
 	}
+	batch.Draw(win)
 	return NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid, false)
 }

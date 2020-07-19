@@ -2,7 +2,6 @@ package screen
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/faiface/pixel"
@@ -63,9 +62,7 @@ func (screen *WithBoard) DrawCursor(ss pixel.Picture, batch *pixel.Batch) {
 		cursorColor = objectAtCursor.GetColor()
 	}
 	description := objectAtCursor.Describe()
-	td := render.NewTextDrawer(ss)
-	td.DrawText(description, logical.V(0, 0), batch)
-	td.DrawText(strings.Repeat(" ", 32-len(description)), logical.V(len(description), 0), batch)
+	textBottom(description, ss, batch)
 	if screen.ShouldIDrawCursor() || objectAtCursor.IsEmpty() {
 		sd.DrawSpriteColor(cursorSprite(screen.CursorSprite), screen.CursorPosition, cursorColor, batch)
 	}

@@ -2,7 +2,9 @@ package screen
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/fx"
@@ -142,7 +144,7 @@ func drawMainBorder(win *pixelgl.Window, sd render.SpriteDrawer) {
 	batch := sd.GetNewBatch()
 	color := render.GetColor(0, 0, 255)
 	// Bottom left
-	sd.DrawSpriteColor(logical.V(6, 20), logical.V(0, 0), color, batch)
+	sd.DrawSpriteColor(logical.V(6, 20), logical.ZeroVec(), color, batch)
 	// Bottom row
 	for i := 1; i < 15; i++ {
 		sd.DrawSpriteColor(logical.V(7, 20), logical.V(i, 0), color, batch)
@@ -163,4 +165,10 @@ func drawMainBorder(win *pixelgl.Window, sd render.SpriteDrawer) {
 	// Top right
 	sd.DrawSpriteColor(logical.V(4, 20), logical.V(15, 10), color, batch)
 	batch.Draw(win)
+}
+
+func textBottom(text string, ss pixel.Picture, target pixel.Target) {
+	td := render.NewTextDrawer(ss)
+	td.DrawText(text, logical.ZeroVec(), target)
+	td.DrawText(strings.Repeat(" ", 32-len(text)), logical.V(len(text), 0), target)
 }

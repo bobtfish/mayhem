@@ -10,7 +10,6 @@ import (
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
-	"github.com/bobtfish/mayhem/render"
 )
 
 type RangedCombat struct {
@@ -43,7 +42,7 @@ func (screen *RangedCombat) Step(ss pixel.Picture, win *pixelgl.Window) GameScre
 
 	// FIXME - this code is stolen from flying movement, can we consolidate?
 	if screen.DisplayRange {
-		render.NewTextDrawer(ss).DrawText(fmt.Sprintf("Ranged attack (range=%d)", attackRange), logical.ZeroVec(), batch)
+		textBottom(fmt.Sprintf("Ranged attack (range=%d)", attackRange), ss, batch)
 	}
 	cursorMoved := screen.WithBoard.MoveCursor(win)
 	if cursorMoved || (!screen.OutOfRange && !screen.DisplayRange) {
@@ -58,7 +57,7 @@ func (screen *RangedCombat) Step(ss pixel.Picture, win *pixelgl.Window) GameScre
 		if attackDistance > 0 { // You can't ranged attack yourself
 			if attackDistance > attackRange {
 				fmt.Printf("Out of range\n")
-				render.NewTextDrawer(ss).DrawText("Out of range                   ", logical.ZeroVec(), batch)
+				textBottom("Out of range", ss, batch)
 				screen.OutOfRange = true
 			} else {
 				// Do ranged attack
@@ -137,7 +136,7 @@ func (screen *EngagedAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {
 
 func (screen *EngagedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
-	render.NewTextDrawer(ss).DrawText("Engaged to enemy                        ", logical.ZeroVec(), batch)
+	textBottom("Engaged to enemy", ss, batch)
 	batch.Draw(win)
 
 	direction := captureDirectionKey(win)

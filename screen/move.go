@@ -11,7 +11,6 @@ import (
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
 	"github.com/bobtfish/mayhem/player"
-	"github.com/bobtfish/mayhem/render"
 )
 
 type MoveAnnounceScreen struct {
@@ -26,7 +25,7 @@ func (screen *MoveAnnounceScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 
 func (screen *MoveAnnounceScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
-	render.NewTextDrawer(ss).DrawText(fmt.Sprintf("%s's turn", screen.Players[screen.PlayerIdx].Name), logical.V(0, 0), batch)
+	textBottom(fmt.Sprintf("%s's turn", screen.Players[screen.PlayerIdx].Name), ss, batch)
 	batch.Draw(win)
 
 	// 0 skips movement turn
@@ -158,7 +157,7 @@ func (screen *MoveGroundCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Wi
 
 func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
-	render.NewTextDrawer(ss).DrawText(fmt.Sprintf("Movement range=%d", screen.MovementLeft), logical.V(0, 0), batch)
+	textBottom(fmt.Sprintf("Movement range=%d", screen.MovementLeft), ss, batch)
 	batch.Draw(win)
 
 	currentLocation := screen.Character.GetBoardPosition()
@@ -312,7 +311,7 @@ func (screen *MoveFlyingCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Wi
 func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	if screen.DisplayRange {
-		render.NewTextDrawer(ss).DrawText(fmt.Sprintf("Movement range=%d (flying)", screen.Character.GetMovement()), logical.ZeroVec(), batch)
+		textBottom(fmt.Sprintf("Movement range=%d (flying)", screen.Character.GetMovement()), ss, batch)
 	}
 	cursorMoved := screen.WithBoard.MoveCursor(win)
 	if cursorMoved || (!screen.OutOfRange && !screen.DisplayRange) {
@@ -326,7 +325,7 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 		currentLocation := screen.Character.GetBoardPosition()
 		if screen.WithBoard.CursorPosition.Distance(currentLocation) > screen.Character.GetMovement() {
 			fmt.Printf("Out of range\n")
-			render.NewTextDrawer(ss).DrawText("Out of range                   ", logical.ZeroVec(), batch)
+			textBottom("Out of range", ss, batch)
 			screen.OutOfRange = true
 		} else {
 			// work out what's in this square, if nothing move to it, if something attack it
