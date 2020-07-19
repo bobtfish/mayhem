@@ -185,10 +185,7 @@ func PostSuccessfulAttack(target grid.GameObject, withBoard *WithBoard) GameScre
 		ob.MakeCorpse()
 	} else {
 		fmt.Printf("remove defender as no corpse\n")
-		// FIXME is this needed, or can we just pass target or ob?
-		// FIXME unsafe to access ob here, may not be corpsable, players are not and this causes
-		//       SEGV
-		died := withBoard.Grid.GetGameObjectStack(ob.GetBoardPosition()).RemoveTopObject()
+		died := withBoard.Grid.GetGameObjectStack(target.(movable.Movable).GetBoardPosition()).RemoveTopObject()
 		if KillIfPlayer(died, withBoard.Grid) {
 			if WeHaveAWinner(withBoard.Players) {
 				return &WinnerScreen{
