@@ -109,7 +109,7 @@ func (screen *DoRangedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 			fmt.Printf("Attack rating %d defence rating %d\n", attackRating, defenceRating)
 			if attackRating > defenceRating {
 				fmt.Printf("Attack kills defender\n")
-				newScreen := PostSuccessfulAttack(target, screen.WithBoard)
+				newScreen := PostSuccessfulAttack(target, screen.WithBoard, false)
 				if newScreen != nil {
 					return newScreen
 				}
@@ -175,11 +175,11 @@ type DoAttack struct {
 
 func (screen *DoAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {}
 
-func PostSuccessfulAttack(target grid.GameObject, withBoard *WithBoard) GameScreen {
+func PostSuccessfulAttack(target grid.GameObject, withBoard *WithBoard, canMakeCorpse bool) GameScreen {
 	// If the defender can be killed, kill them. Otherwise remove them
 	ob, corpsable := target.(movable.Corpseable)
 	fmt.Printf("Defender is %T corpsable %v ob %T(%v)\n", target, corpsable, ob, ob)
-	makesCorpse := corpsable && ob.CanMakeCorpse()
+	makesCorpse := canMakeCorpse && corpsable && ob.CanMakeCorpse()
 	if makesCorpse {
 		fmt.Printf("make corpse\n")
 		ob.MakeCorpse()
@@ -206,7 +206,7 @@ func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 
 	fmt.Printf("Attack rating %d defence rating %d\n", attackRating, defenceRating)
 	if attackRating > defenceRating {
-		newScreen := PostSuccessfulAttack(defender, screen.WithBoard)
+		newScreen := PostSuccessfulAttack(defender, screen.WithBoard, true)
 		if newScreen != nil {
 			return newScreen
 		}
