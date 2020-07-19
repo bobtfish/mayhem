@@ -13,31 +13,33 @@ import (
 
 func NewPlayer() Player {
 	return Player{
-		Defence:     3,
-		Combat:      3,
-		Manoeuvre:   4,
-		ChosenSpell: -1,
-		Spells:      spells.ChooseSpells(),
-		Alive:       true,
+		Defence:         rand.Intn(4) + 1, // 1-5
+		Combat:          rand.Intn(4) + 1, // 1-5
+		Manoeuvre:       rand.Intn(4) + 3, // 3-7
+		MagicResistance: rand.Intn(2) + 6, // 6-8
+		ChosenSpell:     -1,
+		Spells:          spells.ChooseSpells(),
+		Alive:           true,
 	}
 }
 
 type Player struct {
-	Name          string
-	Spells        []spells.Spell
-	HumanPlayer   bool
-	CharacterIcon logical.Vec
-	ChosenSpell   int
-	Color         color.Color
-	LawRating     int
-	BoardPosition logical.Vec
-	IsAnimated    bool
-	SpriteIdx     int
-	Defence       int
-	Combat        int
-	RangedCombat  int
-	AttackRange   int
-	Manoeuvre     int
+	Name            string
+	Spells          []spells.Spell
+	HumanPlayer     bool
+	CharacterIcon   logical.Vec
+	ChosenSpell     int
+	Color           color.Color
+	LawRating       int
+	BoardPosition   logical.Vec
+	IsAnimated      bool
+	SpriteIdx       int
+	Defence         int
+	Combat          int
+	RangedCombat    int
+	AttackRange     int
+	Manoeuvre       int
+	MagicResistance int
 
 	Flying bool // If the player has magic wings
 
