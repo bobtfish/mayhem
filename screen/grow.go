@@ -12,8 +12,8 @@ import (
 	"github.com/bobtfish/mayhem/player"
 )
 
-const GROW_CHANCE = 10
-const VANISH_CHANCE = 2
+const GROW_CHANCE = 15
+const VANISH_CHANCE = 4
 
 var growable map[string]bool
 
