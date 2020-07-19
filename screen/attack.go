@@ -17,13 +17,75 @@ type RangedCombat struct {
 	PlayerIdx       int
 	Character       movable.Movable
 	MovedCharacters map[movable.Movable]bool
+	OutOfRange      bool
+	DisplayRange    bool
 }
 
 func (screen *RangedCombat) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	fmt.Printf("In ranged combat state\n")
+	screen.DisplayRange = true
+	screen.WithBoard.CursorSprite = CURSOR_RANGEDATTACK
 }
 
 func (screen *RangedCombat) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+	attacker := screen.Character.(movable.Attackerable)
+	attackRange := attacker.GetAttackRange()
+	if attackRange == 0 || win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) { // No ranged combat
+		return &MoveFindCharacterScreen{
+			WithBoard:       screen.WithBoard,
+			PlayerIdx:       screen.PlayerIdx,
+			MovedCharacters: screen.MovedCharacters,
+		}
+	}
+
+	batch := screen.WithBoard.DrawBoard(ss, win)
+
+	// FIXME - this code is stolen from flying movement, can we consolidate?
+	if screen.DisplayRange {
+		render.NewTextDrawer(ss).DrawText(fmt.Sprintf("Ranged attack (range=%d)", attackRange), logical.ZeroVec(), batch)
+	}
+	cursorMoved := screen.WithBoard.MoveCursor(win)
+	if cursorMoved || (!screen.OutOfRange && !screen.DisplayRange) {
+		screen.OutOfRange = false
+		screen.DisplayRange = false
+		screen.WithBoard.DrawCursor(ss, batch)
+	}
+
+	if win.JustPressed(pixelgl.KeyS) {
+		characterLocation := screen.Character.GetBoardPosition()
+		attackDistance := screen.WithBoard.CursorPosition.Distance(characterLocation)
+		if attackDistance > 0 { // You can't ranged attack yourself
+			if attackDistance > attackRange {
+				fmt.Printf("Out of range\n")
+				render.NewTextDrawer(ss).DrawText("Out of range                   ", logical.ZeroVec(), batch)
+				screen.OutOfRange = true
+			} else {
+				// Do ranged attack
+				//target := screen.WithBoard.Grid.GetGameObject(screen.WithBoard.CursorPosition)
+				return &DoRangedAttack{
+					WithBoard:       screen.WithBoard,
+					PlayerIdx:       screen.PlayerIdx,
+					MovedCharacters: screen.MovedCharacters,
+				}
+			}
+		}
+	}
+	batch.Draw(win)
+
+	return screen
+}
+
+type DoRangedAttack struct {
+	*WithBoard
+	PlayerIdx       int
+	MovedCharacters map[movable.Movable]bool
+}
+
+func (screen *DoRangedAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {
+	fmt.Printf("Do ranged attack\n")
+}
+
+func (screen *DoRangedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	return &MoveFindCharacterScreen{
 		WithBoard:       screen.WithBoard,
 		PlayerIdx:       screen.PlayerIdx,
