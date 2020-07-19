@@ -4,7 +4,6 @@ Bug / missing feature list:
    Flash characters of one player at start of move turn
    Ranged combat
      - Animation before target square
-     - Line of sight
    Illusion spells / creatures
    Player movement/attack/defence spells changing stats
    Raise dead spell
@@ -20,6 +19,7 @@ Bug / missing feature list:
    Law/Chaos rating doing anything + being global
    Board inspect character
    Examine spell screen
+   Spell casting - must cast within line of sight
    AI Players
    Gooey blob / Fire character and player interactions
 

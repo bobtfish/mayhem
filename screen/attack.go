@@ -60,19 +60,24 @@ func (screen *RangedCombat) Step(ss pixel.Picture, win *pixelgl.Window) GameScre
 				textBottom("Out of range", ss, batch)
 				screen.OutOfRange = true
 			} else {
-				// Do ranged attack
-				fx := attacker.GetAttackFx()
-				screen.WithBoard.Grid.PlaceGameObject(screen.WithBoard.CursorPosition, fx)
+				if !HaveLineOfSight(characterLocation, screen.WithBoard.CursorPosition, screen.WithBoard.Grid) {
+					textBottom("No line of sight", ss, batch)
+					screen.OutOfRange = true
+				} else {
+					// Do ranged attack
+					fx := attacker.GetAttackFx()
+					screen.WithBoard.Grid.PlaceGameObject(screen.WithBoard.CursorPosition, fx)
 
-				return &WaitForFx{
-					Fx:   fx,
-					Grid: screen.WithBoard.Grid,
-					NextScreen: &DoRangedAttack{
-						WithBoard:       screen.WithBoard,
-						PlayerIdx:       screen.PlayerIdx,
-						MovedCharacters: screen.MovedCharacters,
-						Attacker:        attacker,
-					},
+					return &WaitForFx{
+						Fx:   fx,
+						Grid: screen.WithBoard.Grid,
+						NextScreen: &DoRangedAttack{
+							WithBoard:       screen.WithBoard,
+							PlayerIdx:       screen.PlayerIdx,
+							MovedCharacters: screen.MovedCharacters,
+							Attacker:        attacker,
+						},
+					}
 				}
 			}
 		}

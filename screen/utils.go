@@ -65,6 +65,15 @@ func WeHaveAWinner(players []*player.Player) bool {
 	return false
 }
 
+func HaveLineOfSight(from, to logical.Vec, grid *grid.GameGrid) bool {
+	for _, pathV := range to.Subtract(from).Path() {
+		if !grid.GetGameObject(from.Add(pathV)).IsEmpty() {
+			return false
+		}
+	}
+	return true
+}
+
 var numKeyMap map[pixelgl.Button]int
 var spellKeyMap map[pixelgl.Button]int
 var directionKeyMap map[pixelgl.Button]logical.Vec
