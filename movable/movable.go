@@ -19,6 +19,7 @@ type Attackable interface {
 	GetDefence() int
 	CheckBelongsTo(*player.Player) bool
 	Engageable() bool
+	IsUndead() bool
 }
 
 type Attackerable interface {
@@ -26,6 +27,7 @@ type Attackerable interface {
 	GetRangedCombat() int
 	GetAttackRange() int
 	GetAttackFx() *fx.Fx
+	CanAttackUndead() bool
 }
 
 type Corpseable interface {

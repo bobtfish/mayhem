@@ -17,6 +17,7 @@ func NewPlayer() Player {
 		Combat:          rand.Intn(4) + 1, // 1-5
 		Manoeuvre:       rand.Intn(4) + 3, // 3-7
 		MagicResistance: rand.Intn(2) + 6, // 6-8
+		Movement:        1,
 		ChosenSpell:     -1,
 		Spells:          spells.ChooseSpells(),
 		Alive:           true,
@@ -41,8 +42,10 @@ type Player struct {
 	AttackRange     int
 	Manoeuvre       int
 	MagicResistance int
+	Movement        int
 
-	Flying bool // If the player has magic wings
+	Flying         bool // If the player has magic wings
+	HasMagicWeapon bool // If the player can attack undead
 
 	Alive bool
 }
@@ -87,10 +90,7 @@ func (p *Player) RemoveMe() bool {
 // Movable interface BEGIN
 
 func (p *Player) GetMovement() int {
-	if p.Flying {
-		return 6 // FIXME - is this right?
-	}
-	return 1
+	return p.Movement
 }
 
 func (p *Player) IsFlying() bool {
@@ -130,6 +130,10 @@ func (p *Player) Engageable() bool {
 
 // SetBoardPosition is in GameObject interface also
 
+func (p *Player) IsUndead() bool {
+	return false
+}
+
 // Attackable interface END
 
 // Attackerable interface BEGIN
@@ -148,6 +152,10 @@ func (p *Player) GetAttackRange() int {
 
 func (p *Player) GetAttackFx() *fx.Fx {
 	return fx.FxRemoteAttack()
+}
+
+func (p *Player) CanAttackUndead() bool {
+	return p.HasMagicWeapon
 }
 
 // Attackerable interface END
@@ -201,17 +209,6 @@ func (s PlayerSpell) Cast(illusion bool, playerLawRating int, target logical.Vec
 func init() {
 	spells.CreateSpell(PlayerSpell{
 		ASpell: spells.ASpell{
-			Name:          "Magic Knife",
-			LawRating:     1,
-			CastingChance: 90,
-		},
-		MutateFunc: func(p *Player) {
-			p.CharacterIcon = logical.V(4, 22)
-			p.IsAnimated = true
-		},
-	})
-	spells.CreateSpell(PlayerSpell{
-		ASpell: spells.ASpell{
 			Name:          "Magic Armour",
 			LawRating:     1,
 			CastingChance: 40,
@@ -219,6 +216,7 @@ func init() {
 		MutateFunc: func(p *Player) {
 			p.CharacterIcon = logical.V(1, 20)
 			p.IsAnimated = false
+			p.Defence = p.Defence + 4
 		},
 	})
 	spells.CreateSpell(PlayerSpell{
@@ -230,17 +228,33 @@ func init() {
 		MutateFunc: func(p *Player) {
 			p.CharacterIcon = logical.V(0, 20)
 			p.IsAnimated = false
+			p.Defence = p.Defence + 2
+		},
+	})
+	spells.CreateSpell(PlayerSpell{
+		ASpell: spells.ASpell{
+			Name:          "Magic Knife",
+			LawRating:     1,
+			CastingChance: 90,
+		},
+		MutateFunc: func(p *Player) {
+			p.CharacterIcon = logical.V(4, 22)
+			p.IsAnimated = true
+			p.Combat = p.Combat + 2
+			p.CanAttackUndead = true
 		},
 	})
 	spells.CreateSpell(PlayerSpell{
 		ASpell: spells.ASpell{
 			Name:          "Magic Sword",
-			LawRating:     1,  // FIXME
-			CastingChance: 80, // FIXME
+			LawRating:     1,
+			CastingChance: 50,
 		},
 		MutateFunc: func(p *Player) {
 			p.CharacterIcon = logical.V(0, 21)
 			p.IsAnimated = true
+			p.Combat = p.Combat + 4
+			p.CanAttackUndead = true
 		},
 	})
 	spells.CreateSpell(PlayerSpell{
@@ -252,6 +266,8 @@ func init() {
 		MutateFunc: func(p *Player) {
 			p.CharacterIcon = logical.V(0, 22)
 			p.IsAnimated = true
+			p.AttackRange = 6
+			p.RangedCombat = 3
 		},
 	})
 	spells.CreateSpell(PlayerSpell{
@@ -260,7 +276,10 @@ func init() {
 			CastingChance: 80,
 		},
 		MutateFunc: func(p *Player) {
-			// FIXME
+			// FIXME - animation
+			if p.Movement < 3 {
+				p.Movement = 3
+			}
 		},
 	})
 	spells.CreateSpell(PlayerSpell{
@@ -271,6 +290,8 @@ func init() {
 		MutateFunc: func(p *Player) {
 			p.CharacterIcon = logical.V(4, 21)
 			p.IsAnimated = true
+			p.Flying = true
+			p.Movement = 6
 		},
 	})
 	spells.CreateSpell(PlayerSpell{

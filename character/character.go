@@ -342,6 +342,10 @@ func (c *Character) Engageable() bool {
 
 // SetBoardPosition is in GameObject interface also
 
+func (c *Character) IsUndead() bool {
+	return c.Undead
+}
+
 // Attackable interface END
 
 // Attackerable interface BEGIN
@@ -363,6 +367,10 @@ func (c *Character) GetAttackFx() *fx.Fx {
 		return fx.FxFire()
 	}
 	return fx.FxRemoteAttack()
+}
+
+func (c *Character) CanAttackUndead() bool {
+	return c.Undead
 }
 
 // Attackerable interface END

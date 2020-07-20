@@ -3,13 +3,13 @@ Bug / missing feature list:
    Press number to flash characters of one player
    Flash characters of one player at start of move turn
    Ranged combat + spells - animation on way to target square
-   Player movement/attack/defence spells changing stats
    Raise dead spell
    Subversion
    Wall spell
    Tree spells
    Castle/Citadel spells
    Mounts
+   Undead characters cannot be attacked by live characters
    Killing wizard animation
    Nicer end screen
    Combat spells (Magic bolt, lightning)
