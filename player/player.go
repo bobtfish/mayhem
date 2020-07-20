@@ -241,7 +241,7 @@ func init() {
 			p.CharacterIcon = logical.V(4, 22)
 			p.IsAnimated = true
 			p.Combat = p.Combat + 2
-			p.CanAttackUndead = true
+			p.HasMagicWeapon = true
 		},
 	})
 	spells.CreateSpell(PlayerSpell{
@@ -254,7 +254,7 @@ func init() {
 			p.CharacterIcon = logical.V(0, 21)
 			p.IsAnimated = true
 			p.Combat = p.Combat + 4
-			p.CanAttackUndead = true
+			p.HasMagicWeapon = true
 		},
 	})
 	spells.CreateSpell(PlayerSpell{

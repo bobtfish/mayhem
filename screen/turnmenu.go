@@ -46,7 +46,7 @@ func (screen *SpellListScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	for i := 0; i < len(screen.Player.Spells); i++ {
 		mod := i % 2
 		if mod == 1 {
-			mod = 15
+			mod = 14
 		}
 		spell := screen.Player.Spells[i]
 		td.DrawTextColor(

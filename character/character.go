@@ -60,7 +60,7 @@ func LoadCharacterTemplates() {
 		}
 		//fmt.Printf("Create %s range %d\n", v.Name, castRange)
 		if v.BaseCastingChance == 0 {
-			fmt.Printf("Character spell %s has no 'base_casting_chance', setting chance to 100%\n", v.Name)
+			fmt.Printf("Character spell %s has no 'base_casting_chance', setting chance to 100\n", v.Name)
 			v.BaseCastingChance = 100
 		}
 		spells.CreateSpell(CharacterSpell{
@@ -165,7 +165,10 @@ func (s CharacterSpell) CanCast(target grid.GameObject) bool {
 }
 
 func (s CharacterSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
-	if rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
+	if illusion && !s.CanBeIllusion {
+		panic(fmt.Sprintf("Spell %s cannot be illusion, but was cast as one anyway", s.Name))
+	}
+	if illusion || rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
 		grid.PlaceGameObject(target, s.CreateCharacter(illusion, castor))
 		return true, nil
 	}

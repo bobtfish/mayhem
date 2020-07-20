@@ -51,6 +51,7 @@
 #47 Wizard7
 #48 Wizard8
  - name: King Cobra
+   base_casting_chance: 90
    combat: 4
    ranged_combat: 0
    range: 0
@@ -79,6 +80,7 @@
     - 0
 
  - name: Dire Wolf
+   base_casting_chance: 90
    combat: 3
    ranged_combat: 0
    range: 0
@@ -107,6 +109,7 @@
     - 15
 
  - name: Goblin
+   base_casting_chance: 90
    combat: 2
    ranged_combat: 0
    range: 0
@@ -135,6 +138,7 @@
     - 8
 
  - name: Crocodile
+   base_casting_chance: 80
    combat: 5
    ranged_combat: 0
    range: 0
@@ -163,6 +167,7 @@
     - 16
 
  - name: Faun
+   base_casting_chance: 80
    combat: 3
    ranged_combat: 0
    range: 0
@@ -191,6 +196,7 @@
     - 12
 
  - name: Lion
+   base_casting_chance: 60
    combat: 6
    ranged_combat: 0
    range: 0
@@ -219,6 +225,7 @@
     - 19
 
  - name: Elf
+   base_casting_chance: 70
    combat: 1
    ranged_combat: 2
    range: 6
@@ -247,6 +254,7 @@
     - 13
 
  - name: Orc
+   base_casting_chance: 100
    combat: 2
    ranged_combat: 0
    range: 0
@@ -275,6 +283,7 @@
     - 16
 
  - name: Bear
+   base_casting_chance: 70
    combat: 6
    ranged_combat: 0
    range: 0
@@ -303,6 +312,7 @@
     - 18
 
  - name: Gorilla
+   base_casting_chance: 70
    combat: 6
    ranged_combat: 0
    range: 0
@@ -331,6 +341,7 @@
     - 6
 
  - name: Ogre
+   base_casting_chance: 80
    combat: 4
    ranged_combat: 0
    range: 0
@@ -359,6 +370,7 @@
     - 17
 
  - name: Hydra
+   base_casting_chance: 60
    combat: 7
    ranged_combat: 0
    range: 0
@@ -387,6 +399,7 @@
     - 1
 
  - name: Giant Rat
+   base_casting_chance: 100
    combat: 1
    ranged_combat: 0
    range: 0
@@ -415,6 +428,7 @@
     - 9
 
  - name: Giant
+   base_casting_chance: 40
    combat: 9
    ranged_combat: 0
    range: 0
@@ -443,6 +457,7 @@
     - 10
 
  - name: Horse
+   base_casting_chance: 90
    combat: 1
    ranged_combat: 0
    range: 0
@@ -471,6 +486,7 @@
     - 2
 
  - name: Unicorn
+   base_casting_chance: 60
    combat: 5
    ranged_combat: 0
    range: 0
@@ -499,6 +515,7 @@
     - 10
 
  - name: Centaur
+   base_casting_chance: 70
    combat: 1
    ranged_combat: 2
    range: 4
@@ -527,6 +544,7 @@
     - 17
 
  - name: Pegasus
+   base_casting_chance: 60
    combat: 2
    ranged_combat: 0
    range: 0
@@ -556,6 +574,7 @@
     - 15
 
  - name: Gryphon
+   base_casting_chance: 60
    combat: 3
    ranged_combat: 0
    range: 0
@@ -585,6 +604,7 @@
     - 4
 
  - name: Manticore
+   base_casting_chance: 40
    combat: 3
    ranged_combat: 1
    range: 3
@@ -614,6 +634,7 @@
     - 18
 
  - name: Bat
+   base_casting_chance: 80
    combat: 1
    ranged_combat: 0
    range: 0
@@ -643,6 +664,7 @@
     - 19
 
  - name: Green Dragon
+   base_casting_chance: 10
    combat: 5
    ranged_combat: 4
    breathes_fire: true
@@ -673,6 +695,7 @@
     - 5
 
  - name: Red Dragon
+   base_casting_chance: 10
    combat: 7
    ranged_combat: 3
    breathes_fire: true
@@ -703,6 +726,7 @@
     - 14
 
  - name: Golden Dragon
+   base_casting_chance: 10
    combat: 9
    ranged_combat: 5
    breathes_fire: true
@@ -733,6 +757,7 @@
     - 7
 
  - name: Harpy
+   base_casting_chance: 60
    combat: 4
    ranged_combat: 0
    range: 0
@@ -762,6 +787,7 @@
     - 3
 
  - name: Eagle
+   base_casting_chance: 70
    combat: 3
    ranged_combat: 0
    range: 0
@@ -791,6 +817,7 @@
     - 14
 
  - name: Vampire
+   base_casting_chance: 20
    combat: 6
    ranged_combat: 0
    range: 0
@@ -821,6 +848,7 @@
     - 9
 
  - name: Ghost
+   base_casting_chance: 50
    combat: 1
    ranged_combat: 0
    range: 0
@@ -851,6 +879,7 @@
     - 11
 
  - name: Spectre
+   base_casting_chance: 60
    combat: 4
    ranged_combat: 0
    range: 0
@@ -896,6 +925,7 @@
     - 12
 
  - name: Wraith
+   base_casting_chance: 50
    combat: 5
    ranged_combat: 0
    range: 0
@@ -925,6 +955,7 @@
     - 8
 
  - name: Skeleton
+   base_casting_chance: 70
    combat: 3
    ranged_combat: 0
    range: 0
@@ -954,6 +985,7 @@
     - 13
 
  - name: Zombie
+   base_casting_chance: 90
    combat: 1
    ranged_combat: 0
    range: 0
@@ -983,6 +1015,7 @@
     - 7
 
  - name: Gooey Blob
+   base_casting_chance: 80
    combat: 1
    ranged_combat: 0
    range: 0
@@ -1012,6 +1045,7 @@
     - 6
 
  - name: Magic Fire
+   base_casting_chance: 80
    combat: 0
    ranged_combat: 0
    range: 0
@@ -1040,6 +1074,7 @@
     - 5
 
  - name: Magic Wood
+   base_casting_chance: 80
    combat: 0
    ranged_combat: 0
    range: 0
@@ -1062,6 +1097,7 @@
       - 4
 
  - name: Shadow Wood
+   base_casting_chance: 40
    combat: 2
    ranged_combat: 0
    range: 0
@@ -1078,6 +1114,7 @@
       - 3
 
  - name: Magic Castle
+   base_casting_chance: 50
    combat: 0
    ranged_combat: 0
    range: 0
@@ -1101,6 +1138,7 @@
       - 0
 
  - name: Dark Citadel
+   base_casting_chance: 50
    combat: 0
    ranged_combat: 0
    range: 0
@@ -1124,6 +1162,7 @@
       - 1
 
  - name: Wall
+   base_casting_chance: 90
    combat: 0
    ranged_combat: 0
    range: 0
