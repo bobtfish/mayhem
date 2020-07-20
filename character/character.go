@@ -37,6 +37,7 @@ type CharacterType struct {
 	Undead             bool    `yaml:"undead"`
 	CastRange          int     `yaml:"cast_range"`
 	CanBeIllusion      bool    `yaml:"can_be_illusion"`
+	BaseCastingChance  int     `yaml:"base_casting_chance"`
 }
 
 func LoadCharacterTemplates() {
@@ -58,10 +59,14 @@ func LoadCharacterTemplates() {
 			v.CastRange = 1
 		}
 		//fmt.Printf("Create %s range %d\n", v.Name, castRange)
+		if v.BaseCastingChance == 0 {
+			fmt.Printf("Character spell %s has no 'base_casting_chance', setting chance to 100%\n", v.Name)
+			v.BaseCastingChance = 100
+		}
 		spells.CreateSpell(CharacterSpell{
 			Name:               v.Name,
 			LawRating:          v.LawChaos,
-			CastingChance:      100, // FIXME
+			CastingChance:      v.BaseCastingChance,
 			Sprite:             logical.V(v.Sprites[0][0], v.Sprites[0][1]),
 			Color:              render.GetColor(v.ColorR, v.ColorG, v.ColorB),
 			Movement:           v.Movement,
