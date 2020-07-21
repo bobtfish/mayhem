@@ -209,6 +209,7 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, movedCharacters map[movable.Movable]bool) MoveStatus {
 	as := DoAttackMaybe(from, to, playerIdx, withBoard, movedCharacters)
 	if as.NotEmpty {
+		fmt.Printf("Do attack maybe, was not empty\n")
 		// FIXME AttackStatus.ToMoveStatus method?
 		if as.NextScreen != nil {
 			return MoveStatus{
@@ -240,7 +241,7 @@ func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard
 		}
 	}
 	return MoveStatus{
-		DidMove:    false,
+		DidMove:    true,
 		NextScreen: nil,
 	}
 }
@@ -372,14 +373,13 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 				return ms.NextScreen
 			}
 			if ms.IllegalUndeadAttack {
-				screen.OutOfrange = true
+				screen.OutOfRange = true
 				textBottom("Undead - Cannot be attacked", ss, batch)
 			}
-			if !ms.DidMove {
-				return screen
+			if ms.DidMove {
+				fmt.Printf("Did do flying move, finish screen\n")
+				return screen.MoveFlyingCharacterScreenFinished()
 			}
-
-			return screen.MoveFlyingCharacterScreenFinished()
 		}
 
 	}
