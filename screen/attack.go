@@ -100,31 +100,40 @@ func (screen *DoRangedAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {
 
 func (screen *DoRangedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	target := screen.WithBoard.Grid.GetGameObject(screen.WithBoard.CursorPosition)
+	needPause := false
 	if !target.IsEmpty() {
 		fmt.Printf("Target square is not empty\n")
 		ob, attackable := target.(movable.Attackable)
 		if attackable {
 			fmt.Printf("Target square is attackable\n")
+			if !ob.IsUndead() || screen.Attacker.CanAttackUndead() {
+				// FIXME this is duplicate logic
+				defenceRating := ob.GetDefence() + rand.Intn(9)
+				attackRating := screen.Attacker.GetRangedCombat() + rand.Intn(9)
 
-			// FIXME this is duplicate logic
-			defenceRating := ob.GetDefence() + rand.Intn(9)
-			attackRating := screen.Attacker.GetRangedCombat() + rand.Intn(9)
-
-			fmt.Printf("Attack rating %d defence rating %d\n", attackRating, defenceRating)
-			if attackRating > defenceRating {
-				fmt.Printf("Attack kills defender\n")
-				newScreen := PostSuccessfulAttack(target, screen.WithBoard, false)
-				if newScreen != nil {
-					return newScreen
+				fmt.Printf("Attack rating %d defence rating %d\n", attackRating, defenceRating)
+				if attackRating > defenceRating {
+					fmt.Printf("Attack kills defender\n")
+					newScreen := PostSuccessfulAttack(target, screen.WithBoard, false)
+					if newScreen != nil {
+						return newScreen
+					}
 				}
+			} else {
+				textBottom("Undead - Cannot be attacked", ss, win)
+				needPause = true
 			}
 		}
 	}
 
-	return &MoveFindCharacterScreen{
-		WithBoard:       screen.WithBoard,
-		PlayerIdx:       screen.PlayerIdx,
-		MovedCharacters: screen.MovedCharacters,
+	return &Pause{
+		Skip: !needPause,
+		Grid: screen.WithBoard.Grid,
+		NextScreen: &MoveFindCharacterScreen{
+			WithBoard:       screen.WithBoard,
+			PlayerIdx:       screen.PlayerIdx,
+			MovedCharacters: screen.MovedCharacters,
+		},
 	}
 }
 
