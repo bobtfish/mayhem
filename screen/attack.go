@@ -133,27 +133,35 @@ type EngagedAttack struct {
 	PlayerIdx       int
 	Character       movable.Movable
 	MovedCharacters map[movable.Movable]bool
+	ClearMsg        bool
 }
 
 func (screen *EngagedAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	fmt.Printf("In engaged attack state\n")
+	textBottom("Engaged to enemy", ss, win)
 }
 
 func (screen *EngagedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
-	textBottom("Engaged to enemy", ss, batch)
-	batch.Draw(win)
+	if screen.ClearMsg {
+		textBottom("", ss, batch)
+	}
 
 	direction := captureDirectionKey(win)
 	if direction != logical.ZeroVec() {
+		screen.ClearMsg = true
 		fmt.Printf("Try to move in v(%d, %d)\n", direction.X, direction.Y)
 		currentLocation := screen.Character.GetBoardPosition()
 		newLocation := currentLocation.Add(direction)
 
-		attackScreen, _ := DoAttackMaybe(currentLocation, newLocation, screen.PlayerIdx, screen.WithBoard, screen.MovedCharacters)
-		if attackScreen != nil {
+		as := DoAttackMaybe(currentLocation, newLocation, screen.PlayerIdx, screen.WithBoard, screen.MovedCharacters)
+		if as.NextScreen != nil {
 			fmt.Printf("Can attack in that direction")
-			return attackScreen
+			return as.NextScreen
+		}
+		if as.IllegalUndeadAttack {
+			screen.ClearMsg = false
+			textBottom("Undead - Cannot be attacked", ss, batch)
 		}
 	}
 
@@ -165,7 +173,7 @@ func (screen *EngagedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScr
 			MovedCharacters: screen.MovedCharacters,
 		}
 	}
-
+	batch.Draw(win)
 	return screen
 }
 
