@@ -184,7 +184,7 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			screen.WithBoard.CursorPosition = newLocation
 
 			if ms.MountMove {
-				screen.Character = screen.WithBoard.Grid.GetGridObject(newLocation).(moveable.Movable)
+				screen.Character = screen.WithBoard.Grid.GetGameObject(newLocation).(movable.Movable)
 				screen.MovedCharacters[screen.Character] = true
 				return screen.MoveGroundCharacterScreenFinished()
 			}
@@ -345,9 +345,8 @@ func doCharacterMove(from, to logical.Vec, grid *grid.GameGrid) {
 
 func doMount(from, to logical.Vec, grid *grid.GameGrid) {
 	fmt.Printf("doMount\n")
-	player := grid.GetGameObjectStack(from).RemoveTopObject().(*player.Player)
-	mount := grid.GetGameObject(to).(*character.Character)
-	mount.Mount(player)
+	grid.GetGameObjectStack(from).RemoveTopObject()
+	grid.GetGameObject(to).(*character.Character).Mount()
 }
 
 func (screen *MoveGroundCharacterScreen) MoveGroundCharacterScreenFinished() GameScreen {
@@ -415,7 +414,7 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 				fmt.Printf("Did do flying move, finish screen\n")
 
 				if ms.MountMove {
-					screen.Character = screen.WithBoard.Grid.GetGridObject(newLocation).(moveable.Movable)
+					screen.Character = screen.WithBoard.Grid.GetGameObject(screen.WithBoard.CursorPosition).(movable.Movable)
 					screen.MovedCharacters[screen.Character] = true
 				}
 

@@ -1,5 +1,4 @@
 Bug / missing feature list:
-   Character spells have hard coded casting chance of 100%
    Press number to flash characters of one player
    Flash characters of one player at start of move turn
    Ranged combat + spells - animation on way to target square
@@ -8,7 +7,10 @@ Bug / missing feature list:
    Wall spell
    Tree spells
    Castle/Citadel spells
-   Mounts
+   Mounts - all working except dismount
+    - Dismount wizard (Y or N)
+    - goes to movement range = 1 (i.e. move wizard normally)
+    - Character gets to move afterwards
    Killing wizard animation
    Nicer end screen
    Combat spells (Magic bolt, lightning)

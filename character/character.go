@@ -234,7 +234,8 @@ type Character struct {
 	IsIllusion         bool
 	Mountable          bool
 
-	BelongsTo *player.Player
+	BelongsTo      *player.Player
+	CarryingPlayer bool
 	// Remember to add any fields you add here to the Clone method
 
 	SpriteIdx     int
@@ -299,6 +300,9 @@ func (c *Character) Describe() string {
 
 func (c *Character) SetBoardPosition(v logical.Vec) {
 	c.BoardPosition = v
+	if c.CarryingPlayer {
+		c.BelongsTo.BoardPosition = v
+	}
 }
 
 // GameObject interface END
@@ -411,9 +415,10 @@ func (c *Character) MakeCorpse() {
 
 // Corpsable interface END
 
-func (c *Character) Mount(p *player.Player) {
+func (c *Character) Mount() {
 	if !c.IsMount() {
 		panic("Tried to mount player on character which is not a mount")
 	}
 	fmt.Printf("Mount the player\n")
+	c.CarryingPlayer = true
 }
