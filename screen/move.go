@@ -183,6 +183,12 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 
 			screen.WithBoard.CursorPosition = newLocation
 
+			if ms.MountMove {
+				screen.Character = screen.WithBoard.Grid.GetGridObject(newLocation).(moveable.Movable)
+				screen.MovedCharacters[screen.Character] = true
+				return screen.MoveGroundCharacterScreenFinished()
+			}
+
 			// Do the D&D diagonal move thing
 			if direction.IsDiagonal() {
 				screen.NumDiagonals++
@@ -192,7 +198,7 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			}
 			screen.MovementLeft--
 
-			if ms.EndMove || screen.MovementLeft <= 0 {
+			if screen.MovementLeft <= 0 {
 				return screen.MoveGroundCharacterScreenFinished()
 			}
 		}
@@ -222,8 +228,8 @@ func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard
 		if as.IsMount {
 			doMount(from, to, withBoard.Grid)
 			return MoveStatus{
-				DidMove: true,
-				EndMove: true,
+				DidMove:   true,
+				MountMove: true,
 			}
 		}
 
@@ -340,7 +346,7 @@ func doCharacterMove(from, to logical.Vec, grid *grid.GameGrid) {
 func doMount(from, to logical.Vec, grid *grid.GameGrid) {
 	fmt.Printf("doMount\n")
 	player := grid.GetGameObjectStack(from).RemoveTopObject().(*player.Player)
-	mount := grid.GetGameObject(from).(*character.Character)
+	mount := grid.GetGameObject(to).(*character.Character)
 	mount.Mount(player)
 }
 
@@ -373,7 +379,7 @@ type MoveStatus struct {
 	DidMove             bool
 	IllegalUndeadAttack bool
 	NextScreen          GameScreen
-	EndMove             bool
+	MountMove           bool
 }
 
 func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
@@ -407,6 +413,12 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			}
 			if ms.DidMove {
 				fmt.Printf("Did do flying move, finish screen\n")
+
+				if ms.MountMove {
+					screen.Character = screen.WithBoard.Grid.GetGridObject(newLocation).(moveable.Movable)
+					screen.MovedCharacters[screen.Character] = true
+				}
+
 				return screen.MoveFlyingCharacterScreenFinished()
 			}
 		}
