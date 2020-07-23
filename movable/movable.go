@@ -20,6 +20,7 @@ type Attackable interface {
 	CheckBelongsTo(*player.Player) bool
 	Engageable() bool
 	IsUndead() bool
+	IsMount() bool
 }
 
 type Attackerable interface {

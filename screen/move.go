@@ -6,6 +6,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/bobtfish/mayhem/character"
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
@@ -191,7 +192,7 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			}
 			screen.MovementLeft--
 
-			if screen.MovementLeft <= 0 {
+			if ms.EndMove || screen.MovementLeft <= 0 {
 				return screen.MoveGroundCharacterScreenFinished()
 			}
 		}
@@ -217,6 +218,15 @@ func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard
 				NextScreen: as.NextScreen,
 			}
 		}
+
+		if as.IsMount {
+			doMount(from, to, withBoard.Grid)
+			return MoveStatus{
+				DidMove: true,
+				EndMove: true,
+			}
+		}
+
 		return MoveStatus{
 			IllegalUndeadAttack: as.IllegalUndeadAttack,
 			DidMove:             false,
@@ -250,6 +260,7 @@ type AttackStatus struct {
 	NotEmpty            bool
 	IllegalUndeadAttack bool
 	NextScreen          GameScreen
+	IsMount             bool
 }
 
 func DoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, movedCharacters map[movable.Movable]bool) AttackStatus {
@@ -285,6 +296,16 @@ func DoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, mo
 						Fx:   fx,
 					},
 				}
+			} else {
+				// Does belong to this player, see if it's mountable, if so we can move to it
+				_, isPlayer := withBoard.Grid.GetGameObject(from).(*player.Player)
+				if isPlayer { // We're moving the player, lets see if target is something we can mount
+					fmt.Printf("Moving player, check for mount\n")
+					if ob.IsMount() {
+						fmt.Printf("  Is mount\n")
+						return AttackStatus{NotEmpty: true, IsMount: true}
+					}
+				}
 			}
 		}
 		return AttackStatus{NotEmpty: true}
@@ -316,6 +337,13 @@ func doCharacterMove(from, to logical.Vec, grid *grid.GameGrid) {
 	grid.PlaceGameObject(to, character)
 }
 
+func doMount(from, to logical.Vec, grid *grid.GameGrid) {
+	fmt.Printf("doMount\n")
+	player := grid.GetGameObjectStack(from).RemoveTopObject().(*player.Player)
+	mount := grid.GetGameObject(from).(*character.Character)
+	mount.Mount(player)
+}
+
 func (screen *MoveGroundCharacterScreen) MoveGroundCharacterScreenFinished() GameScreen {
 	return &RangedCombat{
 		WithBoard:       screen.WithBoard,
@@ -345,6 +373,7 @@ type MoveStatus struct {
 	DidMove             bool
 	IllegalUndeadAttack bool
 	NextScreen          GameScreen
+	EndMove             bool
 }
 
 func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {

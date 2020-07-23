@@ -469,6 +469,7 @@
    law_chaos: 1
    strength: 21
    can_be_illusion: true
+   mountable: true
    color_r: 190
    color_g: 200
    color_b: 67
@@ -498,6 +499,7 @@
    law_chaos: 2
    strength: 16
    can_be_illusion: true
+   mountable: true
    color_r: 87
    color_g: 186
    color_b: 185
@@ -527,6 +529,7 @@
    law_chaos: 1
    strength: 23
    can_be_illusion: true
+   mountable: true
    color_r: 204
    color_g: 204
    color_b: 0
@@ -557,6 +560,7 @@
    law_chaos: 2
    strength: 16
    can_be_illusion: true
+   mountable: true
    color_r: 255
    color_g: 255
    color_b: 255
@@ -587,6 +591,7 @@
    law_chaos: 1
    strength: 10
    can_be_illusion: true
+   mountable: true
    color_r: 165
    color_g: 165
    color_b: 165
@@ -617,6 +622,7 @@
    law_chaos: -1
    strength: 13
    can_be_illusion: true
+   mountable: true
    color_r: 255
    color_g: 255
    color_b: 0

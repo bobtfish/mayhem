@@ -16,7 +16,6 @@ import (
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
 	"github.com/bobtfish/mayhem/screen"
-	"github.com/bobtfish/mayhem/spells"
 )
 
 func loadSpriteSheet() io.Reader {
@@ -41,27 +40,16 @@ func run() {
 	gw := screen.NewGameWindow(ss)
 
 	if *quickPtr {
+		fred := player.NewPlayer()
+		fred.Name = "fred"
+		fred.CharacterIcon = logical.V(0, 23)
+		fred.Color = render.GetColor(255, 0, 0)
+		bob := player.NewPlayer()
+		bob.Name = "bob"
+		bob.CharacterIcon = logical.V(1, 23)
+		bob.Color = render.GetColor(255, 0, 255)
 		gw.Screen = &screen.StartMainGame{
-			Players: []*player.Player{
-				&player.Player{
-					Name:          "fred",
-					HumanPlayer:   true,
-					CharacterIcon: logical.V(0, 23),
-					Color:         render.GetColor(255, 0, 0),
-					ChosenSpell:   -1,
-					Spells:        spells.ChooseSpells(),
-					Alive:         true,
-				},
-				&player.Player{
-					Name:          "bob",
-					HumanPlayer:   true,
-					CharacterIcon: logical.V(1, 23),
-					Color:         render.GetColor(255, 0, 255),
-					ChosenSpell:   -1,
-					Spells:        spells.ChooseSpells(),
-					Alive:         true,
-				},
-			},
+			Players: []*player.Player{&fred, &bob},
 		}
 		gw.Screen.Enter(gw.SpriteSheet, gw.Window)
 	}

@@ -38,6 +38,7 @@ type CharacterType struct {
 	CastRange          int     `yaml:"cast_range"`
 	CanBeIllusion      bool    `yaml:"can_be_illusion"`
 	BaseCastingChance  int     `yaml:"base_casting_chance"`
+	Mountable          bool    `yaml:"mountable"`
 }
 
 func LoadCharacterTemplates() {
@@ -81,6 +82,7 @@ func LoadCharacterTemplates() {
 			AttackRange:        v.AttackRange,
 			RangedAttackIsFire: v.RangedAttackIsFire,
 			CanBeIllusion:      v.CanBeIllusion,
+			Mountable:          v.Mountable,
 		})
 	}
 
@@ -140,6 +142,7 @@ type CharacterSpell struct {
 	RangedAttackIsFire bool
 	Manoeuvre          int
 	CanBeIllusion      bool
+	Mountable          bool
 }
 
 // Spell interface begin
@@ -205,6 +208,7 @@ func (s CharacterSpell) CreateCharacter(isIllusion bool, castor grid.GameObject)
 		RangedAttackIsFire: s.RangedAttackIsFire,
 		AttackRange:        s.AttackRange,
 		IsIllusion:         isIllusion,
+		Mountable:          s.Mountable,
 
 		// FIXME - ugh this is gross - would it be better done up a level?
 		BelongsTo: castor.(*player.Player),
@@ -228,6 +232,7 @@ type Character struct {
 	DeadSprite         logical.Vec
 	IsDead             bool
 	IsIllusion         bool
+	Mountable          bool
 
 	BelongsTo *player.Player
 	// Remember to add any fields you add here to the Clone method
@@ -254,6 +259,7 @@ func (c *Character) Clone() *Character {
 		IsDead:             c.IsDead,
 		BelongsTo:          c.BelongsTo,
 		IsIllusion:         c.IsIllusion,
+		Mountable:          c.Mountable,
 	}
 }
 
@@ -354,6 +360,10 @@ func (c *Character) IsUndead() bool {
 	return c.Undead
 }
 
+func (c *Character) IsMount() bool {
+	return c.Mountable
+}
+
 // Attackable interface END
 
 // Attackerable interface BEGIN
@@ -400,3 +410,10 @@ func (c *Character) MakeCorpse() {
 }
 
 // Corpsable interface END
+
+func (c *Character) Mount(p *player.Player) {
+	if !c.IsMount() {
+		panic("Tried to mount player on character which is not a mount")
+	}
+	fmt.Printf("Mount the player\n")
+}

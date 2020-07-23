@@ -90,6 +90,7 @@ func (p *Player) RemoveMe() bool {
 // Movable interface BEGIN
 
 func (p *Player) GetMovement() int {
+	fmt.Printf("Get player movement, is %d\n", p.Movement)
 	return p.Movement
 }
 
@@ -131,6 +132,10 @@ func (p *Player) Engageable() bool {
 // SetBoardPosition is in GameObject interface also
 
 func (p *Player) IsUndead() bool {
+	return false
+}
+
+func (p *Player) IsMount() bool {
 	return false
 }
 
