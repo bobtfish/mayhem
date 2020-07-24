@@ -89,6 +89,17 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 					screen.MovedCharacters[ob] = true
 				}
 
+				// Are we a mount with a wizard mounted
+				char, isChar := ob.(*character.Character)
+				if isChar && char.CarryingPlayer {
+					return &MaybeDismount{
+						WithBoard:       screen.WithBoard,
+						PlayerIdx:       screen.PlayerIdx,
+						Character:       ob,
+						MovedCharacters: screen.MovedCharacters,
+					}
+				}
+
 				// Is it engaged?
 				if IsNextToEngageable(screen.WithBoard.CursorPosition, screen.PlayerIdx, screen.WithBoard) {
 					fmt.Printf("Is next to engageable character\n")
@@ -129,6 +140,64 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 	return screen
 }
 
+type MaybeDismount struct {
+	*WithBoard
+	PlayerIdx       int
+	MovedCharacters map[movable.Movable]bool
+	Character       movable.Movable
+}
+
+func (screen *MaybeDismount) Enter(ss pixel.Picture, win *pixelgl.Window) {}
+
+func (screen *MaybeDismount) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+	batch := screen.WithBoard.DrawBoard(ss, win)
+	textBottom("Dismount wizard (Y or N)", ss, batch)
+	batch.Draw(win)
+
+	if win.JustPressed(pixelgl.KeyN) { // Move character as normal
+		// Note in the original game, characters with a player never seem to get engaged, so I deliberately skip that here
+		if screen.Character.IsFlying() {
+			return &MoveFlyingCharacterScreen{
+				WithBoard:       screen.WithBoard,
+				PlayerIdx:       screen.PlayerIdx,
+				Character:       screen.Character,
+				MovedCharacters: screen.MovedCharacters,
+			}
+		}
+		return &MoveGroundCharacterScreen{
+			WithBoard:       screen.WithBoard,
+			PlayerIdx:       screen.PlayerIdx,
+			Character:       screen.Character,
+			MovementLeft:    screen.Character.GetMovement(),
+			MovedCharacters: screen.MovedCharacters,
+		}
+	}
+	if win.JustPressed(pixelgl.KeyY) { // Do dismount
+		// Dismount sets the character to not moved, the wizard moves
+		delete(screen.MovedCharacters, screen.Character)
+		wizard := screen.Character.(*character.Character).BelongsTo
+		screen.MovedCharacters[wizard] = true
+		if wizard.IsFlying() {
+			return &MoveFlyingCharacterScreen{
+				WithBoard:       screen.WithBoard,
+				PlayerIdx:       screen.PlayerIdx,
+				Character:       wizard,
+				MovedCharacters: screen.MovedCharacters,
+				IsDismount:      true,
+			}
+		}
+		return &MoveGroundCharacterScreen{
+			WithBoard:       screen.WithBoard,
+			PlayerIdx:       screen.PlayerIdx,
+			Character:       wizard,
+			MovementLeft:    wizard.GetMovement(),
+			MovedCharacters: screen.MovedCharacters,
+			IsDismount:      true,
+		}
+	}
+	return screen
+}
+
 func NextPlayerMove(playerIdx int, players []*player.Player, withBoard *WithBoard) GameScreen {
 	nextIdx := NextPlayerIdx(playerIdx, players)
 	if nextIdx == len(withBoard.Players) {
@@ -149,6 +218,7 @@ type MoveGroundCharacterScreen struct {
 	MovementLeft    int
 	NumDiagonals    int
 	MovedCharacters map[movable.Movable]bool
+	IsDismount      bool
 }
 
 func (screen *MoveGroundCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -172,7 +242,7 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			return screen
 		}
 
-		ms := MoveDoAttackMaybe(currentLocation, newLocation, screen.PlayerIdx, screen.WithBoard, screen.MovedCharacters)
+		ms := MoveDoAttackMaybe(currentLocation, newLocation, screen.PlayerIdx, screen.WithBoard, screen.MovedCharacters, screen.IsDismount)
 		if ms.NextScreen != nil {
 			return ms.NextScreen
 		}
@@ -213,7 +283,7 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 // If moving to an empty square does the move then returns true allowing progress to continue (and ground/air specific logic to follow)
 // If moving to a square which can be attacked, returns the attack screen to make the attack happen
 // If moving to a square with something that cannot be moved into or attacked, return false
-func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, movedCharacters map[movable.Movable]bool) MoveStatus {
+func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, movedCharacters map[movable.Movable]bool, isDismount bool) MoveStatus {
 	as := DoAttackMaybe(from, to, playerIdx, withBoard, movedCharacters)
 	if as.NotEmpty {
 		fmt.Printf("Do attack maybe, was not empty\n")
@@ -365,6 +435,7 @@ type MoveFlyingCharacterScreen struct {
 	OutOfRange      bool
 	DisplayRange    bool
 	MovedCharacters map[movable.Movable]bool
+	IsDismount      bool
 }
 
 func (screen *MoveFlyingCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -402,7 +473,7 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			screen.OutOfRange = true
 		} else {
 			// work out what's in this square, if nothing move to it, if something attack it
-			ms := MoveDoAttackMaybe(currentLocation, screen.WithBoard.CursorPosition, screen.PlayerIdx, screen.WithBoard, screen.MovedCharacters)
+			ms := MoveDoAttackMaybe(currentLocation, screen.WithBoard.CursorPosition, screen.PlayerIdx, screen.WithBoard, screen.MovedCharacters, screen.IsDismount)
 			if ms.NextScreen != nil {
 				return ms.NextScreen
 			}
