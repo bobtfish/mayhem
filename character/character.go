@@ -9,6 +9,7 @@ import (
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/movable"
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
 	"github.com/bobtfish/mayhem/spells"
@@ -415,4 +416,40 @@ func (c *Character) Mount() {
 	}
 	fmt.Printf("Mount the player\n")
 	c.CarryingPlayer = true
+}
+
+func ExplodeCreatures(target logical.Vec, grid *grid.GameGrid) bool {
+	ob := grid.GetGameObject(target)
+	a, isAttackable := ob.(movable.Attackable)
+	if !isAttackable {
+		return false
+	}
+	if rand.Intn(9)+100 > a.GetMagicResistance() {
+		player, isPlayer := ob.(*player.Player)
+		if isPlayer {
+			// Loop through the board and explode every character belonging to this player
+			for x := 0; x < grid.Width(); x++ {
+				for y := 0; y < grid.Height(); y++ {
+					vec := logical.V(x, y)
+					if target.Equals(vec) {
+						grid.PlaceGameObject(vec, fx.FxDisbelieve())
+					} else {
+						otherA, otherIsAttackable := grid.GetGameObject(vec).(movable.Attackable)
+						if otherIsAttackable {
+							if otherA.CheckBelongsTo(player) {
+								grid.GetGameObjectStack(vec).RemoveTopObject()
+								grid.PlaceGameObject(vec, fx.FxDisbelieve())
+							}
+						}
+					}
+				}
+			}
+		} else {
+			// Just explode this character
+			grid.GetGameObjectStack(target).RemoveTopObject()
+			grid.PlaceGameObject(target, fx.FxDisbelieve())
+		}
+		return true
+	}
+	return false
 }

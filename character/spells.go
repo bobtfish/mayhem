@@ -77,4 +77,48 @@ func init() {
 			return false
 		},
 	})
+	spells.CreateSpell(spells.OtherSpell{
+		ASpell: spells.ASpell{ // 1 chance only, makes creatures belonging to player explode
+			Name:          "Vengence",
+			CastingChance: 80,
+			CastRange:     20,
+		},
+		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
+			return ExplodeCreatures(target, grid)
+		},
+	})
+	spells.CreateSpell(spells.OtherSpell{
+		ASpell: spells.ASpell{ // 1 chance only, doesn't kill player - makes their creatures explode maybe?
+			Name:          "Decree",
+			CastingChance: 80,
+			CastRange:     20,
+			LawRating:     1,
+		},
+		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
+			return ExplodeCreatures(target, grid)
+		},
+	})
+	spells.CreateSpell(spells.OtherSpell{
+		ASpell: spells.ASpell{ // 3 tries, doesn't kill player - makes their creatures explode
+			Name:          "Dark Power",
+			CastingChance: 50,
+			CastRange:     20,
+			LawRating:     -2,
+		},
+		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
+			return ExplodeCreatures(target, grid)
+		},
+	})
+	spells.CreateSpell(spells.OtherSpell{
+		ASpell: spells.ASpell{ // 3 tries, doesn't kill player - makes their creatures explode
+			Name:          "Justice",
+			CastingChance: 50,
+			CastRange:     20,
+			LawRating:     2,
+		},
+		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
+			return ExplodeCreatures(target, grid)
+		},
+	})
+
 }
