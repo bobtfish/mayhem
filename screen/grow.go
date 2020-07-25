@@ -42,6 +42,8 @@ func doesItVanish() bool {
 type GrowScreen struct {
 	*WithBoard
 	Consider logical.Vec
+	Fx       *fx.Fx
+	Grew     bool
 }
 
 func (screen *GrowScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -56,13 +58,24 @@ func (screen *GrowScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen
 
 	firstAlivePlayerIdx := NextPlayerIdx(-1, screen.WithBoard.Players)
 	fmt.Printf("First alive player index %d\n", firstAlivePlayerIdx)
+	nextScreen := &TurnMenuScreen{
+		Players:   screen.WithBoard.Players,
+		Grid:      screen.WithBoard.Grid,
+		PlayerIdx: firstAlivePlayerIdx,
+	}
+
+	if screen.Fx != nil {
+		return &WaitForFx{
+			Grid:       screen.WithBoard.Grid,
+			Fx:         screen.Fx,
+			NextScreen: nextScreen,
+		}
+	}
+
 	return &Pause{
-		Grid: screen.WithBoard.Grid,
-		NextScreen: &TurnMenuScreen{
-			Players:   screen.WithBoard.Players,
-			Grid:      screen.WithBoard.Grid,
-			PlayerIdx: firstAlivePlayerIdx,
-		},
+		Skip:       !screen.Grew,
+		Grid:       screen.WithBoard.Grid,
+		NextScreen: nextScreen,
 	}
 }
 
@@ -115,9 +128,11 @@ func (screen *GrowScreen) IterateGrowVanish() {
 							}
 						}
 						screen.WithBoard.Grid.PlaceGameObject(adj[adjIdx], c)
+						screen.Grew = true
 					} else {
 						if doesItVanish() {
 							screen.WithBoard.Grid.GetGameObjectStack(screen.Consider).RemoveTopObject()
+							screen.Grew = true
 						}
 					}
 					// Don't bother to check if we're another character type, we already matched
@@ -129,8 +144,10 @@ func (screen *GrowScreen) IterateGrowVanish() {
 				if name == char.Name {
 					if char.CarryingPlayer && rand.Intn(9)+1 <= 2 { // 20% chance
 						screen.WithBoard.Grid.GetGameObjectStack(screen.Consider).RemoveTopObject()
-						screen.WithBoard.Grid.PlaceGameObject(screen.Consider, char.BelongsTo)    // Put the wizard back down
-						screen.WithBoard.Grid.PlaceGameObject(screen.Consider, fx.FxDisbelieve()) // Also put a nice animation down
+						screen.WithBoard.Grid.PlaceGameObject(screen.Consider, char.BelongsTo) // Put the wizard back down
+						f := fx.FxDisbelieve()
+						screen.Fx = f
+						screen.WithBoard.Grid.PlaceGameObject(screen.Consider, f) // Also put a nice animation down
 					}
 				}
 			}
