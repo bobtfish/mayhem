@@ -295,7 +295,13 @@ func (c *Character) GetColor() color.Color {
 }
 
 func (c *Character) Describe() string {
-	return fmt.Sprintf("%s (%s)", c.Name, c.BelongsTo.Name)
+	if c.BelongsTo != nil {
+		return fmt.Sprintf("%s (%s)", c.Name, c.BelongsTo.Name)
+	}
+	if c.IsDead {
+		return fmt.Sprintf("%s (Dead)", c.Name)
+	}
+	return c.Name
 }
 
 func (c *Character) SetBoardPosition(v logical.Vec) {
@@ -411,6 +417,7 @@ func (c *Character) CanMakeCorpse() bool {
 
 func (c *Character) MakeCorpse() {
 	c.IsDead = true
+	c.BelongsTo = nil
 }
 
 // Corpsable interface END
