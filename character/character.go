@@ -24,7 +24,7 @@ type CharacterType struct {
 	Defence            int     `yaml:"defence"`
 	Movement           int     `yaml:"movement"`
 	Flying             bool    `yaml:"flying"`
-	MagicalResistance  int     `yaml:"magical_resistance"`
+	MagicResistance    int     `yaml:"magical_resistance"`
 	Manoeuvre          int     `yaml:"manoeuvre"`
 	Unknown            int     `yaml:"unknown"`
 	LawChaos           int     `yaml:"law_chaos"`
@@ -83,6 +83,7 @@ func LoadCharacterTemplates() {
 			RangedAttackIsFire: v.RangedAttackIsFire,
 			CanBeIllusion:      v.CanBeIllusion,
 			Mountable:          v.Mountable,
+			MagicResistance:    v.MagicResistance,
 		})
 	}
 
@@ -117,6 +118,7 @@ type CharacterSpell struct {
 	Manoeuvre          int
 	CanBeIllusion      bool
 	Mountable          bool
+	MagicResistance    int
 }
 
 // Spell interface begin
@@ -183,6 +185,7 @@ func (s CharacterSpell) CreateCharacter(isIllusion bool, castor grid.GameObject)
 		AttackRange:        s.AttackRange,
 		IsIllusion:         isIllusion,
 		Mountable:          s.Mountable,
+		MagicResistance:    s.MagicResistance,
 
 		// FIXME - ugh this is gross - would it be better done up a level?
 		BelongsTo: castor.(*player.Player),
@@ -207,6 +210,7 @@ type Character struct {
 	IsDead             bool
 	IsIllusion         bool
 	Mountable          bool
+	MagicResistance    int
 
 	BelongsTo      *player.Player
 	CarryingPlayer bool
@@ -235,6 +239,7 @@ func (c *Character) Clone() *Character {
 		BelongsTo:          c.BelongsTo,
 		IsIllusion:         c.IsIllusion,
 		Mountable:          c.Mountable,
+		MagicResistance:    c.MagicResistance,
 	}
 }
 

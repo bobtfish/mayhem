@@ -1,6 +1,8 @@
 package character
 
 import (
+	"math/rand"
+
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
@@ -55,8 +57,8 @@ func init() {
 			return true
 		},
 	})
-	CreateSpell(OtherSpell{
-		ASpell: ASpell{
+	spells.CreateSpell(spells.OtherSpell{
+		ASpell: spells.ASpell{
 			Name:          "Subversion",
 			CastingChance: 100,
 			CastRange:     7,
@@ -68,8 +70,11 @@ func init() {
 			if !isChar || char.IsDead {
 				return false
 			}
-			char.BelongsTo = p
-			return true
+			if rand.Intn(9)+1 > char.MagicResistance {
+				char.BelongsTo = p
+				return true
+			}
+			return false
 		},
 	})
 }
