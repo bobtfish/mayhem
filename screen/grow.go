@@ -58,10 +58,14 @@ func (screen *GrowScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen
 
 	firstAlivePlayerIdx := NextPlayerIdx(-1, screen.WithBoard.Players)
 	fmt.Printf("First alive player index %d\n", firstAlivePlayerIdx)
-	nextScreen := &TurnMenuScreen{
-		Players:   screen.WithBoard.Players,
-		Grid:      screen.WithBoard.Grid,
-		PlayerIdx: firstAlivePlayerIdx,
+	nextScreen := &Pause{
+		Skip: !screen.Grew,
+		Grid: screen.WithBoard.Grid,
+		NextScreen: &TurnMenuScreen{
+			Players:   screen.WithBoard.Players,
+			Grid:      screen.WithBoard.Grid,
+			PlayerIdx: firstAlivePlayerIdx,
+		},
 	}
 
 	if screen.Fx != nil {
@@ -71,12 +75,7 @@ func (screen *GrowScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen
 			NextScreen: nextScreen,
 		}
 	}
-
-	return &Pause{
-		Skip:       !screen.Grew,
-		Grid:       screen.WithBoard.Grid,
-		NextScreen: nextScreen,
-	}
+	return nextScreen
 }
 
 // FIXME - lots of puke worthy type casting in here, should not need this special casing really....
@@ -143,6 +142,7 @@ func (screen *GrowScreen) IterateGrowVanish() {
 				// If we're a special explodable character (castle or citadel)
 				if name == char.Name {
 					if char.CarryingPlayer && rand.Intn(9)+1 <= 2 { // 20% chance
+						screen.Grew = true
 						screen.WithBoard.Grid.GetGameObjectStack(screen.Consider).RemoveTopObject()
 						screen.WithBoard.Grid.PlaceGameObject(screen.Consider, char.BelongsTo) // Put the wizard back down
 						f := fx.FxDisbelieve()
