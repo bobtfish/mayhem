@@ -1104,6 +1104,7 @@
       - 4
 
  - name: Shadow Wood
+   quantity: 6
    base_casting_chance: 40
    combat: 2
    ranged_combat: 0
@@ -1171,7 +1172,7 @@
       - 1
 
  - name: Wall
-# FIXME get 4 tiles
+   quantity: 4
    base_casting_chance: 90
    combat: 0
    ranged_combat: 0

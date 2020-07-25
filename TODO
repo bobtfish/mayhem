@@ -12,6 +12,9 @@ Bug / missing feature list:
    Tree spells
    Combat spells (Magic bolt, lightning)
    Justice/Vengence/etc spells
+     - Fix chance of casting
+     - Fix what you can cast on
+     - Fix multiple casts allowed
 
   Gameplay:
    Law/Chaos rating doing anything + being global

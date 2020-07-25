@@ -40,6 +40,7 @@ type CharacterType struct {
 	CanBeIllusion      bool    `yaml:"can_be_illusion"`
 	BaseCastingChance  int     `yaml:"base_casting_chance"`
 	Mountable          bool    `yaml:"mountable"`
+	Quantity           int     `yaml:"quantity"`
 }
 
 func LoadCharacterTemplates() {
@@ -85,6 +86,7 @@ func LoadCharacterTemplates() {
 			CanBeIllusion:      v.CanBeIllusion,
 			Mountable:          v.Mountable,
 			MagicResistance:    v.MagicResistance,
+			Quantity:           v.Quantity,
 		})
 	}
 
@@ -120,6 +122,7 @@ type CharacterSpell struct {
 	CanBeIllusion      bool
 	Mountable          bool
 	MagicResistance    int
+	Quantity           int
 }
 
 // Spell interface begin
@@ -128,6 +131,12 @@ func (s CharacterSpell) GetName() string {
 }
 func (s CharacterSpell) GetLawRating() int {
 	return s.LawRating
+}
+func (s CharacterSpell) NumberOfCasts() int {
+	if s.Quantity > 1 {
+		return s.Quantity
+	}
+	return 1
 }
 func (s CharacterSpell) GetCastingChance(playerLawRating int) int {
 	// FIXME do something with playerLawRating
