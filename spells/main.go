@@ -68,6 +68,7 @@ type CreatureSpell struct {
 
 type OtherSpell struct {
 	ASpell
+	MutateFunc func(logical.Vec, *grid.GameGrid, grid.GameObject) bool
 }
 
 func (s OtherSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
@@ -75,7 +76,7 @@ func (s OtherSpell) Cast(illusion bool, playerLawRating int, target logical.Vec,
 		panic("OtherSpell cannot be illusion")
 	}
 	if rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
-		return true, nil
+		return s.MutateFunc(target, grid, owner), nil
 	}
 	return false, nil
 }
@@ -125,48 +126,77 @@ func CreateSpell(s Spell) {
 }
 
 func init() {
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Raise Dead",
-		LawRating:     -1,
-		CastingChance: 60,
-		CastRange:     4,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Lightning",
-		CastingChance: 100,
-		CastRange:     4,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Magic Bolt",
-		CastingChance: 100,
-		CastRange:     6,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Vengence",
-		CastingChance: 80,
-		CastRange:     20,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Decree",
-		CastingChance: 80,
-		CastRange:     20,
-		LawRating:     1,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Dark Power",
-		CastingChance: 50,
-		CastRange:     20,
-		LawRating:     -2,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Justice",
-		CastingChance: 50,
-		CastRange:     20,
-		LawRating:     2,
-	}})
-	CreateSpell(OtherSpell{ASpell{
-		Name:          "Subversion",
-		CastingChance: 100,
-		CastRange:     7,
-	}})
+	CreateSpell(OtherSpell{
+		ASpell: ASpell{
+			Name:          "Lightning",
+			CastingChance: 100,
+			CastRange:     4,
+		},
+		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
+			return false
+		},
+	})
+	CreateSpell(OtherSpell{
+		ASpell: ASpell{
+			Name:          "Magic Bolt",
+			CastingChance: 100,
+			CastRange:     6,
+		},
+		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
+			return false
+		},
+	})
+	CreateSpell(OtherSpell{
+		ASpell: ASpell{
+			Name:          "Vengence",
+			CastingChance: 80,
+			CastRange:     20,
+		},
+		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
+			return false
+		},
+	})
+	CreateSpell(OtherSpell{
+		ASpell: ASpell{
+			Name:          "Decree",
+			CastingChance: 80,
+			CastRange:     20,
+			LawRating:     1,
+		},
+		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
+			return false
+		},
+	})
+	CreateSpell(OtherSpell{
+		ASpell: ASpell{
+			Name:          "Dark Power",
+			CastingChance: 50,
+			CastRange:     20,
+			LawRating:     -2,
+		},
+		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
+			return false
+		},
+	})
+	CreateSpell(OtherSpell{
+		ASpell: ASpell{
+			Name:          "Justice",
+			CastingChance: 50,
+			CastRange:     20,
+			LawRating:     2,
+		},
+		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
+			return false
+		},
+	})
+	CreateSpell(OtherSpell{
+		ASpell: ASpell{
+			Name:          "Subversion",
+			CastingChance: 100,
+			CastRange:     7,
+		},
+		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
+			return false
+		},
+	})
 }

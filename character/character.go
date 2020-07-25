@@ -97,32 +97,6 @@ func LoadCharacterTemplates() {
 	}}
 }
 
-type DisbelieveSpell struct {
-	spells.ASpell
-}
-
-func (s DisbelieveSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
-	if illusion {
-		panic("DisbelieveSpell cannot be illusion")
-	}
-	character := grid.GetGameObject(target).(*Character)
-	if character.IsIllusion {
-		grid.GetGameObjectStack(target).RemoveTopObject()
-		anim := fx.FxDisbelieve()
-		grid.PlaceGameObject(target, anim)
-		return true, anim
-	}
-	return false, nil
-}
-
-func (s DisbelieveSpell) CanCast(target grid.GameObject) bool {
-	_, isCharacter := target.(*Character)
-	if isCharacter {
-		return true
-	}
-	return false
-}
-
 // This is the spell to create a character
 type CharacterSpell struct {
 	Name               string
