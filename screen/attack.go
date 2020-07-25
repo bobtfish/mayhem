@@ -164,7 +164,7 @@ func (screen *EngagedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScr
 		currentLocation := screen.Character.GetBoardPosition()
 		newLocation := currentLocation.Add(direction)
 
-		as := DoAttackMaybe(currentLocation, newLocation, screen.PlayerIdx, screen.WithBoard, screen.MovedCharacters)
+		as := DoAttackMaybe(currentLocation, newLocation, screen.PlayerIdx, screen.WithBoard, screen.MovedCharacters, false)
 		if as.NextScreen != nil {
 			fmt.Printf("Can attack in that direction")
 			return as.NextScreen
@@ -193,6 +193,7 @@ type DoAttack struct {
 	DefenderV       logical.Vec
 	PlayerIdx       int
 	MovedCharacters map[movable.Movable]bool
+	IsDismount      bool
 }
 
 func (screen *DoAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {}
@@ -232,7 +233,7 @@ func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	// Work out what happened. This is overly simple, but equivalent to what the original game does :)
 	defender := screen.WithBoard.Grid.GetGameObject(screen.DefenderV)
 	defenceRating := defender.(movable.Attackable).GetDefence() + rand.Intn(9)
-	attacker := screen.WithBoard.Grid.GetGameObject(screen.AttackerV)
+	attacker := getAttacker(screen.WithBoard.Grid.GetGameObject(screen.AttackerV), screen.IsDismount)
 	attackRating := attacker.(movable.Attackerable).GetCombat() + rand.Intn(9)
 
 	fmt.Printf("Attack rating %d defence rating %d\n", attackRating, defenceRating)
@@ -243,7 +244,7 @@ func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 		}
 
 		if canMoveOnto {
-			doCharacterMove(screen.AttackerV, screen.DefenderV, screen.WithBoard.Grid)
+			doCharacterMove(screen.AttackerV, screen.DefenderV, screen.WithBoard.Grid, screen.IsDismount)
 			screen.AttackerV = screen.DefenderV
 		}
 	}

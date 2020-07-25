@@ -284,7 +284,7 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 // If moving to a square which can be attacked, returns the attack screen to make the attack happen
 // If moving to a square with something that cannot be moved into or attacked, return false
 func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, movedCharacters map[movable.Movable]bool, isDismount bool) MoveStatus {
-	as := DoAttackMaybe(from, to, playerIdx, withBoard, movedCharacters)
+	as := DoAttackMaybe(from, to, playerIdx, withBoard, movedCharacters, isDismount)
 	if as.NotEmpty {
 		fmt.Printf("Do attack maybe, was not empty\n")
 		// FIXME AttackStatus.ToMoveStatus method?
@@ -311,7 +311,7 @@ func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard
 	}
 
 	// Is an empty square, move to it
-	doCharacterMove(from, to, withBoard.Grid)
+	doCharacterMove(from, to, withBoard.Grid, isDismount)
 
 	// If you move next to an engageable character, you always become engaged in combat
 	if IsNextToEngageable(to, playerIdx, withBoard) {
@@ -339,7 +339,14 @@ type AttackStatus struct {
 	IsMount             bool
 }
 
-func DoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, movedCharacters map[movable.Movable]bool) AttackStatus {
+func getAttacker(ob grid.GameObject, isDismount bool) movable.Attackerable {
+	if !isDismount {
+		return ob.(movable.Attackerable)
+	}
+	return ob.(*character.Character).BelongsTo
+}
+
+func DoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, movedCharacters map[movable.Movable]bool, isDismount bool) AttackStatus {
 	target := withBoard.Grid.GetGameObject(to)
 	if !target.IsEmpty() {
 		fmt.Printf("Target square is not empty\n")
@@ -347,7 +354,7 @@ func DoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, mo
 		if attackable {
 			fmt.Printf("Target square is attackable\n")
 			if !ob.CheckBelongsTo(withBoard.Players[playerIdx]) {
-				attacker := withBoard.Grid.GetGameObject(from).(movable.Attackerable)
+				attacker := getAttacker(withBoard.Grid.GetGameObject(from), isDismount)
 				if ob.IsUndead() && !attacker.CanAttackUndead() {
 					fmt.Printf("Cannot attack undead\n")
 					return AttackStatus{
@@ -367,6 +374,7 @@ func DoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, mo
 							WithBoard:       withBoard,
 							PlayerIdx:       playerIdx,
 							MovedCharacters: movedCharacters,
+							IsDismount:      isDismount,
 						},
 						Grid: withBoard.Grid,
 						Fx:   fx,
@@ -407,15 +415,25 @@ func IsNextToEngageable(location logical.Vec, playerIdx int, withBoard *WithBoar
 }
 
 // this gets reused from screen/attack.go
-func doCharacterMove(from, to logical.Vec, grid *grid.GameGrid) {
-	character := grid.GetGameObjectStack(from).RemoveTopObject()
+func doCharacterMove(from, to logical.Vec, grid *grid.GameGrid, isDismount bool) {
+	stack := grid.GetGameObjectStack(from)
+	if isDismount {
+		mount := stack.TopObject().(*character.Character)
+		mount.CarryingPlayer = false
+		mount.BelongsTo.SetBoardPosition(to)
+		grid.PlaceGameObject(to, mount.BelongsTo)
+		return
+	}
+	character := stack.RemoveTopObject()
 	character.SetBoardPosition(to)
 	grid.PlaceGameObject(to, character)
 }
 
 func doMount(from, to logical.Vec, grid *grid.GameGrid) {
 	fmt.Printf("doMount\n")
-	grid.GetGameObjectStack(from).RemoveTopObject()
+	// Take the player off the board (as we just track them as mounted on the character)
+	// but set their position (in case they dismount without moving first)
+	grid.GetGameObjectStack(from).RemoveTopObject().SetBoardPosition(to)
 	grid.GetGameObject(to).(*character.Character).Mount()
 }
 

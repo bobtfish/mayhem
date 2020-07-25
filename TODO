@@ -1,20 +1,22 @@
 Bug / missing feature list:
+
+  Visual / animation:
    Press number to flash characters of one player
    Flash characters of one player at start of move turn
    Ranged combat + spells - animation on way to target square
+   Killing wizard animation
+   Nicer end screen
+
+  Spells:
    Raise dead spell
    Subversion
    Wall spell
    Tree spells
    Castle/Citadel spells
-   Mounts - all working except dismount
-    - Dismount wizard (Y or N)
-    - goes to movement range = 1 (i.e. move wizard normally)
-    - Character gets to move afterwards
-   Killing wizard animation
-   Nicer end screen
    Combat spells (Magic bolt, lightning)
    Justice/Vengence/etc spells
+
+  Gameplay:
    Law/Chaos rating doing anything + being global
    Board inspect character
    Examine spell screen
