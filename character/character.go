@@ -275,7 +275,11 @@ func (c *Character) GetColor() color.Color {
 
 func (c *Character) Describe() string {
 	if c.BelongsTo != nil {
-		return fmt.Sprintf("%s (%s)", c.Name, c.BelongsTo.Name)
+		carry := ""
+		if c.CarryingPlayer {
+			carry = "#"
+		}
+		return fmt.Sprintf("%s%s (%s)", c.Name, carry, c.BelongsTo.Name)
 	}
 	if c.IsDead {
 		return fmt.Sprintf("%s (Dead)", c.Name)
