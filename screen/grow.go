@@ -8,6 +8,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/character"
+	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
 )
@@ -16,12 +17,17 @@ const GROW_CHANCE = 15
 const VANISH_CHANCE = 4
 
 var growable map[string]bool
+var explodeIfMounted map[string]bool
 
 func init() {
 	// FIXME - this should be encoded in the characters themselves in some way, not hard coded here
 	growable = map[string]bool{
 		"Gooey Blob": false,
 		"Magic Fire": true,
+	}
+	explodeIfMounted = map[string]bool{
+		"Magic Castle": true,
+		"Dark Citadel": true,
 	}
 }
 
@@ -116,6 +122,16 @@ func (screen *GrowScreen) IterateGrowVanish() {
 					}
 					// Don't bother to check if we're another character type, we already matched
 					break
+				}
+			}
+			for name, _ := range explodeIfMounted {
+				// If we're a special explodable character (castle or citadel)
+				if name == char.Name {
+					if char.CarryingPlayer && rand.Intn(9)+1 <= 2 { // 20% chance
+						screen.WithBoard.Grid.GetGameObjectStack(screen.Consider).RemoveTopObject()
+						screen.WithBoard.Grid.PlaceGameObject(screen.Consider, char.BelongsTo)    // Put the wizard back down
+						screen.WithBoard.Grid.PlaceGameObject(screen.Consider, fx.FxDisbelieve()) // Also put a nice animation down
+					}
 				}
 			}
 		}

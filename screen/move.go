@@ -75,10 +75,6 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 			fmt.Printf("Is movable\n")
 			if ob.CheckBelongsTo(screen.Players[screen.PlayerIdx]) {
 				fmt.Printf("Belongs to this player\n")
-				if ob.GetMovement() == 0 {
-					fmt.Printf("Not movable (0 movement range)\n")
-					return screen
-				}
 				// Definitely something we can move
 
 				// Skip if already moved
@@ -98,6 +94,12 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 						Character:       ob,
 						MovedCharacters: screen.MovedCharacters,
 					}
+				}
+
+				// This check is after dismount for magic castle
+				if ob.GetMovement() == 0 {
+					fmt.Printf("Not movable (0 movement range)\n")
+					return screen
 				}
 
 				// Is it engaged?
@@ -151,28 +153,15 @@ func (screen *MaybeDismount) Enter(ss pixel.Picture, win *pixelgl.Window) {}
 
 func (screen *MaybeDismount) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
-	textBottom("Dismount wizard (Y or N)", ss, batch)
+	isStaticCharacter := false
+	if screen.Character.GetMovement() == 0 { // Magic castle / dark citadel
+		isStaticCharacter = true
+	} else {
+		textBottom("Dismount wizard (Y or N)", ss, batch)
+	}
 	batch.Draw(win)
 
-	if win.JustPressed(pixelgl.KeyN) { // Move character as normal
-		// Note in the original game, characters with a player never seem to get engaged, so I deliberately skip that here
-		if screen.Character.IsFlying() {
-			return &MoveFlyingCharacterScreen{
-				WithBoard:       screen.WithBoard,
-				PlayerIdx:       screen.PlayerIdx,
-				Character:       screen.Character,
-				MovedCharacters: screen.MovedCharacters,
-			}
-		}
-		return &MoveGroundCharacterScreen{
-			WithBoard:       screen.WithBoard,
-			PlayerIdx:       screen.PlayerIdx,
-			Character:       screen.Character,
-			MovementLeft:    screen.Character.GetMovement(),
-			MovedCharacters: screen.MovedCharacters,
-		}
-	}
-	if win.JustPressed(pixelgl.KeyY) { // Do dismount
+	if isStaticCharacter || win.JustPressed(pixelgl.KeyY) { // Do dismount
 		// Dismount sets the character to not moved, the wizard moves
 		delete(screen.MovedCharacters, screen.Character)
 		wizard := screen.Character.(*character.Character).BelongsTo
@@ -193,6 +182,25 @@ func (screen *MaybeDismount) Step(ss pixel.Picture, win *pixelgl.Window) GameScr
 			MovementLeft:    wizard.GetMovement(),
 			MovedCharacters: screen.MovedCharacters,
 			IsDismount:      true,
+		}
+	}
+
+	if win.JustPressed(pixelgl.KeyN) { // Move character as normal
+		// Note in the original game, characters with a player never seem to get engaged, so I deliberately skip that here
+		if screen.Character.IsFlying() {
+			return &MoveFlyingCharacterScreen{
+				WithBoard:       screen.WithBoard,
+				PlayerIdx:       screen.PlayerIdx,
+				Character:       screen.Character,
+				MovedCharacters: screen.MovedCharacters,
+			}
+		}
+		return &MoveGroundCharacterScreen{
+			WithBoard:       screen.WithBoard,
+			PlayerIdx:       screen.PlayerIdx,
+			Character:       screen.Character,
+			MovementLeft:    screen.Character.GetMovement(),
+			MovedCharacters: screen.MovedCharacters,
 		}
 	}
 	return screen
