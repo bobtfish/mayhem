@@ -189,14 +189,4 @@ func init() {
 			return false
 		},
 	})
-	CreateSpell(OtherSpell{
-		ASpell: ASpell{
-			Name:          "Subversion",
-			CastingChance: 100,
-			CastRange:     7,
-		},
-		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
-			return false
-		},
-	})
 }

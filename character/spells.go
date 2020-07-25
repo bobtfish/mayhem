@@ -55,4 +55,21 @@ func init() {
 			return true
 		},
 	})
+	CreateSpell(OtherSpell{
+		ASpell: ASpell{
+			Name:          "Subversion",
+			CastingChance: 100,
+			CastRange:     7,
+		},
+		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
+			p := owner.(*player.Player)
+			ob := grid.GetGameObject(target)
+			char, isChar := ob.(*Character)
+			if !isChar || char.IsDead {
+				return false
+			}
+			char.BelongsTo = p
+			return true
+		},
+	})
 }
