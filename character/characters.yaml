@@ -1171,6 +1171,7 @@
       - 1
 
  - name: Wall
+# FIXME get 4 tiles
    base_casting_chance: 90
    combat: 0
    ranged_combat: 0

@@ -340,6 +340,10 @@ func (c *Character) GetDefence() int {
 	return c.Defence
 }
 
+func (c *Character) GetMagicResistance() int {
+	return c.MagicResistance
+}
+
 func (c *Character) Engageable() bool {
 	if c.Movement > 0 {
 		return true

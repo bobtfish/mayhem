@@ -127,17 +127,25 @@ func CreateSpell(s Spell) {
 
 func init() {
 	CreateSpell(OtherSpell{
-		ASpell: ASpell{
+		ASpell: ASpell{ // Uses disbelive animation if it kills a thing. No corpse
 			Name:          "Lightning",
 			CastingChance: 100,
 			CastRange:     4,
 		},
 		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
-			return false
+			a, isAttackable := grid.GetGameObject(target).(movable.Attackable)
+			if !isAttackable {
+				return false
+			}
+			if rand.Intn(9)+3 > a.GetDefence() {
+				fmt.Printf("Killed by lightning\n")
+				return true
+			}
+			return true
 		},
 	})
 	CreateSpell(OtherSpell{
-		ASpell: ASpell{
+		ASpell: ASpell{ // as above, just less strong
 			Name:          "Magic Bolt",
 			CastingChance: 100,
 			CastRange:     6,
@@ -147,7 +155,7 @@ func init() {
 		},
 	})
 	CreateSpell(OtherSpell{
-		ASpell: ASpell{
+		ASpell: ASpell{ // 1 chance only, makes creatures belonging to player explode
 			Name:          "Vengence",
 			CastingChance: 80,
 			CastRange:     20,
@@ -157,7 +165,7 @@ func init() {
 		},
 	})
 	CreateSpell(OtherSpell{
-		ASpell: ASpell{
+		ASpell: ASpell{ // 1 chance only, doesn't kill player - makes their creatures explode maybe?
 			Name:          "Decree",
 			CastingChance: 80,
 			CastRange:     20,
@@ -168,7 +176,7 @@ func init() {
 		},
 	})
 	CreateSpell(OtherSpell{
-		ASpell: ASpell{
+		ASpell: ASpell{ // 3 tries, doesn't kill player - makes their creatures explode
 			Name:          "Dark Power",
 			CastingChance: 50,
 			CastRange:     20,
@@ -179,7 +187,7 @@ func init() {
 		},
 	})
 	CreateSpell(OtherSpell{
-		ASpell: ASpell{
+		ASpell: ASpell{ // 3 tries, doesn't kill player - makes their creatures explode
 			Name:          "Justice",
 			CastingChance: 50,
 			CastRange:     20,

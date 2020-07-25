@@ -125,6 +125,10 @@ func (p *Player) GetDefence() int {
 	return p.Defence
 }
 
+func (p *Player) GetMagicResistance() int {
+	return p.MagicResistance
+}
+
 func (p *Player) Engageable() bool {
 	return true
 }

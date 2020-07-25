@@ -21,6 +21,7 @@ type Attackable interface {
 	Engageable() bool
 	IsUndead() bool
 	IsMount() bool
+	GetMagicResistance() int
 }
 
 type Attackerable interface {
