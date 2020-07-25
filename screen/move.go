@@ -497,6 +497,7 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			}
 			if ms.IllegalUndeadAttack {
 				screen.OutOfRange = true
+				screen.DisplayRange = false
 				textBottom("Undead - Cannot be attacked", ss, batch)
 			}
 			if ms.DidMove {

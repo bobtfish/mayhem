@@ -104,6 +104,7 @@ func (screen *SelectSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 	i := captureSpellKey(win)
 	if i >= 0 && i < len(screen.Player.Spells) {
 		screen.Player.ChosenSpell = i
+		screen.Player.CastIllusion = false // Remember to reset this
 		if screen.Player.Spells[i].CanCastAsIllusion() {
 			return &IsIllusionScreen{
 				SpellListScreen: screen.SpellListScreen,
