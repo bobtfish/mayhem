@@ -11,6 +11,7 @@ import (
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
+	"github.com/bobtfish/mayhem/player"
 )
 
 type RangedCombat struct {
@@ -203,6 +204,14 @@ func PostSuccessfulAttack(target grid.GameObject, withBoard *WithBoard, canMakeC
 	// If the defender can be killed, kill them. Otherwise remove them
 	ob, corpsable := target.(movable.Corpseable)
 	fmt.Printf("Defender is %T corpsable %v ob %T(%v)\n", target, corpsable, ob, ob)
+
+	// Store character and player for later
+	var p *player.Player
+	char, isCharacter := target.(*character.Character)
+	if isCharacter {
+		p = char.BelongsTo
+	}
+
 	makesCorpse := canMakeCorpse && corpsable && ob.CanMakeCorpse()
 	if makesCorpse {
 		fmt.Printf("make corpse\n")
@@ -220,10 +229,10 @@ func PostSuccessfulAttack(target grid.GameObject, withBoard *WithBoard, canMakeC
 	}
 
 	// If the thing that was just killed was carrying the player, put the player back on the board
-	char, isCharacter := target.(*character.Character)
 	if isCharacter && char.CarryingPlayer {
 		canMoveOnto = false
-		withBoard.Grid.PlaceGameObject(char.BoardPosition, char.BelongsTo)
+		fmt.Printf("Was carrying player, put back: %T %v\n", p, p)
+		withBoard.Grid.PlaceGameObject(char.BoardPosition, p)
 	}
 
 	return canMoveOnto, nil

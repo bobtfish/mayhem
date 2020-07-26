@@ -109,7 +109,7 @@ func init() {
 			return ExplodeCreatures(target, grid)
 		},
 	})
-    */
+	*/
 	spells.CreateSpell(spells.OtherSpell{
 		ASpell: spells.ASpell{ // 3 tries, doesn't kill player - makes their creatures explode
 			Name:          "Justice",
