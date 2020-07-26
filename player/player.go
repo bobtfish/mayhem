@@ -303,7 +303,7 @@ func init() {
 			p.Movement = 6
 		},
 	})
-	spells.CreateSpell(PlayerSpell{
+	/*spells.CreateSpell(PlayerSpell{
 		ASpell: spells.ASpell{
 			Name:          "Law-1",
 			CastingChance: 100,
@@ -346,5 +346,5 @@ func init() {
 		MutateFunc: func(p *Player) {
 			p.LawRating = p.LawRating - 2
 		},
-	})
+	}) */
 }
