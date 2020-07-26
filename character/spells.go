@@ -77,7 +77,7 @@ func init() {
 			return false
 		},
 	})
-	spells.CreateSpell(spells.OtherSpell{
+	/*spells.CreateSpell(spells.OtherSpell{
 		ASpell: spells.ASpell{ // 1 chance only, makes creatures belonging to player explode
 			Name:          "Vengence",
 			CastingChance: 80,
@@ -109,6 +109,7 @@ func init() {
 			return ExplodeCreatures(target, grid)
 		},
 	})
+    */
 	spells.CreateSpell(spells.OtherSpell{
 		ASpell: spells.ASpell{ // 3 tries, doesn't kill player - makes their creatures explode
 			Name:          "Justice",
@@ -120,5 +121,4 @@ func init() {
 			return ExplodeCreatures(target, grid)
 		},
 	})
-
 }

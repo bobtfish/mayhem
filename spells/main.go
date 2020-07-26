@@ -126,21 +126,21 @@ func CreateSpell(s Spell) {
 }
 
 func init() {
-	CreateSpell(OtherSpell{
+	/*CreateSpell(OtherSpell{
 		ASpell: ASpell{ // Uses disbelive animation if it kills a thing. No corpse
 			Name:          "Lightning",
 			CastingChance: 100,
 			CastRange:     4,
 		},
 		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
-			/*a, isAttackable := grid.GetGameObject(target).(movable.Attackable)
+			a, isAttackable := grid.GetGameObject(target).(movable.Attackable)
 			if !isAttackable {
 				return false
 			}
 			if rand.Intn(9)+3 > a.GetDefence() {
 				fmt.Printf("Killed by lightning\n")
 				return true
-			}*/
+			}
 			return true
 		},
 	})
@@ -153,5 +153,5 @@ func init() {
 		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
 			return false
 		},
-	})
+	})*/
 }

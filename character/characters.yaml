@@ -1079,46 +1079,46 @@
     - 9
     - 5
 
- - name: Magic Wood
-   base_casting_chance: 80
-   combat: 0
-   ranged_combat: 0
-   range: 0
-   defence: 5
-   movement: 0
-   magical_resistance: 0
-   manoeuvre: 9
-   unknown: 6
-   law_chaos: 2
-   strength: 250
-   mountable: true
-   color_r: 0
-   color_g: 255
-   color_b: 0
+# - name: Magic Wood
+#   base_casting_chance: 80
+#   combat: 0
+#   ranged_combat: 0
+#   range: 0
+#   defence: 5
+#   movement: 0
+#   magical_resistance: 0
+#   manoeuvre: 9
+#   unknown: 6
+#   law_chaos: 2
+#   strength: 250
+#   mountable: true
+#   color_r: 0
+#   color_g: 255
+#   color_b: 0
 # ALTERNATE
 #   color_r: 255
 #   color_g: 255
 #   color_b: 0
-   sprites:
-    - - 5
-      - 4
+#   sprites:
+#    - - 5
+#      - 4
 
- - name: Shadow Wood
-   base_casting_chance: 40
-   combat: 2
-   ranged_combat: 0
-   range: 0
-   defence: 4
-   movement: 0
-   magical_resistance: 0
-   manoeuvre: 9
-   unknown: 4
-   law_chaos: -2
-   strength: 30
-   cast_range: 8
-   sprites:
-    - - 5
-      - 3
+# - name: Shadow Wood
+#   base_casting_chance: 40
+#   combat: 2
+#   ranged_combat: 0
+#   range: 0
+#   defence: 4
+#   movement: 0
+#   magical_resistance: 0
+#   manoeuvre: 9
+#   unknown: 4
+#   law_chaos: -2
+#   strength: 30
+#   cast_range: 8
+#   sprites:
+#    - - 5
+#      - 3
 
  - name: Magic Castle
    base_casting_chance: 50
@@ -1170,28 +1170,28 @@
     - - 5
       - 1
 
- - name: Wall
+# - name: Wall
 # FIXME get 4 tiles
-   base_casting_chance: 90
-   combat: 0
-   ranged_combat: 0
-   range: 0
-   defence: 0
-   movement: 0
-   magical_resistance: 0
-   manoeuvre: 0
-   unknown: 0
-   law_chaos: 0
-   strength: 30
-   color_r: 255
-   color_g: 0
-   color_b: 0
-   cast_range: 6
+#   base_casting_chance: 90
+#   combat: 0
+#   ranged_combat: 0
+#   range: 0
+#   defence: 0
+#   movement: 0
+#   magical_resistance: 0
+#   manoeuvre: 0
+#   unknown: 0
+#   law_chaos: 0
+#   strength: 30
+#   color_r: 255
+#   color_g: 0
+#   color_b: 0
+#   cast_range: 6
 # ALTERNATE - BLACK =
 #   color_r: 255
 #   color_g: 255
 #   color_b: 0
-   sprites:
-    - - 5
-      - 2
+#   sprites:
+#    - - 5
+#      - 2
 
