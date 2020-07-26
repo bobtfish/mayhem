@@ -62,9 +62,8 @@ func (screen *DisplaySpellCastScreen) Step(ss pixel.Picture, win *pixelgl.Window
 	batch.Draw(win)
 	if win.JustPressed(pixelgl.KeyS) || !captureDirectionKey(win).Equals(logical.ZeroVec()) {
 		return &TargetSpellScreen{
-			WithBoard:     screen.WithBoard,
-			PlayerIdx:     screen.PlayerIdx,
-			NumberOfCasts: spell.NumberOfCasts(),
+			WithBoard: screen.WithBoard,
+			PlayerIdx: screen.PlayerIdx,
 		}
 	}
 	if win.JustPressed(pixelgl.Key0) {
@@ -78,9 +77,8 @@ func (screen *DisplaySpellCastScreen) Step(ss pixel.Picture, win *pixelgl.Window
 
 type TargetSpellScreen struct {
 	*WithBoard
-	PlayerIdx     int
-	OutOfRange    bool
-	NumberOfCasts int
+	PlayerIdx  int
+	OutOfRange bool
 }
 
 func (screen *TargetSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -140,9 +138,8 @@ func (screen *TargetSpellScreen) AnimateAndCast() GameScreen {
 	}
 	return &WaitForFx{
 		NextScreen: &DoSpellCast{
-			WithBoard:         screen.WithBoard,
-			PlayerIdx:         screen.PlayerIdx,
-			NumberOfCastsLeft: screen.NumberOfCasts - 1,
+			WithBoard: screen.WithBoard,
+			PlayerIdx: screen.PlayerIdx,
 		},
 		Grid: screen.WithBoard.Grid,
 		Fx:   anim,
@@ -154,15 +151,13 @@ func (screen *TargetSpellScreen) AnimateAndCast() GameScreen {
 
 type DoSpellCast struct {
 	*WithBoard
-	PlayerIdx         int
-	NumberOfCastsLeft int
+	PlayerIdx int
 }
 
 func (screen *DoSpellCast) Enter(ss pixel.Picture, win *pixelgl.Window) {
 }
 
 func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
-	var nextScreen GameScreen
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	// Fx for spell cast finished
 	// Work out what happened :)
@@ -178,16 +173,8 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScree
 		textBottom("Spell Failed", ss, batch)
 	}
 	batch.Draw(win)
-	nextScreen = &TargetSpellScreen{
-		WithBoard:     screen.WithBoard,
-		PlayerIdx:     screen.PlayerIdx,
-		NumberOfCasts: screen.NumberOfCastsLeft,
-	}
-	if screen.NumberOfCastsLeft == 0 {
-		nextScreen = NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid, false)
-	}
 	return &WaitForFx{
-		NextScreen: nextScreen,
+		NextScreen: NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid, false),
 		Grid:       screen.Grid,
 		Fx:         fx,
 	}

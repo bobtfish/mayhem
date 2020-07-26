@@ -20,7 +20,6 @@ type Spell interface {
 	Cast(bool, int, logical.Vec, *grid.GameGrid, grid.GameObject) (bool, *fx.Fx)
 	IsReuseable() bool
 	CastFx() *fx.Fx
-	NumberOfCasts() int
 }
 
 type ASpell struct {
@@ -30,14 +29,6 @@ type ASpell struct {
 	CastingChance int
 	CastRange     int
 	NoCastFx      bool
-	TriesAllowed  int
-}
-
-func (s ASpell) NumberOfCasts() int {
-	if s.TriesAllowed == 0 {
-		return 1
-	}
-	return s.TriesAllowed
 }
 
 func (s ASpell) CastFx() *fx.Fx {

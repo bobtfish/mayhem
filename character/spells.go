@@ -104,7 +104,6 @@ func init() {
 			CastingChance: 50,
 			CastRange:     20,
 			LawRating:     -2,
-			TriesAllowed:  3,
 		},
 		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
 			return ExplodeCreatures(target, grid)
@@ -116,7 +115,6 @@ func init() {
 			CastingChance: 50,
 			CastRange:     20,
 			LawRating:     2,
-			TriesAllowed:  3,
 		},
 		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
 			return ExplodeCreatures(target, grid)
