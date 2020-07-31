@@ -144,15 +144,28 @@ func (s CharacterSpell) CanCast(target grid.GameObject) bool {
 	return false
 }
 
+// FIXME duplicate code with spells/main.go
 func (s CharacterSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
-	if illusion && !s.CanBeIllusion {
-		panic(fmt.Sprintf("Spell %s cannot be illusion, but was cast as one anyway", s.Name))
-	}
-	if illusion || rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
-		grid.PlaceGameObject(target, s.CreateCharacter(illusion, castor))
-		return true, nil
+	if s.CastSucceeds(illusion, playerLawRating) {
+		return s.DoCast(illusion, playerLawRating, target, grid, castor)
 	}
 	return false, nil
+}
+
+func (s CharacterSpell) DoCast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
+	grid.PlaceGameObject(target, s.CreateCharacter(illusion, castor))
+	return true, nil
+}
+
+// FIXME duplicate code with spells/main.go
+func (s CharacterSpell) CastSucceeds(illusion bool, playerLawRating int) bool {
+	if illusion && !s.CanCastAsIllusion() {
+		panic(fmt.Sprintf("Spell %s (type %T) cannot be illusion, but was cast as one anyway", s.Name, s))
+	}
+	if illusion || rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
+		return true
+	}
+	return false
 }
 
 func (s CharacterSpell) IsReuseable() bool {

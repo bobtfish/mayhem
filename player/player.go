@@ -200,17 +200,19 @@ func (s PlayerSpell) CanCast(target grid.GameObject) bool {
 	return false
 }
 
+func (s PlayerSpell) DoCast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
+	tile := grid.GetGameObject(target)
+	player := tile.(*Player)
+	s.MutateFunc(player)
+	// May have just become not animated
+	player.SpriteIdx = 0
+	return true, nil
+}
+
+// FIXME duplicate code with spells/main.go
 func (s PlayerSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
-	if illusion {
-		panic("PlayerSpell cannot be illusion")
-	}
-	if rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
-		tile := grid.GetGameObject(target)
-		player := tile.(*Player)
-		s.MutateFunc(player)
-		// May have just become not animated
-		player.SpriteIdx = 0
-		return true, nil
+	if s.CastSucceeds(illusion, playerLawRating) {
+		return s.DoCast(illusion, playerLawRating, target, grid, castor)
 	}
 	return false, nil
 }

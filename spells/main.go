@@ -1,6 +1,7 @@
 package spells
 
 import (
+	"fmt"
 	"image/color"
 	"math/rand"
 
@@ -18,6 +19,8 @@ type Spell interface {
 	CanCast(grid.GameObject) bool
 	CanCastAsIllusion() bool
 	Cast(bool, int, logical.Vec, *grid.GameGrid, grid.GameObject) (bool, *fx.Fx)
+	DoCast(bool, int, logical.Vec, *grid.GameGrid, grid.GameObject) (bool, *fx.Fx)
+	CastSucceeds(bool, int) bool
 	IsReuseable() bool
 	CastFx() *fx.Fx
 }
@@ -61,6 +64,15 @@ func (s ASpell) CanCast(target grid.GameObject) bool {
 func (s ASpell) CanCastAsIllusion() bool {
 	return false
 }
+func (s ASpell) CastSucceeds(illusion bool, playerLawRating int) bool {
+	if illusion && !s.CanCastAsIllusion() {
+		panic(fmt.Sprintf("Spell %s (type %T) cannot be illusion, but was cast as one anyway", s.Name, s))
+	}
+	if illusion || rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
+		return true
+	}
+	return false
+}
 
 type CreatureSpell struct {
 	ASpell
@@ -72,13 +84,14 @@ type OtherSpell struct {
 }
 
 func (s OtherSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
-	if illusion {
-		panic("OtherSpell cannot be illusion")
-	}
-	if rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
-		return s.MutateFunc(target, grid, owner), nil
+	if s.CastSucceeds(illusion, playerLawRating) {
+		return s.DoCast(illusion, playerLawRating, target, grid, owner)
 	}
 	return false, nil
+}
+
+func (s OtherSpell) DoCast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
+	return s.MutateFunc(target, grid, owner), nil
 }
 
 func LawRatingSymbol(s Spell) string {
