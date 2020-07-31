@@ -19,7 +19,7 @@ type Spell interface {
 	CanCast(grid.GameObject) bool
 	CanCastAsIllusion() bool
 	Cast(bool, int, logical.Vec, *grid.GameGrid, grid.GameObject) (bool, *fx.Fx)
-	DoCast(bool, int, logical.Vec, *grid.GameGrid, grid.GameObject) (bool, *fx.Fx)
+	DoCast(bool, logical.Vec, *grid.GameGrid, grid.GameObject) (bool, *fx.Fx)
 	CastSucceeds(bool, int) bool
 	IsReuseable() bool
 	CastFx() *fx.Fx
@@ -85,12 +85,12 @@ type OtherSpell struct {
 
 func (s OtherSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
 	if s.CastSucceeds(illusion, playerLawRating) {
-		return s.DoCast(illusion, playerLawRating, target, grid, owner)
+		return s.DoCast(illusion, target, grid, owner)
 	}
 	return false, nil
 }
 
-func (s OtherSpell) DoCast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
+func (s OtherSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
 	return s.MutateFunc(target, grid, owner), nil
 }
 

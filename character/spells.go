@@ -16,12 +16,12 @@ type DisbelieveSpell struct {
 
 func (s DisbelieveSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
 	if s.CastSucceeds(illusion, playerLawRating) {
-		return s.DoCast(illusion, playerLawRating, target, grid, castor)
+		return s.DoCast(illusion, target, grid, castor)
 	}
 	return false, nil
 }
 
-func (s DisbelieveSpell) DoCast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
+func (s DisbelieveSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
 	if illusion {
 		panic("DisbelieveSpell cannot be illusion")
 	}

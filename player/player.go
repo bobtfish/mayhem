@@ -200,7 +200,7 @@ func (s PlayerSpell) CanCast(target grid.GameObject) bool {
 	return false
 }
 
-func (s PlayerSpell) DoCast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
+func (s PlayerSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
 	tile := grid.GetGameObject(target)
 	player := tile.(*Player)
 	s.MutateFunc(player)
@@ -212,7 +212,7 @@ func (s PlayerSpell) DoCast(illusion bool, playerLawRating int, target logical.V
 // FIXME duplicate code with spells/main.go
 func (s PlayerSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
 	if s.CastSucceeds(illusion, playerLawRating) {
-		return s.DoCast(illusion, playerLawRating, target, grid, castor)
+		return s.DoCast(illusion, target, grid, castor)
 	}
 	return false, nil
 }
