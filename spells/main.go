@@ -18,7 +18,6 @@ type Spell interface {
 	GetCastRange() int
 	CanCast(grid.GameObject) bool
 	CanCastAsIllusion() bool
-	Cast(bool, int, logical.Vec, *grid.GameGrid, grid.GameObject) (bool, *fx.Fx)
 	DoCast(bool, logical.Vec, *grid.GameGrid, grid.GameObject) (bool, *fx.Fx)
 	CastSucceeds(bool, int) bool
 	IsReuseable() bool
@@ -81,13 +80,6 @@ type CreatureSpell struct {
 type OtherSpell struct {
 	ASpell
 	MutateFunc func(logical.Vec, *grid.GameGrid, grid.GameObject) bool
-}
-
-func (s OtherSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
-	if s.CastSucceeds(illusion, playerLawRating) {
-		return s.DoCast(illusion, target, grid, owner)
-	}
-	return false, nil
 }
 
 func (s OtherSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {

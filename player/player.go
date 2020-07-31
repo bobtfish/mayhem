@@ -170,6 +170,7 @@ func (p *Player) CanAttackUndead() bool {
 // Attackerable interface END
 
 func (p *Player) CastSpell(target logical.Vec, grid *grid.GameGrid) (bool, *fx.Fx) {
+	var ret bool
 	var anim *fx.Fx
 	fmt.Printf("IN Player spell cast\n")
 	i := p.ChosenSpell
@@ -180,7 +181,9 @@ func (p *Player) CastSpell(target logical.Vec, grid *grid.GameGrid) (bool, *fx.F
 		p.Spells = spells
 	}
 	fmt.Printf("Player spell %T cast on %T\n", spell, target)
-	ret, anim := spell.Cast(p.CastIllusion, p.LawRating, target, grid, p)
+	if spell.CastSucceeds(p.CastIllusion, p.LawRating) {
+		ret, anim = spell.DoCast(p.CastIllusion, target, grid, p)
+	}
 	p.ChosenSpell = -1
 	return ret, anim
 }
@@ -207,14 +210,6 @@ func (s PlayerSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGr
 	// May have just become not animated
 	player.SpriteIdx = 0
 	return true, nil
-}
-
-// FIXME duplicate code with spells/main.go
-func (s PlayerSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
-	if s.CastSucceeds(illusion, playerLawRating) {
-		return s.DoCast(illusion, target, grid, castor)
-	}
-	return false, nil
 }
 
 func init() {

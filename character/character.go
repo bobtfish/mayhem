@@ -144,14 +144,6 @@ func (s CharacterSpell) CanCast(target grid.GameObject) bool {
 	return false
 }
 
-// FIXME duplicate code with spells/main.go
-func (s CharacterSpell) Cast(illusion bool, playerLawRating int, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
-	if s.CastSucceeds(illusion, playerLawRating) {
-		return s.DoCast(illusion, target, grid, castor)
-	}
-	return false, nil
-}
-
 func (s CharacterSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
 	grid.PlaceGameObject(target, s.CreateCharacter(illusion, castor))
 	return true, nil
