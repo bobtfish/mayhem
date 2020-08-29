@@ -143,7 +143,7 @@ func (screen *GrowScreen) IterateGrowVanish() {
 						screen.Grew = true
 						screen.WithBoard.Grid.GetGameObjectStack(screen.Consider).RemoveTopObject()
 						screen.WithBoard.Grid.PlaceGameObject(screen.Consider, char.BelongsTo) // Put the wizard back down
-						f := fx.FxDisbelieve()
+						f := fx.Disbelieve()
 						screen.Fx = f
 						screen.WithBoard.Grid.PlaceGameObject(screen.Consider, f) // Also put a nice animation down
 					}

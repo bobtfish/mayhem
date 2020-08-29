@@ -54,7 +54,7 @@ func (f *Fx) SetBoardPosition(v logical.Vec) {}
 
 // Fx Constructors
 
-func FxSpellCast() *Fx {
+func SpellCast() *Fx {
 	return &Fx{
 		SpriteVec:   logical.V(0, 28),
 		SpriteCount: 8,
@@ -62,7 +62,7 @@ func FxSpellCast() *Fx {
 	}
 }
 
-func FxRemoteAttack() *Fx {
+func RemoteAttack() *Fx {
 	return &Fx{
 		SpriteVec:   logical.V(0, 27),
 		SpriteCount: 8,
@@ -70,7 +70,7 @@ func FxRemoteAttack() *Fx {
 	}
 }
 
-func FxFire() *Fx {
+func Fire() *Fx {
 	return &Fx{
 		SpriteVec:   logical.V(0, 26),
 		SpriteCount: 8,
@@ -78,7 +78,7 @@ func FxFire() *Fx {
 	}
 }
 
-func FxDisbelieve() *Fx {
+func Disbelieve() *Fx {
 	return &Fx{
 		SpriteVec:   logical.V(0, 25),
 		SpriteCount: 7,
@@ -86,7 +86,7 @@ func FxDisbelieve() *Fx {
 	}
 }
 
-func FxAttack() *Fx {
+func Attack() *Fx {
 	return &Fx{
 		SpriteVec:   logical.V(0, 24),
 		SpriteCount: 4,

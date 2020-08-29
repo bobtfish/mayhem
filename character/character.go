@@ -45,7 +45,7 @@ type CharacterType struct {
 
 func LoadCharacterTemplates() {
 	cl := make([]CharacterType, 0)
-	err := yaml.Unmarshal([]byte(character_yaml), &cl)
+	err := yaml.Unmarshal([]byte(characterYaml), &cl)
 	if err != nil {
 		panic(err)
 	}
@@ -163,7 +163,7 @@ func (s CharacterSpell) IsReuseable() bool {
 }
 
 func (s CharacterSpell) CastFx() *fx.Fx {
-	return fx.FxSpellCast()
+	return fx.SpellCast()
 }
 
 func (s CharacterSpell) CanCastAsIllusion() bool {
@@ -373,9 +373,9 @@ func (c *Character) GetAttackRange() int {
 
 func (c *Character) GetAttackFx() *fx.Fx {
 	if c.RangedAttackIsFire {
-		return fx.FxFire()
+		return fx.Fire()
 	}
-	return fx.FxRemoteAttack()
+	return fx.RemoteAttack()
 }
 
 func (c *Character) CanAttackUndead() bool {
@@ -425,13 +425,13 @@ func ExplodeCreatures(target logical.Vec, grid *grid.GameGrid) bool {
 				for y := 0; y < grid.Height(); y++ {
 					vec := logical.V(x, y)
 					if target.Equals(vec) {
-						grid.PlaceGameObject(vec, fx.FxDisbelieve())
+						grid.PlaceGameObject(vec, fx.Disbelieve())
 					} else {
 						otherA, otherIsAttackable := grid.GetGameObject(vec).(movable.Attackable)
 						if otherIsAttackable {
 							if otherA.CheckBelongsTo(player) {
 								grid.GetGameObjectStack(vec).RemoveTopObject()
-								grid.PlaceGameObject(vec, fx.FxDisbelieve())
+								grid.PlaceGameObject(vec, fx.Disbelieve())
 							}
 						}
 					}
@@ -440,7 +440,7 @@ func ExplodeCreatures(target logical.Vec, grid *grid.GameGrid) bool {
 		} else {
 			// Just explode this character
 			grid.GetGameObjectStack(target).RemoveTopObject()
-			grid.PlaceGameObject(target, fx.FxDisbelieve())
+			grid.PlaceGameObject(target, fx.Disbelieve())
 		}
 		return true
 	}

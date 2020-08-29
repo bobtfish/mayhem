@@ -8,7 +8,7 @@ import (
 const HEREDOC = string('`')
 
 func main() {
-	fmt.Printf("package character\n\nconst character_yaml = " + HEREDOC)
+	fmt.Printf("package character\n\nconst characterYaml = " + HEREDOC)
 	dat, err := ioutil.ReadFile("character/characters.yaml")
 	if err != nil {
 		panic(err)

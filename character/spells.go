@@ -20,7 +20,7 @@ func (s DisbelieveSpell) DoCast(illusion bool, target logical.Vec, grid *grid.Ga
 	character := grid.GetGameObject(target).(*Character)
 	if character.IsIllusion {
 		grid.GetGameObjectStack(target).RemoveTopObject()
-		anim := fx.FxDisbelieve()
+		anim := fx.Disbelieve()
 		grid.PlaceGameObject(target, anim)
 		return true, anim
 	}
@@ -75,7 +75,7 @@ func init() {
 	})
 	/*spells.CreateSpell(spells.OtherSpell{
 		ASpell: spells.ASpell{ // 1 chance only, makes creatures belonging to player explode
-			Name:          "Vengence",
+			Name:          "Vengeance",
 			CastingChance: 80,
 			CastRange:     20,
 		},

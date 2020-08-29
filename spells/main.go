@@ -37,7 +37,7 @@ func (s ASpell) CastFx() *fx.Fx {
 	if s.NoCastFx {
 		return nil
 	}
-	return fx.FxSpellCast()
+	return fx.SpellCast()
 }
 func (s ASpell) GetName() string {
 	return s.Name

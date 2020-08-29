@@ -367,7 +367,7 @@ func DoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, mo
 					}
 				}
 				fmt.Printf("Target square belongs to a different player do attack\n")
-				fx := fx.FxAttack()
+				fx := fx.Attack()
 				withBoard.Grid.PlaceGameObject(to, fx)
 				return AttackStatus{
 					NotEmpty: true,

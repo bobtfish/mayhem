@@ -10,6 +10,7 @@ import (
 var rnd *mrand.Rand
 
 func init() {
+	// nolint // This is explicitly OK as we hand math/rand a strong random source
 	rnd = mrand.New(cryptoSource{})
 }
 

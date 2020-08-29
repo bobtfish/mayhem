@@ -156,7 +156,7 @@ func (p *Player) GetAttackRange() int {
 }
 
 func (p *Player) GetAttackFx() *fx.Fx {
-	return fx.FxRemoteAttack()
+	return fx.RemoteAttack()
 }
 
 func (p *Player) CanAttackUndead() bool {

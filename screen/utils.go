@@ -30,7 +30,7 @@ func KillIfPlayer(g grid.GameObject, grid *grid.GameGrid) bool {
 						if ob.CheckBelongsTo(player) {
 							stack := grid.GetGameObjectStack(vec)
 							stack.RemoveTopObject()
-							stack.PlaceObject(fx.FxRemoteAttack())
+							stack.PlaceObject(fx.RemoteAttack())
 						}
 					}
 				}
