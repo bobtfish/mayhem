@@ -26,7 +26,7 @@ type RangedCombat struct {
 func (screen *RangedCombat) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	fmt.Printf("In ranged combat state\n")
 	screen.DisplayRange = true
-	screen.WithBoard.CursorSprite = CURSOR_RANGEDATTACK
+	screen.WithBoard.CursorSprite = CursorRangedAttack
 }
 
 func (screen *RangedCombat) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {

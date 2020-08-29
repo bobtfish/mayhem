@@ -11,9 +11,9 @@ import (
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
 	"github.com/bobtfish/mayhem/player"
+	"github.com/bobtfish/mayhem/rand"
 	"github.com/bobtfish/mayhem/render"
 	"github.com/bobtfish/mayhem/spells"
-	"github.com/bobtfish/mayhem/rand"
 )
 
 // Abstract character that can be created

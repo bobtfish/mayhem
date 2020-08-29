@@ -39,16 +39,16 @@ func GetSpriteSheet(io io.Reader) pixel.Picture {
 func NewSpriteDrawer(ss pixel.Picture) SpriteDrawer {
 	return SpriteDrawer{
 		SpriteSheet:      ss,
-		SpriteSheetSizeV: logical.V(SPRITE_SIZE, SPRITE_SIZE),
-		WinSizeV:         logical.V(CHAR_PIXELS, CHAR_PIXELS),
+		SpriteSheetSizeV: logical.V(SpriteSize, SpriteSize),
+		WinSizeV:         logical.V(CharPixels, CharPixels),
 	}
 }
 
 func NewTextDrawer(ss pixel.Picture) SpriteDrawer {
 	return SpriteDrawer{
 		SpriteSheet:      ss,
-		SpriteSheetSizeV: logical.V(SPRITE_SIZE/2, SPRITE_SIZE),
-		WinSizeV:         logical.V(CHAR_PIXELS/2, CHAR_PIXELS),
+		SpriteSheetSizeV: logical.V(SpriteSize/2, SpriteSize),
+		WinSizeV:         logical.V(CharPixels/2, CharPixels),
 	}
 }
 
@@ -72,8 +72,8 @@ func (sd SpriteDrawer) GetSpriteMatrix(winPos logical.Vec) pixel.Matrix {
 	mat := pixel.IM
 	v := winPos.Multiply(sd.WinSizeV).Add(sd.WinOffsetV).ToPixelVec()
 	mat = mat.Moved(v)
-	mat = mat.ScaledXY(v, pixel.V(CHAR_PIXELS/SPRITE_SIZE, CHAR_PIXELS/SPRITE_SIZE))
-	return mat.Moved(pixel.V(CHAR_PIXELS/2-1, CHAR_PIXELS/2-1))
+	mat = mat.ScaledXY(v, pixel.V(CharPixels/SpriteSize, CharPixels/SpriteSize))
+	return mat.Moved(pixel.V(CharPixels/2-1, CharPixels/2-1))
 }
 
 func (sd SpriteDrawer) DrawSpriteColor(ssPos, winPos logical.Vec, mask color.Color, target pixel.Target) {

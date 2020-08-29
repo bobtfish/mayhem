@@ -50,6 +50,7 @@ func (screen *HelpScreenMenu) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 
 type HelpScreenKeys struct{}
 
+// nolint
 func (screen *HelpScreenKeys) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)
@@ -122,6 +123,7 @@ func (screen *HelpScreenCombat) Step(ss pixel.Picture, win *pixelgl.Window) Game
 
 type HelpScreenCombatRanged struct{}
 
+// nolint
 func (screen *HelpScreenCombatRanged) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)
@@ -171,6 +173,7 @@ func (screen *HelpScreenUndead) Step(ss pixel.Picture, win *pixelgl.Window) Game
 
 type HelpScreenMounts struct{}
 
+// nolint
 func (screen *HelpScreenMounts) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)

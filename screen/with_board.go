@@ -19,7 +19,7 @@ type WithBoard struct {
 	CursorFlashTime time.Time
 	Grid            *grid.GameGrid
 	Players         []*player.Player
-	CursorSprite    int // Defaults to CURSOR_SPELL
+	CursorSprite    int // Defaults to CursorSpell
 }
 
 func (screen *WithBoard) ShouldIDrawCursor() bool {

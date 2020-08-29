@@ -87,7 +87,7 @@ func (screen *PlayerIconScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	td.DrawText("Which character?", logical.V(0, 4), win)
 	td.DrawText("1  2  3  4  5  6  7  8", logical.V(0, 3), win)
 	for x := 0; x < 8; x++ {
-		offset := logical.V(render.CHAR_PIXELS/4+render.CHAR_PIXELS/2*x*3, render.CHAR_PIXELS*2-render.CHAR_PIXELS/2)
+		offset := logical.V(render.CharPixels/4+render.CharPixels/2*x*3, render.CharPixels*2-render.CharPixels/2)
 		sd.WithOffset(offset).DrawSprite(logical.V(x, 23), logical.V(1, 3), win)
 	}
 }
@@ -98,7 +98,7 @@ func (screen *PlayerIconScreen) Step(ss pixel.Picture, win *pixelgl.Window) Game
 		screen.CurrentPlayer.CharacterIcon = logical.V(c-1, 23)
 		TextDrawer(ss).DrawText(fmt.Sprintf("%d", c), logical.V(17, 4), win)
 		sd := SpriteDrawer(ss)
-		offset := sd.WinOffsetV.Add(logical.V(render.CHAR_PIXELS/4, 0))
+		offset := sd.WinOffsetV.Add(logical.V(render.CharPixels/4, 0))
 		sd.WithOffset(offset).DrawSprite(screen.CurrentPlayer.CharacterIcon, logical.V(9, 4), win)
 		return &PlayerColorScreen{PlayersScreen: screen.PlayersScreen}
 	}
@@ -129,7 +129,7 @@ func (screen *PlayerColorScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	td.DrawText("1  2  3  4  5  6  7  8", logical.V(0, 1), win)
 	colors := characterColorChoices()
 	for x := 0; x < 8; x++ {
-		offset := logical.V(render.CHAR_PIXELS/4+render.CHAR_PIXELS/2*x*3, render.CHAR_PIXELS*2-render.CHAR_PIXELS/2)
+		offset := logical.V(render.CharPixels/4+render.CharPixels/2*x*3, render.CharPixels*2-render.CharPixels/2)
 		sd.WithOffset(offset).DrawSpriteColor(screen.CurrentPlayer.CharacterIcon, logical.V(1, 1), colors[x], win)
 	}
 }
@@ -141,7 +141,7 @@ func (screen *PlayerColorScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 	if c >= 1 && c <= 8 {
 		colors := characterColorChoices()
 		td.DrawText(fmt.Sprintf("%d", c), logical.V(13, 2), win)
-		offset := sd.WinOffsetV.Add(logical.V(render.CHAR_PIXELS/4, 0))
+		offset := sd.WinOffsetV.Add(logical.V(render.CharPixels/4, 0))
 		sd.WithOffset(offset).DrawSpriteColor(screen.CurrentPlayer.CharacterIcon, logical.V(7, 2), colors[c-1], win)
 		screen.CurrentPlayer.Color = colors[c-1]
 		newPlayer := screen.CurrentPlayer

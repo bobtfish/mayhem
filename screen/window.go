@@ -29,7 +29,7 @@ func NewGameWindow(ss pixel.Picture) *GameWindow {
 
 	cfg := pixelgl.WindowConfig{
 		Title:  title,
-		Bounds: pixel.R(0, 0, WIN_X, WIN_Y),
+		Bounds: pixel.R(0, 0, WinX, WinY),
 		VSync:  true,
 	}
 	win, err := pixelgl.NewWindow(cfg)

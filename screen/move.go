@@ -52,7 +52,7 @@ type MoveFindCharacterScreen struct {
 
 func (screen *MoveFindCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
-	screen.WithBoard.CursorSprite = CURSOR_BOX
+	screen.WithBoard.CursorSprite = CursorBox
 	if screen.MovedCharacters == nil {
 		screen.MovedCharacters = make(map[movable.Movable]bool)
 	}
@@ -461,7 +461,7 @@ type MoveFlyingCharacterScreen struct {
 
 func (screen *MoveFlyingCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
-	screen.WithBoard.CursorSprite = CURSOR_FLY
+	screen.WithBoard.CursorSprite = CursorFly
 	fmt.Printf("Enter move flying character screen for player %d\n", screen.PlayerIdx+1)
 	screen.DisplayRange = true // Set this to start to suppress cursor till we move it
 }

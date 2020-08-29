@@ -15,7 +15,7 @@ type StartMainGame struct {
 
 // Initialize stuff for the main game
 func (screen *StartMainGame) Enter(ss pixel.Picture, win *pixelgl.Window) {
-	screen.Grid = grid.MakeGameGrid(GRID_WIDTH, GRID_HEIGHT)
+	screen.Grid = grid.MakeGameGrid(GridWidth, GridHeight)
 	for i, pos := range player.GetStartPositions(len(screen.Players)) {
 		screen.Grid.PlaceGameObject(pos, screen.Players[i])
 	}

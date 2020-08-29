@@ -1,11 +1,11 @@
 package character
 
 import (
-	"github.com/bobtfish/mayhem/rand"
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
+	"github.com/bobtfish/mayhem/rand"
 	"github.com/bobtfish/mayhem/spells"
 )
 
