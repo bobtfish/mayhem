@@ -6,9 +6,11 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
+	"github.com/bobtfish/mayhem/spells"
 )
 
 // Move state onto next player spell cast (if there are players left)
@@ -162,7 +164,24 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScree
 	// Work out what happened :)
 	targetVec := screen.WithBoard.CursorPosition
 	fmt.Printf("About to call player CastSpell method\n")
-	success, fx := screen.Players[screen.PlayerIdx].CastSpell(targetVec, screen.WithBoard.Grid)
+	p := screen.Players[screen.PlayerIdx]
+
+	fmt.Printf("IN Player spell cast\n")
+	i := p.ChosenSpell
+	spell := p.Spells[i]
+	if !spell.IsReuseable() {
+		spells := make([]spells.Spell, 0)
+		spells = append(p.Spells[:i], p.Spells[i+1:]...)
+		p.Spells = spells
+	}
+	fmt.Printf("Player spell %T cast on %T\n", spell, targetVec)
+	var success bool
+	var anim *fx.Fx
+	if spell.CastSucceeds(p.CastIllusion, p.LawRating) {
+		success, anim = spell.DoCast(p.CastIllusion, targetVec, screen.WithBoard.Grid, p)
+	}
+	p.ChosenSpell = -1
+
 	fmt.Printf("Finished player CastSpell method\n")
 	if success {
 		fmt.Printf("Spell Succeeds\n")
@@ -175,6 +194,6 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScree
 	return &WaitForFx{
 		NextScreen: NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid, false),
 		Grid:       screen.Grid,
-		Fx:         fx,
+		Fx:         anim,
 	}
 }
