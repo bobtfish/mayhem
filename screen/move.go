@@ -81,9 +81,8 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 				if _, movedAlready := screen.MovedCharacters[ob]; movedAlready {
 					fmt.Printf("Not movable (has moved already)\n")
 					return screen
-				} else {
-					screen.MovedCharacters[ob] = true
 				}
+				screen.MovedCharacters[ob] = true
 
 				// Are we a mount with a wizard mounted
 				char, isChar := ob.(*character.Character)
@@ -113,10 +112,8 @@ func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Windo
 							Character:       ob,
 							MovedCharacters: screen.MovedCharacters,
 						}
-					} else {
-						fmt.Printf("Broke engagement, can move normally\n")
 					}
-
+					fmt.Printf("Broke engagement, can move normally\n")
 				}
 
 				// Not engaged, so move
@@ -258,7 +255,6 @@ func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 			textBottom("Undead - Cannot be attacked", ss, batch)
 		}
 		if ms.DidMove {
-
 			screen.WithBoard.CursorPosition = newLocation
 
 			if ms.MountMove {
@@ -388,15 +384,14 @@ func DoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, mo
 						Fx:   fx,
 					},
 				}
-			} else {
-				// Does belong to this player, see if it's mountable, if so we can move to it
-				_, isPlayer := withBoard.Grid.GetGameObject(from).(*player.Player)
-				if isPlayer { // We're moving the player, lets see if target is something we can mount
-					fmt.Printf("Moving player, check for mount\n")
-					if ob.IsMount() {
-						fmt.Printf("  Is mount\n")
-						return AttackStatus{NotEmpty: true, IsMount: true}
-					}
+			}
+			// Does belong to this player, see if it's mountable, if so we can move to it
+			_, isPlayer := withBoard.Grid.GetGameObject(from).(*player.Player)
+			if isPlayer { // We're moving the player, lets see if target is something we can mount
+				fmt.Printf("Moving player, check for mount\n")
+				if ob.IsMount() {
+					fmt.Printf("  Is mount\n")
+					return AttackStatus{NotEmpty: true, IsMount: true}
 				}
 			}
 		}
@@ -468,7 +463,7 @@ func (screen *MoveFlyingCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Wi
 	ClearScreen(ss, win)
 	screen.WithBoard.CursorSprite = CURSOR_FLY
 	fmt.Printf("Enter move flying character screen for player %d\n", screen.PlayerIdx+1)
-	screen.DisplayRange = true // Set this to start to supress cursor till we move it
+	screen.DisplayRange = true // Set this to start to suppress cursor till we move it
 }
 
 type MoveStatus struct {
@@ -519,7 +514,6 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 				return screen.MoveFlyingCharacterScreenFinished()
 			}
 		}
-
 	}
 
 	// Allow you to cancel movement, but that character then counts as moved

@@ -3,8 +3,8 @@ package spells
 import (
 	"fmt"
 	"image/color"
-	"math/rand"
 
+	"github.com/bobtfish/mayhem/rand"
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"

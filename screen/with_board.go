@@ -54,7 +54,7 @@ func (screen *WithBoard) MoveCursor(win *pixelgl.Window) bool {
 	return false
 }
 
-func (screen *WithBoard) DrawCursor(ss pixel.Picture, batch *pixel.Batch) {
+func (screen *WithBoard) DrawCursor(ss pixel.Picture, batch pixel.Target) {
 	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
 	objectAtCursor := screen.Grid.GetGameObject(screen.CursorPosition)
 	cursorColor := render.GetColor(0, 255, 255)
@@ -68,7 +68,7 @@ func (screen *WithBoard) DrawCursor(ss pixel.Picture, batch *pixel.Batch) {
 	}
 }
 
-func (screen *WithBoard) MoveAndDrawCursor(ss pixel.Picture, win *pixelgl.Window, batch *pixel.Batch) {
+func (screen *WithBoard) MoveAndDrawCursor(ss pixel.Picture, win *pixelgl.Window, batch pixel.Target) {
 	screen.MoveCursor(win)
 	screen.DrawCursor(ss, batch)
 }

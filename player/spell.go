@@ -44,7 +44,7 @@ func init() {
 			p.CharacterIcon = logical.V(1, 20)
 			p.IsAnimated = false
 			p.SpriteIdx = 0
-			p.Defence = p.Defence + 4
+			p.Defence += 4
 		},
 	})
 	spells.CreateSpell(PlayerSpell{
@@ -57,7 +57,7 @@ func init() {
 			p.CharacterIcon = logical.V(0, 20)
 			p.IsAnimated = false
 			p.SpriteIdx = 0
-			p.Defence = p.Defence + 2
+			p.Defence += 2
 		},
 	})
 	spells.CreateSpell(PlayerSpell{
@@ -69,7 +69,7 @@ func init() {
 		MutateFunc: func(p *Player) {
 			p.CharacterIcon = logical.V(4, 22)
 			p.IsAnimated = true
-			p.Combat = p.Combat + 2
+			p.Combat += 2
 			p.HasMagicWeapon = true
 		},
 	})
@@ -82,7 +82,7 @@ func init() {
 		MutateFunc: func(p *Player) {
 			p.CharacterIcon = logical.V(0, 21)
 			p.IsAnimated = true
-			p.Combat = p.Combat + 4
+			p.Combat += 4
 			p.HasMagicWeapon = true
 		},
 	})
@@ -123,48 +123,49 @@ func init() {
 			p.Movement = 6
 		},
 	})
-	/*spells.CreateSpell(PlayerSpell{
-		ASpell: spells.ASpell{
-			Name:          "Law-1",
-			CastingChance: 100,
-			LawRating:     2,
-			NoCastFx:      true,
-		},
-		MutateFunc: func(p *Player) {
-			p.LawRating++
-		},
-	})
-	spells.CreateSpell(PlayerSpell{
-		ASpell: spells.ASpell{
-			Name:          "Law-2",
-			CastingChance: 60,
-			LawRating:     4,
-			NoCastFx:      true,
-		},
-		MutateFunc: func(p *Player) {
-			p.LawRating = p.LawRating + 2
-		},
-	})
-	spells.CreateSpell(PlayerSpell{
-		ASpell: spells.ASpell{
-			Name:          "Chaos-1",
-			CastingChance: 80,
-			LawRating:     -2,
-			NoCastFx:      true,
-		},
-		MutateFunc: func(p *Player) {
-			p.LawRating--
-		},
-	})
-	spells.CreateSpell(PlayerSpell{
-		ASpell: spells.ASpell{
-			Name:          "Chaos-2",
-			CastingChance: 60,
-			LawRating:     -4,
-			NoCastFx:      true,
-		},
-		MutateFunc: func(p *Player) {
-			p.LawRating = p.LawRating - 2
-		},
-	}) */
 }
+
+/*spells.CreateSpell(PlayerSpell{
+	ASpell: spells.ASpell{
+		Name:          "Law-1",
+		CastingChance: 100,
+		LawRating:     2,
+		NoCastFx:      true,
+	},
+	MutateFunc: func(p *Player) {
+		p.LawRating++
+	},
+})
+spells.CreateSpell(PlayerSpell{
+	ASpell: spells.ASpell{
+		Name:          "Law-2",
+		CastingChance: 60,
+		LawRating:     4,
+		NoCastFx:      true,
+	},
+	MutateFunc: func(p *Player) {
+		p.LawRating = p.LawRating + 2
+	},
+})
+spells.CreateSpell(PlayerSpell{
+	ASpell: spells.ASpell{
+		Name:          "Chaos-1",
+		CastingChance: 80,
+		LawRating:     -2,
+		NoCastFx:      true,
+	},
+	MutateFunc: func(p *Player) {
+		p.LawRating--
+	},
+})
+spells.CreateSpell(PlayerSpell{
+	ASpell: spells.ASpell{
+		Name:          "Chaos-2",
+		CastingChance: 60,
+		LawRating:     -4,
+		NoCastFx:      true,
+	},
+	MutateFunc: func(p *Player) {
+		p.LawRating = p.LawRating - 2
+	},
+}) */

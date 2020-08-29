@@ -95,29 +95,27 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 		target := screen.WithBoard.CursorPosition
 		fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetCastRange(), target.X, target.Y)
 		return screen.AnimateAndCast()
-	} else {
-		if screen.WithBoard.MoveCursor(win) || !screen.MessageShown {
-			screen.MessageShown = false
-			screen.WithBoard.DrawCursor(ss, batch)
-		}
-		if win.JustPressed(pixelgl.KeyS) {
-			target := screen.WithBoard.CursorPosition
-			if spell.GetCastRange() < target.Distance(screen.Players[screen.PlayerIdx].BoardPosition) {
-				textBottom("Out of range", ss, batch)
-				fmt.Printf("Out of range! Spell cast range %d but distance to target is %d\n", spell.GetCastRange(), target.Distance(screen.Players[screen.PlayerIdx].BoardPosition))
+	}
+	if screen.WithBoard.MoveCursor(win) || !screen.MessageShown {
+		screen.MessageShown = false
+		screen.WithBoard.DrawCursor(ss, batch)
+	}
+	if win.JustPressed(pixelgl.KeyS) {
+		target := screen.WithBoard.CursorPosition
+		if spell.GetCastRange() < target.Distance(screen.Players[screen.PlayerIdx].BoardPosition) {
+			textBottom("Out of range", ss, batch)
+			fmt.Printf("Out of range! Spell cast range %d but distance to target is %d\n", spell.GetCastRange(), target.Distance(screen.Players[screen.PlayerIdx].BoardPosition))
+			screen.MessageShown = true
+		} else {
+			if !HaveLineOfSight(screen.Players[screen.PlayerIdx].BoardPosition, screen.WithBoard.CursorPosition, screen.WithBoard.Grid) {
+				textBottom("No line of sight", ss, batch)
 				screen.MessageShown = true
 			} else {
-				if !HaveLineOfSight(screen.Players[screen.PlayerIdx].BoardPosition, screen.WithBoard.CursorPosition, screen.WithBoard.Grid) {
-					textBottom("No line of sight", ss, batch)
-					screen.MessageShown = true
-				} else {
-					if spell.CanCast(screen.WithBoard.Grid.GetGameObject(target)) {
-						fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetCastRange(), target.X, target.Y)
-						return screen.AnimateAndCast()
-					} else {
-						fmt.Printf("Cannot cast on non-empty square\n")
-					}
+				if spell.CanCast(screen.WithBoard.Grid.GetGameObject(target)) {
+					fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetCastRange(), target.X, target.Y)
+					return screen.AnimateAndCast()
 				}
+				fmt.Printf("Cannot cast on non-empty square\n")
 			}
 		}
 	}

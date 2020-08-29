@@ -146,7 +146,7 @@ func intToChar(i int) string {
 	return fmt.Sprint('A' + i)
 }
 
-func drawMainBorder(win *pixelgl.Window, sd render.SpriteDrawer) {
+func drawMainBorder(win pixel.Target, sd render.SpriteDrawer) {
 	batch := sd.GetNewBatch()
 	color := render.GetColor(0, 0, 255)
 	// Bottom left

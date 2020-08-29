@@ -2,11 +2,11 @@ package screen
 
 import (
 	"fmt"
-	"math/rand"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/bobtfish/mayhem/rand"
 	"github.com/bobtfish/mayhem/character"
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/logical"
@@ -128,11 +128,9 @@ func (screen *GrowScreen) IterateGrowVanish() {
 						}
 						screen.WithBoard.Grid.PlaceGameObject(adj[adjIdx], c)
 						screen.Grew = true
-					} else {
-						if doesItVanish() {
-							screen.WithBoard.Grid.GetGameObjectStack(screen.Consider).RemoveTopObject()
-							screen.Grew = true
-						}
+					} else if doesItVanish() {
+						screen.WithBoard.Grid.GetGameObjectStack(screen.Consider).RemoveTopObject()
+						screen.Grew = true
 					}
 					// Don't bother to check if we're another character type, we already matched
 					break
@@ -154,10 +152,10 @@ func (screen *GrowScreen) IterateGrowVanish() {
 		}
 
 		// Bump tile counter
-		screen.Consider.X = screen.Consider.X + 1
+		screen.Consider.X++
 		if screen.Consider.X == screen.WithBoard.Grid.MaxX() {
 			screen.Consider.X = 0
-			screen.Consider.Y = screen.Consider.Y + 1
+			screen.Consider.Y++
 		}
 	}
 }

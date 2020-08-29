@@ -3,7 +3,6 @@ package character
 import (
 	"fmt"
 	"image/color"
-	"math/rand"
 
 	"gopkg.in/yaml.v2"
 
@@ -14,6 +13,7 @@ import (
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
 	"github.com/bobtfish/mayhem/spells"
+	"github.com/bobtfish/mayhem/rand"
 )
 
 // Abstract character that can be created

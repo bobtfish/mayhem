@@ -36,7 +36,7 @@ func (screen *PlayerNameScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 }
 
 func (screen *PlayerNameScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
-	if win.JustPressed(pixelgl.KeyEnter) && len(screen.CurrentPlayer.Name) >= 0 {
+	if win.JustPressed(pixelgl.KeyEnter) && len(screen.CurrentPlayer.Name) > 0 {
 		return &PlayerAIScreen{PlayersScreen: screen.PlayersScreen}
 	}
 	if win.JustPressed(pixelgl.KeyBackspace) && len(screen.CurrentPlayer.Name) > 0 {
@@ -153,9 +153,8 @@ func (screen *PlayerColorScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 			return &StartMainGame{
 				Players: screen.Players,
 			}
-		} else {
-			return &PlayerNameScreen{PlayersScreen: screen.PlayersScreen}
 		}
+		return &PlayerNameScreen{PlayersScreen: screen.PlayersScreen}
 	}
 	return screen
 }

@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"math/rand"
 	"time"
 
 	"github.com/faiface/pixel/pixelgl"
@@ -82,6 +81,5 @@ func run() {
 }
 
 func main() {
-	rand.Seed(int64(time.Now().Nanosecond()))
 	pixelgl.Run(run)
 }

@@ -2,11 +2,11 @@ package screen
 
 import (
 	"fmt"
-	"math/rand"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/bobtfish/mayhem/rand"
 	"github.com/bobtfish/mayhem/character"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
