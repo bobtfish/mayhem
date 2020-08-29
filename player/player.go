@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"image/color"
 
-	"github.com/bobtfish/mayhem/rand"
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/rand"
 	"github.com/bobtfish/mayhem/spells"
 )
 

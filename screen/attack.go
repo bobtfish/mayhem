@@ -6,12 +6,12 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/bobtfish/mayhem/rand"
 	"github.com/bobtfish/mayhem/character"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
 	"github.com/bobtfish/mayhem/player"
+	"github.com/bobtfish/mayhem/rand"
 )
 
 type RangedCombat struct {

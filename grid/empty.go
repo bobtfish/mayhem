@@ -9,15 +9,15 @@ import (
 
 /* Empty game object (bottom level tile) */
 
-const BLANK_SPRITE_X = 8
-const BLANK_SPRITE_Y = 26
+const BlankSpriteX = 8
+const BlankSpriteY = 26
 
 type EmptyObject struct {
 	SpriteCoordinates logical.Vec
 }
 
-var EMPTY_OBJECT = EmptyObject{
-	SpriteCoordinates: logical.V(BLANK_SPRITE_X, BLANK_SPRITE_Y),
+var AnEmptyObject = EmptyObject{
+	SpriteCoordinates: logical.V(BlankSpriteX, BlankSpriteY),
 }
 
 func (e EmptyObject) AnimationTick(odd bool) {}

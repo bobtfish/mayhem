@@ -111,8 +111,8 @@ func (v Vec) Path() []Vec {
 	path := make([]Vec, 0)
 	for Xcurrent < float64(w.X) || Ycurrent < float64(w.Y) {
 		path = append(path, V(int(Xcurrent)*Xsign, int(Ycurrent)*Ysign))
-		Xcurrent = Xcurrent + Xstep
-		Ycurrent = Ycurrent + Ystep
+		Xcurrent += Xstep
+		Ycurrent += Ystep
 	}
 	return path
 }

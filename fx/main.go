@@ -20,24 +20,24 @@ type Fx struct {
 }
 
 // GameObject interface START
-func (c *Fx) AnimationTick(odd bool) {
-	c.SpriteIdx++
-	if c.SpriteIdx == c.SpriteCount && c.RepeatIdx < c.RepeatCount {
-		c.RepeatIdx++
-		c.SpriteIdx = 0
+func (f *Fx) AnimationTick(odd bool) {
+	f.SpriteIdx++
+	if f.SpriteIdx == f.SpriteCount && f.RepeatIdx < f.RepeatCount {
+		f.RepeatIdx++
+		f.SpriteIdx = 0
 	}
 }
 
-func (c *Fx) RemoveMe() bool {
-	return c.SpriteIdx == c.SpriteCount
+func (f *Fx) RemoveMe() bool {
+	return f.SpriteIdx == f.SpriteCount
 }
 
-func (c *Fx) IsEmpty() bool {
+func (f *Fx) IsEmpty() bool {
 	return false
 }
 
-func (c *Fx) GetSpriteSheetCoordinates() logical.Vec {
-	return logical.V(c.SpriteVec.X+c.SpriteIdx, c.SpriteVec.Y)
+func (f *Fx) GetSpriteSheetCoordinates() logical.Vec {
+	return logical.V(f.SpriteVec.X+f.SpriteIdx, f.SpriteVec.Y)
 }
 
 func (f *Fx) GetColor() color.Color {

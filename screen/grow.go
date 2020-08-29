@@ -6,11 +6,11 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/bobtfish/mayhem/rand"
 	"github.com/bobtfish/mayhem/character"
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
+	"github.com/bobtfish/mayhem/rand"
 )
 
 const GROW_CHANCE = 15

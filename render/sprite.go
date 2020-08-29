@@ -4,7 +4,7 @@ import (
 	"image"
 
 	"image/color"
-	_ "image/png"
+	_ "image/png" // For the side effects
 	"io"
 
 	"github.com/faiface/pixel"
