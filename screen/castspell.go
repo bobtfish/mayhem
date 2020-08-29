@@ -49,36 +49,35 @@ type DisplaySpellCastScreen struct {
 
 func (screen *DisplaySpellCastScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
+	thisPlayer := screen.Players[screen.PlayerIdx]
+	if thisPlayer.ChosenSpell >= 0 {
+		spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
+		batch := screen.WithBoard.DrawBoard(ss, win)
+		textBottom(fmt.Sprintf("%s %s %d", thisPlayer.Name, spell.GetName(), spell.GetCastRange()), ss, batch)
+		batch.Draw(win)
+	}
 }
 
 func (screen *DisplaySpellCastScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	thisPlayer := screen.Players[screen.PlayerIdx]
-	if thisPlayer.ChosenSpell < 0 {
+	if (thisPlayer.ChosenSpell < 0) || win.JustPressed(pixelgl.Key0) {
 		return NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid, true)
 	}
-	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
-	batch := screen.WithBoard.DrawBoard(ss, win)
-	textBottom(fmt.Sprintf("%s %s %d", thisPlayer.Name, spell.GetName(), spell.GetCastRange()), ss, batch)
-	batch.Draw(win)
 	if win.JustPressed(pixelgl.KeyS) || !captureDirectionKey(win).Equals(logical.ZeroVec()) {
 		return &TargetSpellScreen{
 			WithBoard: screen.WithBoard,
 			PlayerIdx: screen.PlayerIdx,
 		}
 	}
-	if win.JustPressed(pixelgl.Key0) {
-		return NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid, false)
-	}
 	return screen
 }
 
 // If range 0 then cast the spell straight away (on the wizard
 // If range > 0 then move cursor around to find a target until S is pressed
-
 type TargetSpellScreen struct {
 	*WithBoard
-	PlayerIdx  int
-	OutOfRange bool
+	PlayerIdx    int
+	MessageShown bool
 }
 
 func (screen *TargetSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -96,8 +95,8 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 		fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetCastRange(), target.X, target.Y)
 		return screen.AnimateAndCast()
 	} else {
-		if screen.WithBoard.MoveCursor(win) || !screen.OutOfRange {
-			screen.OutOfRange = false
+		if screen.WithBoard.MoveCursor(win) || !screen.MessageShown {
+			screen.MessageShown = false
 			screen.WithBoard.DrawCursor(ss, batch)
 		}
 		if win.JustPressed(pixelgl.KeyS) {
@@ -105,11 +104,11 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 			if spell.GetCastRange() < target.Distance(screen.Players[screen.PlayerIdx].BoardPosition) {
 				textBottom("Out of range", ss, batch)
 				fmt.Printf("Out of range! Spell cast range %d but distance to target is %d\n", spell.GetCastRange(), target.Distance(screen.Players[screen.PlayerIdx].BoardPosition))
-				screen.OutOfRange = true
+				screen.MessageShown = true
 			} else {
 				if !HaveLineOfSight(screen.Players[screen.PlayerIdx].BoardPosition, screen.WithBoard.CursorPosition, screen.WithBoard.Grid) {
 					textBottom("No line of sight", ss, batch)
-					screen.OutOfRange = true
+					screen.MessageShown = true
 				} else {
 					if spell.CanCast(screen.WithBoard.Grid.GetGameObject(target)) {
 						fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetCastRange(), target.X, target.Y)
