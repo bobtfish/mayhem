@@ -59,10 +59,7 @@ func WeHaveAWinner(players []*player.Player) bool {
 			c++
 		}
 	}
-	if c == 1 {
-		return true
-	}
-	return false
+	return c == 1
 }
 
 func HaveLineOfSight(from, to logical.Vec, grid *grid.GameGrid) bool {
@@ -146,7 +143,7 @@ func init() {
 }
 
 func intToChar(i int) string {
-	return string('A' + i)
+	return fmt.Sprint('A' + i)
 }
 
 func drawMainBorder(win *pixelgl.Window, sd render.SpriteDrawer) {

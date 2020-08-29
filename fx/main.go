@@ -29,10 +29,7 @@ func (c *Fx) AnimationTick(odd bool) {
 }
 
 func (c *Fx) RemoveMe() bool {
-	if c.SpriteIdx == c.SpriteCount {
-		return true
-	}
-	return false
+	return c.SpriteIdx == c.SpriteCount
 }
 
 func (c *Fx) IsEmpty() bool {

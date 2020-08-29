@@ -145,7 +145,7 @@ type TurnMenuScreen struct {
 
 func (screen *TurnMenuScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
-	fmt.Println(fmt.Sprintf("index %d", screen.PlayerIdx))
+	fmt.Printf("index %d\n", screen.PlayerIdx)
 	textBottom("      Press Keys 1 to 4", ss, win)
 	td := TextDrawer(ss)
 	td.DrawText(screen.Players[screen.PlayerIdx].Name, logical.V(3, 7), win)

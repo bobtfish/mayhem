@@ -2,9 +2,10 @@ package character
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"image/color"
 	"math/rand"
+
+	"gopkg.in/yaml.v2"
 
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
@@ -138,10 +139,7 @@ func (s CharacterSpell) GetCastRange() int {
 }
 
 func (s CharacterSpell) CanCast(target grid.GameObject) bool {
-	if target.IsEmpty() {
-		return true
-	}
-	return false
+	return target.IsEmpty()
 }
 
 func (s CharacterSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
@@ -258,14 +256,10 @@ func (c *Character) AnimationTick(odd bool) {
 	if c.SpriteIdx == 4 {
 		c.SpriteIdx = 0
 	}
-	return
 }
 
 func (c *Character) IsEmpty() bool {
-	if c.IsDead {
-		return true
-	}
-	return false
+	return c.IsDead
 }
 
 func (c *Character) GetSpriteSheetCoordinates() logical.Vec {
@@ -326,10 +320,7 @@ func (c *Character) CheckBelongsTo(player *player.Player) bool {
 }
 
 func (c *Character) BreakEngagement() bool {
-	if rand.Intn(9) >= c.Manoeuvre {
-		return true
-	}
-	return false
+	return rand.Intn(9) >= c.Manoeuvre
 }
 
 // SetBoardPosition is in GameObject interface also
@@ -351,10 +342,7 @@ func (c *Character) GetMagicResistance() int {
 }
 
 func (c *Character) Engageable() bool {
-	if c.Movement > 0 {
-		return true
-	}
-	return false
+	return c.Movement > 0
 }
 
 // SetBoardPosition is in GameObject interface also

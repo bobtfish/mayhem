@@ -10,7 +10,6 @@ import (
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
-	"github.com/bobtfish/mayhem/spells"
 )
 
 // Move state onto next player spell cast (if there are players left)
@@ -170,9 +169,7 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScree
 	i := p.ChosenSpell
 	spell := p.Spells[i]
 	if !spell.IsReuseable() {
-		spells := make([]spells.Spell, 0)
-		spells = append(p.Spells[:i], p.Spells[i+1:]...)
-		p.Spells = spells
+		p.Spells = append(p.Spells[:i], p.Spells[i+1:]...)
 	}
 	fmt.Printf("Player spell %T cast on %T\n", spell, targetVec)
 	var success bool

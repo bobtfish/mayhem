@@ -138,7 +138,7 @@ func (screen *GrowScreen) IterateGrowVanish() {
 					break
 				}
 			}
-			for name, _ := range explodeIfMounted {
+			for name := range explodeIfMounted {
 				// If we're a special explodable character (castle or citadel)
 				if name == char.Name {
 					if char.CarryingPlayer && rand.Intn(9)+1 <= 2 { // 20% chance

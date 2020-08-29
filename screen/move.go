@@ -54,7 +54,7 @@ func (screen *MoveFindCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Wind
 	ClearScreen(ss, win)
 	screen.WithBoard.CursorSprite = CURSOR_BOX
 	if screen.MovedCharacters == nil {
-		screen.MovedCharacters = make(map[movable.Movable]bool, 0)
+		screen.MovedCharacters = make(map[movable.Movable]bool)
 	}
 	fmt.Printf("Enter move find character screen for player %d\n", screen.PlayerIdx+1)
 }

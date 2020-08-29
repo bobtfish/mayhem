@@ -30,10 +30,7 @@ func (s DisbelieveSpell) DoCast(illusion bool, target logical.Vec, grid *grid.Ga
 
 func (s DisbelieveSpell) CanCast(target grid.GameObject) bool {
 	_, isCharacter := target.(*Character)
-	if isCharacter {
-		return true
-	}
-	return false
+	return isCharacter
 }
 
 func init() {
