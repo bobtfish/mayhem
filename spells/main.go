@@ -19,6 +19,7 @@ type Spell interface {
 	CanCast(grid.GameObject) bool
 	CanCastAsIllusion() bool
 	DoCast(bool, logical.Vec, *grid.GameGrid, grid.GameObject) (bool, *fx.Fx)
+	CastQuantity() int
 	CastSucceeds(bool, int) bool
 	IsReuseable() bool
 	CastFx() *fx.Fx
@@ -47,6 +48,9 @@ func (s ASpell) GetLawRating() int {
 }
 func (s ASpell) IsReuseable() bool {
 	return s.Reuseable
+}
+func (s ASpell) CastQuantity() int {
+	return 1
 }
 func (s ASpell) GetCastingChance(playerLawRating int) int {
 	// FIXME - adjust casting chance based on law rating

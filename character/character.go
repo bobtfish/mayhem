@@ -142,6 +142,10 @@ func (s CharacterSpell) CanCast(target grid.GameObject) bool {
 	return target.IsEmpty()
 }
 
+func (s CharacterSpell) CastQuantity() int {
+	return 1
+}
+
 func (s CharacterSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
 	grid.PlaceGameObject(target, s.CreateCharacter(illusion, castor))
 	return true, nil
