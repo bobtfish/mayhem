@@ -51,6 +51,7 @@ type DisplaySpellCastScreen struct {
 func (screen *DisplaySpellCastScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
 	thisPlayer := screen.Players[screen.PlayerIdx]
+	screen.WithBoard.CursorPosition = thisPlayer.BoardPosition
 	if thisPlayer.ChosenSpell >= 0 {
 		spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
 		batch := screen.WithBoard.DrawBoard(ss, win)
@@ -83,7 +84,6 @@ type TargetSpellScreen struct {
 
 func (screen *TargetSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("", ss, win) // clear bottom bar
-	screen.WithBoard.CursorPosition = screen.Players[screen.PlayerIdx].BoardPosition
 }
 
 func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
