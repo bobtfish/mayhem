@@ -40,6 +40,7 @@ type CharacterType struct {
 	CanBeIllusion      bool    `yaml:"can_be_illusion"`
 	BaseCastingChance  int     `yaml:"base_casting_chance"`
 	Mountable          bool    `yaml:"mountable"`
+	Quantity           int     `yaml:"quantity"`
 }
 
 func LoadCharacterTemplates() {
@@ -85,6 +86,7 @@ func LoadCharacterTemplates() {
 			CanBeIllusion:      v.CanBeIllusion,
 			Mountable:          v.Mountable,
 			MagicResistance:    v.MagicResistance,
+			Quantity:           v.Quantity,
 		})
 	}
 
@@ -120,6 +122,7 @@ type CharacterSpell struct {
 	CanBeIllusion      bool
 	Mountable          bool
 	MagicResistance    int
+	Quantity           int
 }
 
 // Spell interface begin
@@ -142,7 +145,10 @@ func (s CharacterSpell) CanCast(target grid.GameObject) bool {
 }
 
 func (s CharacterSpell) CastQuantity() int {
-	return 1
+	if s.Quantity == 0 {
+		return 1
+	}
+	return s.Quantity
 }
 
 func (s CharacterSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {

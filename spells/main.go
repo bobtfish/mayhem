@@ -123,7 +123,7 @@ func ChooseSpells() []Spell {
 	spells := make([]Spell, 14)
 	spells[0] = AllSpells[0]
 	for i := 1; i < 14; i++ {
-		idx := rand.Intn(len(AllSpells)-2) + 1
+		idx := rand.Intn(len(AllSpells)-1) + 1
 		spells[i] = AllSpells[idx]
 	}
 	return spells

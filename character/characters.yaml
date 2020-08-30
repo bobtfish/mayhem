@@ -1169,29 +1169,28 @@
    sprites:
     - - 5
       - 1
-
-# - name: Wall
-# FIXME get 4 tiles
-#   base_casting_chance: 90
-#   combat: 0
-#   ranged_combat: 0
-#   range: 0
-#   defence: 0
-#   movement: 0
-#   magical_resistance: 0
-#   manoeuvre: 0
-#   unknown: 0
-#   law_chaos: 0
-#   strength: 30
-#   color_r: 255
-#   color_g: 0
-#   color_b: 0
-#   cast_range: 6
+ - name: Wall
+   base_casting_chance: 90
+   combat: 0
+   ranged_combat: 0
+   range: 0
+   defence: 0
+   movement: 0
+   magical_resistance: 0
+   manoeuvre: 0
+   unknown: 0
+   law_chaos: 0
+   strength: 30
+   color_r: 255
+   color_g: 0
+   color_b: 0
+   cast_range: 6
+   quantity: 4
 # ALTERNATE - BLACK =
 #   color_r: 255
 #   color_g: 255
 #   color_b: 0
-#   sprites:
-#    - - 5
-#      - 2
+   sprites:
+    - - 5
+      - 2
 
