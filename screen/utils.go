@@ -143,7 +143,7 @@ func init() {
 }
 
 func intToChar(i int) string {
-	return fmt.Sprint('A' + i)
+	return string('A' + i)
 }
 
 func drawMainBorder(win pixel.Target, sd render.SpriteDrawer) {

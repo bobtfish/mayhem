@@ -3,6 +3,8 @@ package player
 // Player Spells (spells which only affect a player)
 
 import (
+	"fmt"
+
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
@@ -26,7 +28,7 @@ func (s PlayerSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGr
 	tile := grid.GetGameObject(target)
 	player, isPlayer := tile.(*Player)
 	if !isPlayer {
-		panic("Player spell cast on non player - should never happen")
+		panic(fmt.Sprintf("Player spell '%s' cast on non player - should never happen", s.Name))
 	}
 	s.MutateFunc(player)
 	return true, nil

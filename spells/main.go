@@ -32,6 +32,7 @@ type ASpell struct {
 	CastingChance int
 	CastRange     int
 	NoCastFx      bool
+	Tries         int
 }
 
 func (s ASpell) CastFx() *fx.Fx {
@@ -50,7 +51,10 @@ func (s ASpell) IsReuseable() bool {
 	return s.Reuseable
 }
 func (s ASpell) CastQuantity() int {
-	return 1
+	if s.Tries == 0 {
+		return 1
+	}
+	return s.Tries
 }
 func (s ASpell) GetCastingChance(playerLawRating int) int {
 	// FIXME - adjust casting chance based on law rating
@@ -83,11 +87,11 @@ type CreatureSpell struct {
 
 type OtherSpell struct {
 	ASpell
-	MutateFunc func(logical.Vec, *grid.GameGrid, grid.GameObject) bool
+	MutateFunc func(logical.Vec, *grid.GameGrid, grid.GameObject) (bool, *fx.Fx)
 }
 
 func (s OtherSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
-	return s.MutateFunc(target, grid, owner), nil
+	return s.MutateFunc(target, grid, owner)
 }
 
 func LawRatingSymbol(s Spell) string {

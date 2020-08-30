@@ -67,8 +67,9 @@ func (screen *DisplaySpellCastScreen) Step(ss pixel.Picture, win *pixelgl.Window
 	}
 	if win.JustPressed(pixelgl.KeyS) || !captureDirectionKey(win).Equals(logical.ZeroVec()) {
 		return &TargetSpellScreen{
-			WithBoard: screen.WithBoard,
-			PlayerIdx: screen.PlayerIdx,
+			WithBoard:      screen.WithBoard,
+			PlayerIdx:      screen.PlayerIdx,
+			CastsRemaining: thisPlayer.Spells[thisPlayer.ChosenSpell].CastQuantity(),
 		}
 	}
 	return screen
@@ -78,8 +79,10 @@ func (screen *DisplaySpellCastScreen) Step(ss pixel.Picture, win *pixelgl.Window
 // If range > 0 then move cursor around to find a target until S is pressed
 type TargetSpellScreen struct {
 	*WithBoard
-	PlayerIdx    int
-	MessageShown bool
+	PlayerIdx      int
+	CastsRemaining int
+	MessageShown   bool
+	CastBefore     bool
 }
 
 func (screen *TargetSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -136,8 +139,10 @@ func (screen *TargetSpellScreen) AnimateAndCast() GameScreen {
 	}
 	return &WaitForFx{
 		NextScreen: &DoSpellCast{
-			WithBoard: screen.WithBoard,
-			PlayerIdx: screen.PlayerIdx,
+			WithBoard:      screen.WithBoard,
+			PlayerIdx:      screen.PlayerIdx,
+			CastsRemaining: screen.CastsRemaining,
+			CastBefore:     screen.CastBefore,
 		},
 		Grid: screen.WithBoard.Grid,
 		Fx:   anim,
@@ -149,13 +154,16 @@ func (screen *TargetSpellScreen) AnimateAndCast() GameScreen {
 
 type DoSpellCast struct {
 	*WithBoard
-	PlayerIdx int
+	PlayerIdx      int
+	CastsRemaining int
+	CastBefore     bool
 }
 
 func (screen *DoSpellCast) Enter(ss pixel.Picture, win *pixelgl.Window) {
 }
 
 func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+	castsRemaining := screen.CastsRemaining - 1
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	// Fx for spell cast finished
 	// Work out what happened :)
@@ -164,30 +172,43 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScree
 	p := screen.Players[screen.PlayerIdx]
 
 	fmt.Printf("IN Player spell cast\n")
-	i := p.ChosenSpell
-	spell := p.Spells[i]
-	if !spell.IsReuseable() {
-		p.Spells = append(p.Spells[:i], p.Spells[i+1:]...)
-	}
+	spell := p.Spells[p.ChosenSpell]
 	fmt.Printf("Player spell %T cast on %T\n", spell, targetVec)
 	var success bool
+	var canCastMore bool
 	var anim *fx.Fx
-	if spell.CastSucceeds(p.CastIllusion, p.LawRating) {
+	if screen.CastBefore || spell.CastSucceeds(p.CastIllusion, p.LawRating) {
+		canCastMore = true
 		success, anim = spell.DoCast(p.CastIllusion, targetVec, screen.WithBoard.Grid, p)
 	}
-	p.ChosenSpell = -1
 
 	fmt.Printf("Finished player CastSpell method\n")
-	if success {
-		fmt.Printf("Spell Succeeds\n")
-		textBottom("Spell Succeeds", ss, batch)
-	} else {
-		fmt.Printf("Spell failed\n")
-		textBottom("Spell Failed", ss, batch)
+	if !screen.CastBefore {
+		if (canCastMore && castsRemaining > 0) || success {
+			fmt.Printf("Spell Succeeds\n")
+			textBottom("Spell Succeeds", ss, batch)
+		} else {
+			fmt.Printf("Spell failed\n")
+			textBottom("Spell Failed", ss, batch)
+		}
 	}
 	batch.Draw(win)
+	nextScreen := NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid, false)
+	if castsRemaining > 0 && canCastMore {
+		nextScreen = &TargetSpellScreen{
+			WithBoard:      screen.WithBoard,
+			PlayerIdx:      screen.PlayerIdx,
+			CastsRemaining: castsRemaining,
+			CastBefore:     true,
+		}
+	} else {
+		if !spell.IsReuseable() {
+			p.Spells = append(p.Spells[:p.ChosenSpell], p.Spells[p.ChosenSpell+1:]...)
+		}
+		p.ChosenSpell = -1
+	}
 	return &WaitForFx{
-		NextScreen: NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid, false),
+		NextScreen: nextScreen,
 		Grid:       screen.Grid,
 		Fx:         anim,
 	}

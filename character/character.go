@@ -415,21 +415,24 @@ func (c *Character) Mount() {
 	c.CarryingPlayer = true
 }
 
-func ExplodeCreatures(target logical.Vec, grid *grid.GameGrid) bool {
+func ExplodeCreatures(target logical.Vec, grid *grid.GameGrid) (bool, *fx.Fx) {
 	ob := grid.GetGameObject(target)
 	a, isAttackable := ob.(movable.Attackable)
 	if !isAttackable {
-		return false
+		return false, nil
 	}
-	if rand.Intn(9)+100 > a.GetMagicResistance() {
+	chance := rand.Intn(9) + 100
+	fmt.Printf("Chance %d > Resistance %d\n", chance, a.GetMagicResistance())
+	if chance > a.GetMagicResistance() {
 		player, isPlayer := ob.(*player.Player)
+		f := fx.Disbelieve()
 		if isPlayer {
 			// Loop through the board and explode every character belonging to this player
 			for x := 0; x < grid.Width(); x++ {
 				for y := 0; y < grid.Height(); y++ {
 					vec := logical.V(x, y)
 					if target.Equals(vec) {
-						grid.PlaceGameObject(vec, fx.Disbelieve())
+						grid.PlaceGameObject(vec, f)
 					} else {
 						otherA, otherIsAttackable := grid.GetGameObject(vec).(movable.Attackable)
 						if otherIsAttackable {
@@ -444,9 +447,9 @@ func ExplodeCreatures(target logical.Vec, grid *grid.GameGrid) bool {
 		} else {
 			// Just explode this character
 			grid.GetGameObjectStack(target).RemoveTopObject()
-			grid.PlaceGameObject(target, fx.Disbelieve())
+			grid.PlaceGameObject(target, f)
 		}
-		return true
+		return true, f
 	}
-	return false
+	return false, nil
 }
