@@ -118,7 +118,7 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 					fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetCastRange(), target.X, target.Y)
 					return screen.AnimateAndCast()
 				}
-				fmt.Printf("Cannot cast on non-empty square\n")
+				fmt.Printf("Cannot cast '%s' on non-empty square\n", spell.GetName())
 			}
 		}
 	}
