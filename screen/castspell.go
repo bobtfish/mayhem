@@ -169,7 +169,7 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScree
 	var success bool
 	var canCastMore bool
 	var anim *fx.Fx
-	if screen.CastBefore || spell.CastSucceeds(p.CastIllusion, p.LawRating) {
+	if screen.CastBefore || spell.CastSucceeds(p.CastIllusion, screen.LawRating) {
 		canCastMore = true
 		success, anim = spell.DoCast(p.CastIllusion, targetVec, screen.WithBoard.Grid, p)
 	}

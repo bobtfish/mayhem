@@ -56,9 +56,9 @@ func (s ASpell) CastQuantity() int {
 	}
 	return s.Tries
 }
-func (s ASpell) GetCastingChance(playerLawRating int) int {
+func (s ASpell) GetCastingChance(gameLawRating int) int {
 	// FIXME - adjust casting chance based on law rating
-	// of the player and of the spell
+	// of the game and of the spell
 	return s.CastingChance
 }
 func (s ASpell) GetCastRange() int {
@@ -71,11 +71,11 @@ func (s ASpell) CanCast(target grid.GameObject) bool {
 func (s ASpell) CanCastAsIllusion() bool {
 	return false
 }
-func (s ASpell) CastSucceeds(illusion bool, playerLawRating int) bool {
+func (s ASpell) CastSucceeds(illusion bool, gameLawRating int) bool {
 	if illusion && !s.CanCastAsIllusion() {
 		panic(fmt.Sprintf("Spell %s (type %T) cannot be illusion, but was cast as one anyway", s.Name, s))
 	}
-	if illusion || rand.Intn(100) <= s.GetCastingChance(playerLawRating) {
+	if illusion || rand.Intn(100) <= s.GetCastingChance(gameLawRating) {
 		return true
 	}
 	return false

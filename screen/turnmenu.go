@@ -34,8 +34,9 @@ func (screen *ExamineOneSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window)
 
 // Shared SpellListScreen is common functionality
 type SpellListScreen struct {
-	MainMenu *TurnMenuScreen
-	Player   *player.Player
+	MainMenu  *TurnMenuScreen
+	Player    *player.Player
+	LawRating int
 }
 
 func (screen *SpellListScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -52,7 +53,7 @@ func (screen *SpellListScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 		td.DrawTextColor(
 			fmt.Sprintf("%s%s%s", intToChar(i), spells.LawRatingSymbol(spell), spell.GetName()),
 			logical.V(mod, 8-(i/2)),
-			spells.CastingChanceColor(spell.GetCastingChance(screen.Player.LawRating)),
+			spells.CastingChanceColor(spell.GetCastingChance(screen.LawRating)),
 			win,
 		)
 	}
@@ -161,16 +162,18 @@ func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 	if c == 1 {
 		return &ExamineSpellsScreen{
 			SpellListScreen: SpellListScreen{
-				MainMenu: screen,
-				Player:   screen.Players[screen.PlayerIdx],
+				LawRating: screen.LawRating,
+				MainMenu:  screen,
+				Player:    screen.Players[screen.PlayerIdx],
 			},
 		}
 	}
 	if c == 2 {
 		return &SelectSpellScreen{
 			SpellListScreen: SpellListScreen{
-				MainMenu: screen,
-				Player:   screen.Players[screen.PlayerIdx],
+				LawRating: screen.LawRating,
+				MainMenu:  screen,
+				Player:    screen.Players[screen.PlayerIdx],
 			},
 		}
 	}

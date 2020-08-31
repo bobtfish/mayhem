@@ -31,7 +31,6 @@ type Player struct {
 	ChosenSpell     int
 	CastIllusion    bool
 	Color           color.Color
-	LawRating       int
 	BoardPosition   logical.Vec
 	IsAnimated      bool
 	SpriteIdx       int
