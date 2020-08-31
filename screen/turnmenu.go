@@ -169,9 +169,9 @@ func lawRatingText(r int) string {
 }
 
 func lawRatingSymbolText(r int) string {
-	ar := r / 2
+	ar := r / 2 // We display 1 symbol per 10% we changed spell chances
 	if ar < 0 {
-		ar = -r / 2
+		ar = -ar
 	}
 	ra := make([]rune, ar)
 	for i := 0; i < ar; i++ {
