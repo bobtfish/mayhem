@@ -151,10 +151,37 @@ func (screen *TurnMenuScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("      Press Keys 1 to 4", ss, win)
 	td := TextDrawer(ss)
 	td.DrawText(screen.Players[screen.PlayerIdx].Name, logical.V(3, 7), win)
+	td.DrawText(lawRatingText(screen.LawRating), logical.V(3, 6), win)
 	td.DrawText("1. Examine Spells", logical.V(3, 5), win)
 	td.DrawText("2. Select Spell", logical.V(3, 4), win)
 	td.DrawText("3. Examine Board", logical.V(3, 3), win)
 	td.DrawText("4. Continue With Game", logical.V(3, 2), win)
+}
+
+func lawRatingText(r int) string {
+	if r == 0 {
+		return ""
+	}
+	if r > 0 {
+		return fmt.Sprintf("(Law %s)", lawRatingSymbolText(r))
+	}
+	return fmt.Sprintf("(Chaos %s)", lawRatingSymbolText(r))
+}
+
+func lawRatingSymbolText(r int) string {
+	ar := r / 2
+	if ar < 0 {
+		ar = -r / 2
+	}
+	ra := make([]rune, ar)
+	for i := 0; i < ar; i++ {
+		if r > 0 {
+			ra[i] = '^'
+		} else {
+			ra[i] = '*'
+		}
+	}
+	return string(ra)
 }
 
 func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {

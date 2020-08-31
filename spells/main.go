@@ -57,10 +57,22 @@ func (s ASpell) CastQuantity() int {
 	return s.Tries
 }
 func (s ASpell) GetCastingChance(gameLawRating int) int {
-	// FIXME - adjust casting chance based on law rating
-	// of the game and of the spell
-	return s.CastingChance
+	// Neutral spells or neutral games give base chance.
+	// Spells never get harder, so a lawful game + chaos spell or chaotic game + lawful spell both give base chance
+	if s.LawRating == 0 || gameLawRating == 0 || (s.LawRating > 0 && gameLawRating < 0) || (s.LawRating < 0 && gameLawRating > 0) {
+		return s.CastingChance
+	}
+	absLaw := gameLawRating
+	if absLaw < 0 {
+		absLaw = -absLaw
+	}
+	cc := s.CastingChance + (absLaw/2)*10 // Every 2 points makes it 10% easier
+	if cc > 100 {
+		return 100
+	}
+	return cc
 }
+
 func (s ASpell) GetCastRange() int {
 	return s.CastRange
 }

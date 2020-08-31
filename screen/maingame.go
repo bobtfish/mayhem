@@ -23,7 +23,8 @@ func (screen *StartMainGame) Enter(ss pixel.Picture, win *pixelgl.Window) {
 
 func (screen *StartMainGame) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	return &TurnMenuScreen{
-		Players: screen.Players,
-		Grid:    screen.Grid,
+		Players:   screen.Players,
+		Grid:      screen.Grid,
+		LawRating: 2,
 	}
 }
