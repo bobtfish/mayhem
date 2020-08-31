@@ -20,6 +20,7 @@ type WithBoard struct {
 	Grid            *grid.GameGrid
 	Players         []*player.Player
 	CursorSprite    int // Defaults to CursorSpell
+	LawRating       int
 }
 
 func (screen *WithBoard) ShouldIDrawCursor() bool {

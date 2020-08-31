@@ -7,36 +7,28 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/fx"
-	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
-	"github.com/bobtfish/mayhem/player"
 )
 
 // Move state onto next player spell cast (if there are players left)
 // or onto the movement phase if all spells have been cast
-func NextSpellCastOrMove(playerIdx int, players []*player.Player, grid *grid.GameGrid, skipPause bool) GameScreen {
+func NextSpellCastOrMove(playerIdx int, wb *WithBoard, skipPause bool) GameScreen {
 	var nextScreen GameScreen
-	nextIdx := NextPlayerIdx(playerIdx, players)
+	nextIdx := NextPlayerIdx(playerIdx, wb.Players)
 	nextScreen = &DisplaySpellCastScreen{
-		WithBoard: &WithBoard{
-			Grid:    grid,
-			Players: players,
-		},
+		WithBoard: wb,
 		PlayerIdx: nextIdx,
 	}
 
-	if nextIdx == len(players) {
+	if nextIdx == len(wb.Players) {
 		// All players have cast their spells, movement comes next
 		nextScreen = &MoveAnnounceScreen{
-			WithBoard: &WithBoard{
-				Players: players,
-				Grid:    grid,
-			},
+			WithBoard: wb,
 		}
 	}
 	return &Pause{
 		Skip:       skipPause,
-		Grid:       grid,
+		Grid:       wb.Grid,
 		NextScreen: nextScreen,
 	}
 }
@@ -63,7 +55,7 @@ func (screen *DisplaySpellCastScreen) Enter(ss pixel.Picture, win *pixelgl.Windo
 func (screen *DisplaySpellCastScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 	thisPlayer := screen.Players[screen.PlayerIdx]
 	if (thisPlayer.ChosenSpell < 0) || win.JustPressed(pixelgl.Key0) {
-		return NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid, true)
+		return NextSpellCastOrMove(screen.PlayerIdx, screen.WithBoard, true)
 	}
 	if win.JustPressed(pixelgl.KeyS) || !captureDirectionKey(win).Equals(logical.ZeroVec()) {
 		return &TargetSpellScreen{
@@ -124,7 +116,7 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 	}
 	batch.Draw(win)
 	if win.JustPressed(pixelgl.Key0) {
-		return NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid, true)
+		return NextSpellCastOrMove(screen.PlayerIdx, screen.WithBoard, true)
 	}
 	return screen
 }
@@ -193,7 +185,7 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScree
 		}
 	}
 	batch.Draw(win)
-	nextScreen := NextSpellCastOrMove(screen.PlayerIdx, screen.Players, screen.Grid, false)
+	nextScreen := NextSpellCastOrMove(screen.PlayerIdx, screen.WithBoard, false)
 	if castsRemaining > 0 && canCastMore {
 		nextScreen = &TargetSpellScreen{
 			WithBoard:      screen.WithBoard,

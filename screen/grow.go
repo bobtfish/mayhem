@@ -13,8 +13,8 @@ import (
 	"github.com/bobtfish/mayhem/rand"
 )
 
-const GROW_CHANCE = 15
-const VANISH_CHANCE = 4
+const GrowChance = 15
+const VanishChance = 4
 
 var growable map[string]bool
 var explodeIfMounted map[string]bool
@@ -32,11 +32,11 @@ func init() {
 }
 
 func doesItGrow() bool {
-	return rand.Intn(100) <= GROW_CHANCE
+	return rand.Intn(100) <= GrowChance
 }
 
 func doesItVanish() bool {
-	return rand.Intn(100) <= VANISH_CHANCE
+	return rand.Intn(100) <= VanishChance
 }
 
 type GrowScreen struct {
@@ -65,17 +65,15 @@ func (screen *GrowScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen
 			Players:   screen.WithBoard.Players,
 			Grid:      screen.WithBoard.Grid,
 			PlayerIdx: firstAlivePlayerIdx,
+			LawRating: screen.WithBoard.LawRating,
 		},
 	}
 
-	if screen.Fx != nil {
-		return &WaitForFx{
-			Grid:       screen.WithBoard.Grid,
-			Fx:         screen.Fx,
-			NextScreen: nextScreen,
-		}
+	return &WaitForFx{
+		Grid:       screen.WithBoard.Grid,
+		Fx:         screen.Fx,
+		NextScreen: nextScreen,
 	}
-	return nextScreen
 }
 
 // FIXME - lots of puke worthy type casting in here, should not need this special casing really....

@@ -141,6 +141,7 @@ type TurnMenuScreen struct {
 	Players   []*player.Player
 	PlayerIdx int
 	Grid      *grid.GameGrid
+	LawRating int
 }
 
 func (screen *TurnMenuScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -186,8 +187,9 @@ func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 		if len(screen.Players) == screen.PlayerIdx+1 {
 			return &DisplaySpellCastScreen{
 				WithBoard: &WithBoard{
-					Grid:    screen.Grid,
-					Players: screen.Players,
+					Grid:      screen.Grid,
+					Players:   screen.Players,
+					LawRating: screen.LawRating,
 				},
 			}
 		}
@@ -195,6 +197,7 @@ func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameSc
 			Players:   screen.Players,
 			PlayerIdx: screen.PlayerIdx + 1,
 			Grid:      screen.Grid,
+			LawRating: screen.LawRating,
 		}
 	}
 	return screen
