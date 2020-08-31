@@ -179,7 +179,9 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScree
 		if (canCastMore && castsRemaining > 0) || success {
 			fmt.Printf("Spell Succeeds\n")
 			textBottom("Spell Succeeds", ss, batch)
-			screen.WithBoard.LawRating += spell.GetLawRating()
+			if !p.CastIllusion {
+				screen.WithBoard.LawRating += spell.GetLawRating()
+			}
 		} else {
 			fmt.Printf("Spell failed\n")
 			textBottom("Spell Failed", ss, batch)
