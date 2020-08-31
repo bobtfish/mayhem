@@ -66,7 +66,7 @@ func (s ASpell) GetCastingChance(gameLawRating int) int {
 	if absLaw < 0 {
 		absLaw = -absLaw
 	}
-	cc := s.CastingChance + (absLaw/2)*10 // Every 2 points makes it 10% easier
+	cc := s.CastingChance + (absLaw/4)*10 // Every 4 points makes it 10% easier
 	if cc > 100 {
 		return 100
 	}

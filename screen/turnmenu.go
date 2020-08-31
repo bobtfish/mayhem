@@ -169,7 +169,7 @@ func lawRatingText(r int) string {
 }
 
 func lawRatingSymbolText(r int) string {
-	ar := r / 2 // We display 1 symbol per 10% we changed spell chances
+	ar := r / 4 // We display 1 symbol per 10% we changed spell chances
 	if ar < 0 {
 		ar = -ar
 	}

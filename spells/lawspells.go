@@ -18,25 +18,25 @@ func init() {
 	CreateSpell(LawSpell{ASpell{
 		Name:          "Law-1",
 		CastingChance: 100,
-		LawRating:     2,
+		LawRating:     4,
 		NoCastFx:      true,
 	}})
 	CreateSpell(LawSpell{ASpell{
 		Name:          "Law-2",
 		CastingChance: 60,
-		LawRating:     4,
+		LawRating:     8,
 		NoCastFx:      true,
 	}})
 	CreateSpell(LawSpell{ASpell{
 		Name:          "Chaos-1",
 		CastingChance: 80,
-		LawRating:     -2,
+		LawRating:     -4,
 		NoCastFx:      true,
 	}})
 	CreateSpell(LawSpell{ASpell{
 		Name:          "Chaos-2",
 		CastingChance: 60,
-		LawRating:     -4,
+		LawRating:     -8,
 		NoCastFx:      true,
 	}})
 }
