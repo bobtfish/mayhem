@@ -179,6 +179,10 @@ func (s CharacterSpell) CanCastAsIllusion() bool {
 	return s.CanBeIllusion
 }
 
+func (s CharacterSpell) NeedsLineOfSight() bool {
+	return true
+}
+
 // Spell interface end
 
 func (s CharacterSpell) CreateCharacter(isIllusion bool, castor grid.GameObject) *Character {

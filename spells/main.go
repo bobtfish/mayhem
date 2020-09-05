@@ -23,16 +23,18 @@ type Spell interface {
 	CastSucceeds(bool, int) bool
 	IsReuseable() bool
 	CastFx() *fx.Fx
+	NeedsLineOfSight() bool
 }
 
 type ASpell struct {
-	Name          string
-	LawRating     int
-	Reuseable     bool
-	CastingChance int
-	CastRange     int
-	NoCastFx      bool
-	Tries         int
+	Name                string
+	LawRating           int
+	Reuseable           bool
+	CastingChance       int
+	CastRange           int
+	NoCastFx            bool
+	Tries               int
+	NoLineOfSightNeeded bool
 }
 
 func (s ASpell) CastFx() *fx.Fx {
@@ -91,6 +93,9 @@ func (s ASpell) CastSucceeds(illusion bool, gameLawRating int) bool {
 		return true
 	}
 	return false
+}
+func (s ASpell) NeedsLineOfSight() bool {
+	return !s.NoLineOfSightNeeded
 }
 
 type CreatureSpell struct {

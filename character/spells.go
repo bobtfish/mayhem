@@ -78,9 +78,10 @@ func init() {
 	})
 	spells.CreateSpell(spells.OtherSpell{
 		ASpell: spells.ASpell{ // 1 chance only, makes creatures belonging to player explode
-			Name:          "Vengeance",
-			CastingChance: 80,
-			CastRange:     20,
+			Name:                "Vengeance",
+			CastingChance:       80,
+			CastRange:           20,
+			NoLineOfSightNeeded: true,
 		},
 		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
 			return ExplodeCreatures(target, grid)
@@ -88,10 +89,11 @@ func init() {
 	})
 	spells.CreateSpell(spells.OtherSpell{
 		ASpell: spells.ASpell{ // 1 chance only, doesn't kill player - makes their creatures explode maybe?
-			Name:          "Decree",
-			CastingChance: 80,
-			CastRange:     20,
-			LawRating:     1,
+			Name:                "Decree",
+			CastingChance:       80,
+			CastRange:           20,
+			LawRating:           1,
+			NoLineOfSightNeeded: true,
 		},
 		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
 			return ExplodeCreatures(target, grid)
@@ -99,11 +101,12 @@ func init() {
 	})
 	spells.CreateSpell(spells.OtherSpell{
 		ASpell: spells.ASpell{ // 3 tries, doesn't kill player - makes their creatures explode
-			Name:          "Dark Power",
-			CastingChance: 50,
-			CastRange:     20,
-			LawRating:     -2,
-			Tries:         3,
+			Name:                "Dark Power",
+			CastingChance:       50,
+			CastRange:           20,
+			LawRating:           -2,
+			Tries:               3,
+			NoLineOfSightNeeded: true,
 		},
 		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
 			return ExplodeCreatures(target, grid)
@@ -111,11 +114,12 @@ func init() {
 	})
 	spells.CreateSpell(spells.OtherSpell{
 		ASpell: spells.ASpell{ // 3 tries, doesn't kill player - makes their creatures explode
-			Name:          "Justice",
-			CastingChance: 50,
-			CastRange:     20,
-			LawRating:     2,
-			Tries:         3,
+			Name:                "Justice",
+			CastingChance:       50,
+			CastRange:           20,
+			LawRating:           2,
+			Tries:               3,
+			NoLineOfSightNeeded: true,
 		},
 		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
 			return ExplodeCreatures(target, grid)
