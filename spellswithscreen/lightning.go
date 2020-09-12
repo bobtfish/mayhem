@@ -1,13 +1,9 @@
 package spellswithscreen
 
 import (
-	"fmt"
-	"math/rand"
-
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
-	"github.com/bobtfish/mayhem/movable"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 	"github.com/bobtfish/mayhem/spells"
 	"github.com/faiface/pixel"
@@ -16,25 +12,35 @@ import (
 
 type ScreenSpell struct {
 	spells.ASpell
-	MutateFunc func(logical.Vec, *grid.GameGrid, grid.GameObject) (bool, *fx.Fx)
 }
 
-func (s ScreenSpell) TakeOverScreen(grid *grid.GameGrid, nextScreen screeniface.GameScreen) screeniface.GameScreen {
-	return nil
+func (s ScreenSpell) TakeOverScreen(grid *grid.GameGrid, cleanupFunc func(), nextScreen screeniface.GameScreen) screeniface.GameScreen {
+	return &LightningSpellScreen{
+		Grid:        grid,
+		NextScreen:  nextScreen,
+		CleanupFunc: cleanupFunc,
+	}
 }
 
 func (s ScreenSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
-	return s.MutateFunc(target, grid, owner)
+	return false, nil
 }
 
 type LightningSpellScreen struct {
-	Grid *grid.GameGrid
+	Grid        *grid.GameGrid
+	NextScreen  screeniface.GameScreen
+	CleanupFunc func()
 }
 
 func (screen *LightningSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+
 }
 
 func (screen *LightningSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+	if 0 == 1 {
+		screen.CleanupFunc()
+		return screen.NextScreen
+	}
 	return screen
 }
 
@@ -45,7 +51,7 @@ func init() {
 			CastingChance: 100,
 			CastRange:     4,
 		},
-		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
+		/*MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
 			a, isAttackable := grid.GetGameObject(target).(movable.Attackable)
 			if !isAttackable {
 				return false, nil
@@ -55,7 +61,7 @@ func init() {
 				return true, nil
 			}
 			return true, nil
-		},
+		},*/
 	})
 	spells.CreateSpell(ScreenSpell{
 		ASpell: spells.ASpell{ // as above, just less strong
@@ -63,8 +69,8 @@ func init() {
 			CastingChance: 100,
 			CastRange:     6,
 		},
-		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
+		/*MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
 			return false, nil
-		},
+		},*/
 	})
 }
