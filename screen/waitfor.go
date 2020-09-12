@@ -10,17 +10,18 @@ import (
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/render"
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
 type WaitFor struct {
-	NextScreen GameScreen
+	NextScreen screeniface.GameScreen
 	Grid       *grid.GameGrid
 	FinishedF  func() bool
 }
 
 func (screen *WaitFor) Enter(ss pixel.Picture, win *pixelgl.Window) {}
 
-func (screen *WaitFor) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *WaitFor) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	if screen.FinishedF() {
 		fmt.Printf("Waitfor Skip to next screen\n")
 		return screen.NextScreen
@@ -32,14 +33,14 @@ func (screen *WaitFor) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 }
 
 type Pause struct {
-	NextScreen GameScreen
+	NextScreen screeniface.GameScreen
 	Grid       *grid.GameGrid
 	Skip       bool
 }
 
 func (screen *Pause) Enter(ss pixel.Picture, win *pixelgl.Window) {}
 
-func (screen *Pause) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *Pause) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	started := time.Now()
 	return &WaitFor{
 		NextScreen: screen.NextScreen,
@@ -52,13 +53,13 @@ func (screen *Pause) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
 
 type WaitForFx struct {
 	Fx         *fx.Fx
-	NextScreen GameScreen
+	NextScreen screeniface.GameScreen
 	Grid       *grid.GameGrid
 }
 
 func (screen *WaitForFx) Enter(ss pixel.Picture, win *pixelgl.Window) {}
 
-func (screen *WaitForFx) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *WaitForFx) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	return &WaitFor{
 		NextScreen: screen.NextScreen,
 		Grid:       screen.Grid,

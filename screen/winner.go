@@ -9,6 +9,7 @@ import (
 
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
 type WinnerScreen struct {
@@ -31,7 +32,7 @@ func (screen *WinnerScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	td.DrawText(fmt.Sprintf("%s%s", strings.Repeat(" ", spaceLen), winner.Name), logical.V(0, 8), win)
 }
 
-func (screen *WinnerScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *WinnerScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	if win.Typed() != "" {
 		return &InitialScreen{}
 	}

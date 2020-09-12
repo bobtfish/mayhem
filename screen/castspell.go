@@ -8,12 +8,13 @@ import (
 
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/logical"
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
 // Move state onto next player spell cast (if there are players left)
 // or onto the movement phase if all spells have been cast
-func NextSpellCastOrMove(playerIdx int, wb *WithBoard, skipPause bool) GameScreen {
-	var nextScreen GameScreen
+func NextSpellCastOrMove(playerIdx int, wb *WithBoard, skipPause bool) screeniface.GameScreen {
+	var nextScreen screeniface.GameScreen
 	nextIdx := NextPlayerIdx(playerIdx, wb.Players)
 	nextScreen = &DisplaySpellCastScreen{
 		WithBoard: wb,
@@ -52,7 +53,7 @@ func (screen *DisplaySpellCastScreen) Enter(ss pixel.Picture, win *pixelgl.Windo
 	}
 }
 
-func (screen *DisplaySpellCastScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *DisplaySpellCastScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	thisPlayer := screen.Players[screen.PlayerIdx]
 	if (thisPlayer.ChosenSpell < 0) || win.JustPressed(pixelgl.Key0) {
 		return NextSpellCastOrMove(screen.PlayerIdx, screen.WithBoard, true)
@@ -81,7 +82,7 @@ func (screen *TargetSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("", ss, win) // clear bottom bar
 }
 
-func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	thisPlayer := screen.Players[screen.PlayerIdx]
 	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
 	batch := screen.WithBoard.DrawBoard(ss, win)
@@ -121,7 +122,7 @@ func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) Gam
 	return screen
 }
 
-func (screen *TargetSpellScreen) AnimateAndCast() GameScreen {
+func (screen *TargetSpellScreen) AnimateAndCast() screeniface.GameScreen {
 	thisPlayer := screen.Players[screen.PlayerIdx]
 	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
 	target := screen.WithBoard.CursorPosition
@@ -154,7 +155,7 @@ type DoSpellCast struct {
 func (screen *DoSpellCast) Enter(ss pixel.Picture, win *pixelgl.Window) {
 }
 
-func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	castsRemaining := screen.CastsRemaining - 1
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	// Fx for spell cast finished
@@ -166,43 +167,52 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) GameScree
 	fmt.Printf("IN Player spell cast\n")
 	spell := p.Spells[p.ChosenSpell]
 	fmt.Printf("Player spell %T cast on %T\n", spell, targetVec)
-	var success bool
-	var canCastMore bool
-	var anim *fx.Fx
-	if screen.CastBefore || spell.CastSucceeds(p.CastIllusion, screen.LawRating) {
-		canCastMore = true
-		success, anim = spell.DoCast(p.CastIllusion, targetVec, screen.WithBoard.Grid, p)
-	}
 
-	fmt.Printf("Finished player CastSpell method\n")
-	if !screen.CastBefore {
-		if (canCastMore && castsRemaining > 0) || success {
-			fmt.Printf("Spell Succeeds\n")
-			textBottom("Spell Succeeds", ss, batch)
-			screen.WithBoard.LawRating += spell.GetLawRating()
-		} else {
-			fmt.Printf("Spell failed\n")
-			textBottom("Spell Failed", ss, batch)
-		}
-	}
-	batch.Draw(win)
-	nextScreen := NextSpellCastOrMove(screen.PlayerIdx, screen.WithBoard, false)
-	if castsRemaining > 0 && canCastMore {
-		nextScreen = &TargetSpellScreen{
-			WithBoard:      screen.WithBoard,
-			PlayerIdx:      screen.PlayerIdx,
-			CastsRemaining: castsRemaining,
-			CastBefore:     true,
-		}
-	} else {
+	cleanupFunc := func() {
 		if !spell.IsReuseable() {
 			p.Spells = append(p.Spells[:p.ChosenSpell], p.Spells[p.ChosenSpell+1:]...)
 		}
 		p.ChosenSpell = -1
 	}
-	return &WaitForFx{
-		NextScreen: nextScreen,
-		Grid:       screen.Grid,
-		Fx:         anim,
+	nextScreen := NextSpellCastOrMove(screen.PlayerIdx, screen.WithBoard, false)
+
+	takeOver := spell.TakeOverScreen(screen.WithBoard.Grid, cleanupFunc, nextScreen)
+	if takeOver == nil {
+		var success bool
+		var canCastMore bool
+		var anim *fx.Fx
+		if screen.CastBefore || spell.CastSucceeds(p.CastIllusion, screen.LawRating) {
+			canCastMore = true
+			success, anim = spell.DoCast(p.CastIllusion, targetVec, screen.WithBoard.Grid, p)
+		}
+
+		fmt.Printf("Finished player CastSpell method\n")
+		if !screen.CastBefore {
+			if (canCastMore && castsRemaining > 0) || success {
+				fmt.Printf("Spell Succeeds\n")
+				textBottom("Spell Succeeds", ss, batch)
+				screen.WithBoard.LawRating += spell.GetLawRating()
+			} else {
+				fmt.Printf("Spell failed\n")
+				textBottom("Spell Failed", ss, batch)
+			}
+		}
+		batch.Draw(win)
+		if castsRemaining > 0 && canCastMore {
+			nextScreen = &TargetSpellScreen{
+				WithBoard:      screen.WithBoard,
+				PlayerIdx:      screen.PlayerIdx,
+				CastsRemaining: castsRemaining,
+				CastBefore:     true,
+			}
+		} else {
+			cleanupFunc()
+		}
+		return &WaitForFx{
+			NextScreen: nextScreen,
+			Grid:       screen.Grid,
+			Fx:         anim,
+		}
 	}
+	return takeOver
 }

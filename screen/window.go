@@ -1,13 +1,14 @@
 package screen
 
 import (
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 )
 
 type GameWindow struct {
 	Window      *pixelgl.Window
-	Screen      GameScreen
+	Screen      screeniface.GameScreen
 	SpriteSheet pixel.Picture
 }
 

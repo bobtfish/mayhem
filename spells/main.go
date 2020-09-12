@@ -9,6 +9,7 @@ import (
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/rand"
 	"github.com/bobtfish/mayhem/render"
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
 type Spell interface {
@@ -24,6 +25,7 @@ type Spell interface {
 	IsReuseable() bool
 	CastFx() *fx.Fx
 	NeedsLineOfSight() bool
+	TakeOverScreen(*grid.GameGrid, func(), screeniface.GameScreen) screeniface.GameScreen
 }
 
 type ASpell struct {
@@ -37,6 +39,9 @@ type ASpell struct {
 	NoLineOfSightNeeded bool
 }
 
+func (s ASpell) TakeOverScreen(grid *grid.GameGrid, cleanup func(), nextScreen screeniface.GameScreen) screeniface.GameScreen {
+	return nil
+}
 func (s ASpell) CastFx() *fx.Fx {
 	if s.NoCastFx {
 		return nil
@@ -98,19 +103,6 @@ func (s ASpell) NeedsLineOfSight() bool {
 	return !s.NoLineOfSightNeeded
 }
 
-type CreatureSpell struct {
-	ASpell
-}
-
-type OtherSpell struct {
-	ASpell
-	MutateFunc func(logical.Vec, *grid.GameGrid, grid.GameObject) (bool, *fx.Fx)
-}
-
-func (s OtherSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
-	return s.MutateFunc(target, grid, owner)
-}
-
 func LawRatingSymbol(s Spell) string {
 	if s.GetLawRating() == 0 {
 		return "-"
@@ -143,6 +135,13 @@ func ChooseSpells() []Spell {
 		idx := rand.Intn(len(AllSpells)-1) + 1
 		spells[i] = AllSpells[idx]
 	}
+	/*var thisSpell Spell
+	for i := 0; i < len(AllSpells); i++ {
+		if AllSpells[i].GetName() == "Lightning" {
+			thisSpell = AllSpells[i]
+		}
+	}
+	spells[1] = thisSpell*/
 	return spells
 }
 
@@ -153,35 +152,4 @@ func CreateSpell(s Spell) {
 		AllSpells = make([]Spell, 1) // Deliberately leave room for disbelieve spell as number 0
 	}
 	AllSpells = append(AllSpells, s)
-}
-
-func init() {
-	/*CreateSpell(OtherSpell{
-		ASpell: ASpell{ // Uses disbelive animation if it kills a thing. No corpse
-			Name:          "Lightning",
-			CastingChance: 100,
-			CastRange:     4,
-		},
-		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
-			a, isAttackable := grid.GetGameObject(target).(movable.Attackable)
-			if !isAttackable {
-				return false
-			}
-			if rand.Intn(9)+3 > a.GetDefence() {
-				fmt.Printf("Killed by lightning\n")
-				return true
-			}
-			return true
-		},
-	})
-	CreateSpell(OtherSpell{
-		ASpell: ASpell{ // as above, just less strong
-			Name:          "Magic Bolt",
-			CastingChance: 100,
-			CastRange:     6,
-		},
-		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) bool {
-			return false
-		},
-	})*/
 }

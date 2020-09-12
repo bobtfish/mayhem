@@ -8,11 +8,6 @@ import (
 	"github.com/bobtfish/mayhem/render"
 )
 
-type GameScreen interface {
-	Enter(pixel.Picture, *pixelgl.Window)
-	Step(pixel.Picture, *pixelgl.Window) GameScreen
-}
-
 func SpriteDrawer(ss pixel.Picture) render.SpriteDrawer {
 	return render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
 }

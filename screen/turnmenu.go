@@ -9,12 +9,13 @@ import (
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 	"github.com/bobtfish/mayhem/spells"
 )
 
 type ExamineOneSpellScreen struct {
 	Spell        spells.Spell
-	ReturnScreen GameScreen
+	ReturnScreen screeniface.GameScreen
 }
 
 func (screen *ExamineOneSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -25,7 +26,7 @@ func (screen *ExamineOneSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window
 	td.DrawText("FIXME add stuff per spell", logical.V(0, 7), win)
 }
 
-func (screen *ExamineOneSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *ExamineOneSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	if win.Typed() != "" {
 		return screen.ReturnScreen
 	}
@@ -71,7 +72,7 @@ type ExamineSpellsScreen struct {
 //	screen.SpellListScreen.Enter(ss, win)
 //}
 
-func (screen *ExamineSpellsScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *ExamineSpellsScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	c := captureNumKey(win)
 	if c == 0 {
 		return screen.MainMenu
@@ -97,7 +98,7 @@ type SelectSpellScreen struct {
 //	screen.SpellListScreen.Enter(ss, win)
 //}
 
-func (screen *SelectSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *SelectSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	c := captureNumKey(win)
 	if c == 0 {
 		return screen.MainMenu
@@ -127,7 +128,7 @@ func (screen *IsIllusionScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	screen.Player.CastIllusion = false
 }
 
-func (screen *IsIllusionScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *IsIllusionScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	if win.JustPressed(pixelgl.KeyY) {
 		screen.Player.CastIllusion = true
 	}
@@ -184,7 +185,7 @@ func lawRatingSymbolText(r int) string {
 	return string(ra)
 }
 
-func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	c := captureNumKey(win)
 	if c == 1 {
 		return &ExamineSpellsScreen{

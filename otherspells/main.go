@@ -1,8 +1,9 @@
-package character
+package otherspells
 
 import (
 	"fmt"
 
+	"github.com/bobtfish/mayhem/character"
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
@@ -12,31 +13,17 @@ import (
 	"github.com/bobtfish/mayhem/spells"
 )
 
-type DisbelieveSpell struct {
+type OtherSpell struct {
 	spells.ASpell
+	MutateFunc func(logical.Vec, *grid.GameGrid, grid.GameObject) (bool, *fx.Fx)
 }
 
-func (s DisbelieveSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
-	if illusion {
-		panic("DisbelieveSpell cannot be illusion")
-	}
-	character := grid.GetGameObject(target).(*Character)
-	if character.IsIllusion {
-		grid.GetGameObjectStack(target).RemoveTopObject()
-		anim := fx.Disbelieve()
-		grid.PlaceGameObject(target, anim)
-		return true, anim
-	}
-	return false, nil
-}
-
-func (s DisbelieveSpell) CanCast(target grid.GameObject) bool {
-	_, isCharacter := target.(*Character)
-	return isCharacter
+func (s OtherSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
+	return s.MutateFunc(target, grid, owner)
 }
 
 func init() {
-	spells.CreateSpell(spells.OtherSpell{
+	spells.CreateSpell(OtherSpell{
 		ASpell: spells.ASpell{
 			Name:          "Raise Dead",
 			LawRating:     -1,
@@ -46,7 +33,7 @@ func init() {
 		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
 			p := owner.(*player.Player)
 			ob := grid.GetGameObject(target)
-			char, isChar := ob.(*Character)
+			char, isChar := ob.(*character.Character)
 			if !isChar || !char.IsDead {
 				return false, nil
 			}
@@ -56,7 +43,7 @@ func init() {
 			return true, nil
 		},
 	})
-	spells.CreateSpell(spells.OtherSpell{
+	spells.CreateSpell(OtherSpell{
 		ASpell: spells.ASpell{
 			Name:          "Subversion",
 			CastingChance: 100,
@@ -65,7 +52,7 @@ func init() {
 		MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
 			p := owner.(*player.Player)
 			ob := grid.GetGameObject(target)
-			char, isChar := ob.(*Character)
+			char, isChar := ob.(*character.Character)
 			if !isChar || char.IsDead {
 				return false, nil
 			}
@@ -76,7 +63,7 @@ func init() {
 			return false, nil
 		},
 	})
-	spells.CreateSpell(spells.OtherSpell{
+	spells.CreateSpell(OtherSpell{
 		ASpell: spells.ASpell{ // 1 chance only, makes creatures belonging to player explode
 			Name:                "Vengeance",
 			CastingChance:       80,
@@ -87,7 +74,7 @@ func init() {
 			return ExplodeCreatures(target, grid)
 		},
 	})
-	spells.CreateSpell(spells.OtherSpell{
+	spells.CreateSpell(OtherSpell{
 		ASpell: spells.ASpell{ // 1 chance only, doesn't kill player - makes their creatures explode maybe?
 			Name:                "Decree",
 			CastingChance:       80,
@@ -99,7 +86,7 @@ func init() {
 			return ExplodeCreatures(target, grid)
 		},
 	})
-	spells.CreateSpell(spells.OtherSpell{
+	spells.CreateSpell(OtherSpell{
 		ASpell: spells.ASpell{ // 3 tries, doesn't kill player - makes their creatures explode
 			Name:                "Dark Power",
 			CastingChance:       50,
@@ -112,7 +99,7 @@ func init() {
 			return ExplodeCreatures(target, grid)
 		},
 	})
-	spells.CreateSpell(spells.OtherSpell{
+	spells.CreateSpell(OtherSpell{
 		ASpell: spells.ASpell{ // 3 tries, doesn't kill player - makes their creatures explode
 			Name:                "Justice",
 			CastingChance:       50,

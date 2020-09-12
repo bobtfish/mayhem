@@ -12,6 +12,7 @@ import (
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
 	"github.com/bobtfish/mayhem/player"
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
 type MoveAnnounceScreen struct {
@@ -24,7 +25,7 @@ func (screen *MoveAnnounceScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	screen.WithBoard.CursorPosition = screen.Players[screen.PlayerIdx].BoardPosition
 }
 
-func (screen *MoveAnnounceScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *MoveAnnounceScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	textBottom(fmt.Sprintf("%s's turn", screen.Players[screen.PlayerIdx].Name), ss, batch)
 	batch.Draw(win)
@@ -59,7 +60,7 @@ func (screen *MoveFindCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Wind
 	fmt.Printf("Enter move find character screen for player %d\n", screen.PlayerIdx+1)
 }
 
-func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	screen.WithBoard.DrawCursor(ss, batch)
 	screen.WithBoard.MoveCursor(win)
@@ -148,7 +149,7 @@ type MaybeDismount struct {
 
 func (screen *MaybeDismount) Enter(ss pixel.Picture, win *pixelgl.Window) {}
 
-func (screen *MaybeDismount) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *MaybeDismount) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	isStaticCharacter := false
 	if screen.Character.GetMovement() == 0 { // Magic castle / dark citadel
@@ -203,7 +204,7 @@ func (screen *MaybeDismount) Step(ss pixel.Picture, win *pixelgl.Window) GameScr
 	return screen
 }
 
-func NextPlayerMove(playerIdx int, players []*player.Player, withBoard *WithBoard) GameScreen {
+func NextPlayerMove(playerIdx int, players []*player.Player, withBoard *WithBoard) screeniface.GameScreen {
 	nextIdx := NextPlayerIdx(playerIdx, players)
 	if nextIdx == len(withBoard.Players) {
 		return &GrowScreen{
@@ -231,7 +232,7 @@ func (screen *MoveGroundCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Wi
 	fmt.Printf("Enter move ground character screen for player %d\n", screen.PlayerIdx+1)
 }
 
-func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	textBottom(fmt.Sprintf("Movement range=%d", screen.MovementLeft), ss, batch)
 
@@ -339,7 +340,7 @@ func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard
 type AttackStatus struct {
 	NotEmpty            bool
 	IllegalUndeadAttack bool
-	NextScreen          GameScreen
+	NextScreen          screeniface.GameScreen
 	IsMount             bool
 }
 
@@ -440,7 +441,7 @@ func doMount(from, to logical.Vec, grid *grid.GameGrid) {
 	grid.GetGameObject(to).(*character.Character).Mount()
 }
 
-func (screen *MoveGroundCharacterScreen) MoveGroundCharacterScreenFinished() GameScreen {
+func (screen *MoveGroundCharacterScreen) MoveGroundCharacterScreenFinished() screeniface.GameScreen {
 	return &RangedCombat{
 		WithBoard:       screen.WithBoard,
 		PlayerIdx:       screen.PlayerIdx,
@@ -469,11 +470,11 @@ func (screen *MoveFlyingCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Wi
 type MoveStatus struct {
 	DidMove             bool
 	IllegalUndeadAttack bool
-	NextScreen          GameScreen
+	NextScreen          screeniface.GameScreen
 	MountMove           bool
 }
 
-func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	if screen.DisplayRange {
 		textBottom(fmt.Sprintf("Movement range=%d (flying)", screen.Character.GetMovement()), ss, batch)
@@ -525,7 +526,7 @@ func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Win
 	return screen
 }
 
-func (screen *MoveFlyingCharacterScreen) MoveFlyingCharacterScreenFinished() GameScreen {
+func (screen *MoveFlyingCharacterScreen) MoveFlyingCharacterScreenFinished() screeniface.GameScreen {
 	return &RangedCombat{
 		WithBoard:       screen.WithBoard,
 		PlayerIdx:       screen.PlayerIdx,

@@ -12,6 +12,7 @@ import (
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/rand"
 	"github.com/bobtfish/mayhem/render"
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 	"github.com/bobtfish/mayhem/spells"
 )
 
@@ -126,6 +127,9 @@ type CharacterSpell struct {
 }
 
 // Spell interface begin
+func (s CharacterSpell) TakeOverScreen(grid *grid.GameGrid, cleanup func(), nextScreen screeniface.GameScreen) screeniface.GameScreen {
+	return nil
+}
 func (s CharacterSpell) GetName() string {
 	return s.Name
 }

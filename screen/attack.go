@@ -12,6 +12,8 @@ import (
 	"github.com/bobtfish/mayhem/movable"
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/rand"
+
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
 type RangedCombat struct {
@@ -29,7 +31,7 @@ func (screen *RangedCombat) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	screen.WithBoard.CursorSprite = CursorRangedAttack
 }
 
-func (screen *RangedCombat) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *RangedCombat) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	attacker := screen.Character.(movable.Attackerable)
 	attackRange := attacker.GetAttackRange()
 	if attackRange == 0 || win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) { // No ranged combat
@@ -100,7 +102,7 @@ func (screen *DoRangedAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	fmt.Printf("Do ranged attack\n")
 }
 
-func (screen *DoRangedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *DoRangedAttack) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	target := screen.WithBoard.Grid.GetGameObject(screen.WithBoard.CursorPosition)
 	needPause := false
 	if !target.IsEmpty() {
@@ -152,7 +154,7 @@ func (screen *EngagedAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("Engaged to enemy", ss, win)
 }
 
-func (screen *EngagedAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *EngagedAttack) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	if screen.ClearMsg {
 		textBottom("", ss, batch)
@@ -199,7 +201,7 @@ type DoAttack struct {
 
 func (screen *DoAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {}
 
-func PostSuccessfulAttack(target grid.GameObject, withBoard *WithBoard, canMakeCorpse bool) (bool, GameScreen) {
+func PostSuccessfulAttack(target grid.GameObject, withBoard *WithBoard, canMakeCorpse bool) (bool, screeniface.GameScreen) {
 	canMoveOnto := true
 	// If the defender can be killed, kill them. Otherwise remove them
 	ob, corpsable := target.(movable.Corpseable)
@@ -238,7 +240,7 @@ func PostSuccessfulAttack(target grid.GameObject, withBoard *WithBoard, canMakeC
 	return canMoveOnto, nil
 }
 
-func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	// Work out what happened. This is overly simple, but equivalent to what the original game does :)
 	defender := screen.WithBoard.Grid.GetGameObject(screen.DefenderV)
 	defenceRating := defender.(movable.Attackable).GetDefence() + rand.Intn(9)

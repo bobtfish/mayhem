@@ -5,6 +5,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/logical"
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
 type HelpScreenMenu struct{}
@@ -23,7 +24,7 @@ func (screen *HelpScreenMenu) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("Press Keys 1-6 or 0 to return", ss, win)
 }
 
-func (screen *HelpScreenMenu) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *HelpScreenMenu) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	if win.JustPressed(pixelgl.Key0) {
 		return &InitialScreen{}
 	}
@@ -66,7 +67,7 @@ func (screen *HelpScreenKeys) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("   Press any key to continue", ss, win)
 }
 
-func (screen *HelpScreenKeys) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *HelpScreenKeys) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	if win.Typed() != "" {
 		return &HelpScreenMenu{}
 	}
@@ -90,7 +91,7 @@ func (screen *HelpScreenSpells) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("   Press any key to continue", ss, win)
 }
 
-func (screen *HelpScreenSpells) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *HelpScreenSpells) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	if win.Typed() != "" {
 		return &HelpScreenMenu{}
 	}
@@ -114,7 +115,7 @@ func (screen *HelpScreenCombat) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("   Press any key to continue", ss, win)
 }
 
-func (screen *HelpScreenCombat) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *HelpScreenCombat) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	if win.Typed() != "" {
 		return &HelpScreenCombatRanged{}
 	}
@@ -140,7 +141,7 @@ func (screen *HelpScreenCombatRanged) Enter(ss pixel.Picture, win *pixelgl.Windo
 	textBottom("   Press any key to continue", ss, win)
 }
 
-func (screen *HelpScreenCombatRanged) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *HelpScreenCombatRanged) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	if win.Typed() != "" {
 		return &HelpScreenMenu{}
 	}
@@ -164,7 +165,7 @@ func (screen *HelpScreenUndead) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("   Press any key to continue", ss, win)
 }
 
-func (screen *HelpScreenUndead) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *HelpScreenUndead) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	if win.Typed() != "" {
 		return &HelpScreenMenu{}
 	}
@@ -190,7 +191,7 @@ func (screen *HelpScreenMounts) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("   Press any key to continue", ss, win)
 }
 
-func (screen *HelpScreenMounts) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *HelpScreenMounts) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	if win.Typed() != "" {
 		return &HelpScreenMenu{}
 	}
@@ -212,7 +213,7 @@ func (screen *HelpScreenVictory) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("   Press any key to continue", ss, win)
 }
 
-func (screen *HelpScreenVictory) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *HelpScreenVictory) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	if win.Typed() != "" {
 		return &HelpScreenMenu{}
 	}

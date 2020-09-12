@@ -11,6 +11,7 @@ import (
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/rand"
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
 const GrowChance = 15
@@ -50,7 +51,7 @@ func (screen *GrowScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	ClearScreen(ss, win)
 }
 
-func (screen *GrowScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *GrowScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	batch.Draw(win)
 

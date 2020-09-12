@@ -6,6 +6,7 @@ import (
 
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/player"
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
 type StartMainGame struct {
@@ -21,7 +22,7 @@ func (screen *StartMainGame) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	}
 }
 
-func (screen *StartMainGame) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *StartMainGame) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	return &TurnMenuScreen{
 		Players: screen.Players,
 		Grid:    screen.Grid,

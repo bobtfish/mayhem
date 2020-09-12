@@ -7,6 +7,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/logical"
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
 type InitialScreen struct{}
@@ -24,7 +25,7 @@ func (screen *InitialScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("       Press H for help", ss, win)
 }
 
-func (screen *InitialScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *InitialScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	if win.JustPressed(pixelgl.KeyH) {
 		return &HelpScreenMenu{}
 	}
@@ -47,7 +48,7 @@ func (screen *ComputerDifficultyScreen) Enter(ss pixel.Picture, win *pixelgl.Win
 	td.DrawText("(Press 1 to 8)", logical.V(0, 2), win)
 }
 
-func (screen *ComputerDifficultyScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *ComputerDifficultyScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	c := captureNumKey(win)
 	if c >= 1 && c <= 8 {
 		TextDrawer(ss).DrawText(fmt.Sprintf("%d", c), logical.V(27, 3), win)

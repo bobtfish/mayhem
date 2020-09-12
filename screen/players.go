@@ -10,6 +10,7 @@ import (
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
 type PlayersScreen struct {
@@ -35,7 +36,7 @@ func (screen *PlayerNameScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	td.DrawText("Enter name (12 letters max.)", logical.V(0, 8), win)
 }
 
-func (screen *PlayerNameScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *PlayerNameScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	if win.JustPressed(pixelgl.KeyEnter) && len(screen.CurrentPlayer.Name) > 0 {
 		return &PlayerAIScreen{PlayersScreen: screen.PlayersScreen}
 	}
@@ -62,7 +63,7 @@ func (screen *PlayerAIScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	TextDrawer(ss).DrawText("Computer controlled?", logical.V(0, 5), win)
 }
 
-func (screen *PlayerAIScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *PlayerAIScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	td := TextDrawer(ss)
 	if win.JustPressed(pixelgl.KeyY) || win.JustPressed(pixelgl.KeyN) {
 		if win.JustPressed(pixelgl.KeyY) {
@@ -92,7 +93,7 @@ func (screen *PlayerIconScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	}
 }
 
-func (screen *PlayerIconScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *PlayerIconScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	c := captureNumKey(win)
 	if c >= 1 && c <= 8 {
 		screen.CurrentPlayer.CharacterIcon = logical.V(c-1, 23)
@@ -134,7 +135,7 @@ func (screen *PlayerColorScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	}
 }
 
-func (screen *PlayerColorScreen) Step(ss pixel.Picture, win *pixelgl.Window) GameScreen {
+func (screen *PlayerColorScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	td := TextDrawer(ss)
 	sd := SpriteDrawer(ss)
 	c := captureNumKey(win)
