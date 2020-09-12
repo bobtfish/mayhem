@@ -1,9 +1,12 @@
 package spellswithscreen
 
 import (
+	"fmt"
+
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/render"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 	"github.com/bobtfish/mayhem/spells"
 	"github.com/faiface/pixel"
@@ -14,11 +17,12 @@ type ScreenSpell struct {
 	spells.ASpell
 }
 
-func (s ScreenSpell) TakeOverScreen(grid *grid.GameGrid, cleanupFunc func(), nextScreen screeniface.GameScreen) screeniface.GameScreen {
+func (s ScreenSpell) TakeOverScreen(grid *grid.GameGrid, cleanupFunc func(), nextScreen screeniface.GameScreen, target logical.Vec) screeniface.GameScreen {
 	return &LightningSpellScreen{
 		Grid:        grid,
 		NextScreen:  nextScreen,
 		CleanupFunc: cleanupFunc,
+		Target:      target,
 	}
 }
 
@@ -26,17 +30,29 @@ func (s ScreenSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGr
 	return false, nil
 }
 
+func (s ScreenSpell) CastFx() *fx.Fx {
+	return nil
+}
+
 type LightningSpellScreen struct {
 	Grid        *grid.GameGrid
 	NextScreen  screeniface.GameScreen
 	CleanupFunc func()
+	Target      logical.Vec
+}
+
+func (screen *LightningSpellScreen) DrawBoard(ss pixel.Picture, win *pixelgl.Window) *pixel.Batch {
+	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
+	return screen.Grid.DrawBatch(sd)
 }
 
 func (screen *LightningSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
-
+	fmt.Printf("FOO\n")
 }
 
 func (screen *LightningSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+	batch := screen.DrawBoard(ss, win)
+	batch.Draw(win)
 	if 0 == 1 {
 		screen.CleanupFunc()
 		return screen.NextScreen

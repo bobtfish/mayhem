@@ -176,7 +176,7 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) screenifa
 	}
 	nextScreen := NextSpellCastOrMove(screen.PlayerIdx, screen.WithBoard, false)
 
-	takeOver := spell.TakeOverScreen(screen.WithBoard.Grid, cleanupFunc, nextScreen)
+	takeOver := spell.TakeOverScreen(screen.WithBoard.Grid, cleanupFunc, nextScreen, targetVec)
 	if takeOver == nil {
 		var success bool
 		var canCastMore bool

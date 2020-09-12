@@ -17,6 +17,7 @@ import (
 	"github.com/bobtfish/mayhem/screen"
 
 	_ "github.com/bobtfish/mayhem/otherspells"
+	_ "github.com/bobtfish/mayhem/spellswithscreen"
 )
 
 func loadSpriteSheet() io.Reader {

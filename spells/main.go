@@ -25,7 +25,7 @@ type Spell interface {
 	IsReuseable() bool
 	CastFx() *fx.Fx
 	NeedsLineOfSight() bool
-	TakeOverScreen(*grid.GameGrid, func(), screeniface.GameScreen) screeniface.GameScreen
+	TakeOverScreen(*grid.GameGrid, func(), screeniface.GameScreen, logical.Vec) screeniface.GameScreen
 }
 
 type ASpell struct {
@@ -39,7 +39,7 @@ type ASpell struct {
 	NoLineOfSightNeeded bool
 }
 
-func (s ASpell) TakeOverScreen(grid *grid.GameGrid, cleanup func(), nextScreen screeniface.GameScreen) screeniface.GameScreen {
+func (s ASpell) TakeOverScreen(grid *grid.GameGrid, cleanup func(), nextScreen screeniface.GameScreen, target logical.Vec) screeniface.GameScreen {
 	return nil
 }
 func (s ASpell) CastFx() *fx.Fx {
@@ -135,13 +135,13 @@ func ChooseSpells() []Spell {
 		idx := rand.Intn(len(AllSpells)-1) + 1
 		spells[i] = AllSpells[idx]
 	}
-	/*var thisSpell Spell
+	var thisSpell Spell
 	for i := 0; i < len(AllSpells); i++ {
 		if AllSpells[i].GetName() == "Lightning" {
 			thisSpell = AllSpells[i]
 		}
 	}
-	spells[1] = thisSpell*/
+	spells[1] = thisSpell
 	return spells
 }
 
