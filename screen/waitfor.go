@@ -1,7 +1,6 @@
 package screen
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/faiface/pixel"
@@ -23,7 +22,7 @@ func (screen *WaitFor) Enter(ss pixel.Picture, win *pixelgl.Window) {}
 
 func (screen *WaitFor) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	if screen.FinishedF() {
-		fmt.Printf("Waitfor Skip to next screen\n")
+		//fmt.Printf("Waitfor Skip to next screen\n")
 		return screen.NextScreen
 	}
 	if screen.Grid != nil {
@@ -36,9 +35,14 @@ type Pause struct {
 	NextScreen screeniface.GameScreen
 	Grid       *grid.GameGrid
 	Skip       bool
+	For        time.Duration
 }
 
-func (screen *Pause) Enter(ss pixel.Picture, win *pixelgl.Window) {}
+func (screen *Pause) Enter(ss pixel.Picture, win *pixelgl.Window) {
+	if screen.For == time.Duration(0) {
+		screen.For = time.Second
+	}
+}
 
 func (screen *Pause) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	started := time.Now()
@@ -46,7 +50,7 @@ func (screen *Pause) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.Gam
 		NextScreen: screen.NextScreen,
 		Grid:       screen.Grid,
 		FinishedF: func() bool {
-			return screen.Skip || started.Add(time.Second).Before(time.Now())
+			return screen.Skip || started.Add(screen.For).Before(time.Now())
 		},
 	}
 }

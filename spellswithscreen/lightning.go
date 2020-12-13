@@ -1,14 +1,16 @@
 package spellswithscreen
 
 import (
-	"fmt"
+	"time"
 
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/render"
+	screens "github.com/bobtfish/mayhem/screen"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 	"github.com/bobtfish/mayhem/spells"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 )
@@ -18,11 +20,14 @@ type ScreenSpell struct {
 }
 
 func (s ScreenSpell) TakeOverScreen(grid *grid.GameGrid, cleanupFunc func(), nextScreen screeniface.GameScreen, source, target logical.Vec) screeniface.GameScreen {
-	anim := target.Subtract(source).Path()
+	four := logical.V(4, 4)
+	mtarget := target.Multiply(four)
+	msource := source.Multiply(four)
+	anim := mtarget.Subtract(msource).Path()
 	for i, s := range anim {
-		anim[i] = source.Add(s)
+		anim[i] = msource.Add(s)
 	}
-	anim = append(anim, target)
+	anim = append(anim, mtarget)
 	return &LightningSpellScreen{
 		Grid:        grid,
 		NextScreen:  nextScreen,
@@ -58,8 +63,7 @@ func (screen *LightningSpellScreen) DrawBoard(ss pixel.Picture, win *pixelgl.Win
 }
 
 func (screen *LightningSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
-	fmt.Printf("FOO\n")
-
+	//fmt.Printf("FOO\n")
 }
 
 // 25 Y, 0 X
@@ -67,15 +71,15 @@ func (screen *LightningSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window)
 func (screen *LightningSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
 	batch := screen.DrawBoard(ss, win)
 	screen.AnimCount++
-	fmt.Printf("Source is X%dY%d Target is X%dY%d\n", screen.Source.X, screen.Source.Y, screen.Target.X, screen.Target.Y)
-	fmt.Printf("AnimCount is %d Path is %d, %d\n", screen.AnimCount, screen.Anim[screen.AnimCount].X, screen.Anim[screen.AnimCount].Y)
+	//fmt.Printf("Source is X%dY%d Target is X%dY%d\n", screen.Source.X, screen.Source.Y, screen.Target.X, screen.Target.Y)
+	//fmt.Printf("AnimCount is %d Path is %d, %d\n", screen.AnimCount, screen.Anim[screen.AnimCount].X, screen.Anim[screen.AnimCount].Y)
 
 	color := render.GetColor(255, 255, 255)
-	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
-	for i := 0; i <= screen.AnimCount; i++ {
+	sd := render.NewSpriteQuarterDrawer(ss).WithOffset(render.GameBoardV())
+	for i := 0; i < screen.AnimCount; i++ {
 		winPos := screen.Anim[i]
-		fmt.Printf("Draw at %d %d\n", winPos.X, winPos.Y)
-		sd.DrawSpriteColor(logical.V(0, 25), winPos, color, batch)
+		//fmt.Printf("Draw at %d %d\n", winPos.X, winPos.Y)
+		sd.DrawSpriteColor(logical.V(7, 25), winPos, color, batch)
 	}
 
 	batch.Draw(win)
@@ -84,7 +88,10 @@ func (screen *LightningSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) 
 		screen.CleanupFunc()
 		return screen.NextScreen
 	}
-	return screen
+	return &screens.Pause{
+		NextScreen: screen,
+		For:        time.Microsecond,
+	}
 }
 
 func init() {

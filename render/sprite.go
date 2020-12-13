@@ -12,6 +12,20 @@ import (
 	"github.com/bobtfish/mayhem/logical"
 )
 
+// Note that Y values are from top down
+func makeBlackTransparent(source, dest logical.Vec, size int, img *image.NRGBA) {
+	for x := 0; x < size; x++ {
+		for y := 0; y < size; y++ {
+			r, g, b, a := img.At(x+source.X, y+source.Y).RGBA()
+			if r == 0 && g == 0 && b == 0 {
+				a = 0
+			}
+			newPixel := color.RGBA{uint8(r), uint8(g), uint8(b), uint8(a)}
+			img.Set(dest.X+x, dest.Y+y, newPixel)
+		}
+	}
+}
+
 func GetSpriteSheet(io io.Reader) pixel.Picture {
 	img, _, err := image.Decode(io)
 	if err != nil {
@@ -33,6 +47,8 @@ func GetSpriteSheet(io io.Reader) pixel.Picture {
 			wImg.Set(x+size.X, y, newPixel)
 		}
 	}
+	// For the lightning spell, we need a sprite with transparent background
+	makeBlackTransparent(logical.V(0, 15*SpriteSize), logical.V(7*SpriteSize, 15*SpriteSize), SpriteSize, wImg)
 	return pixel.PictureDataFromImage(wImg)
 }
 
@@ -41,6 +57,14 @@ func NewSpriteDrawer(ss pixel.Picture) SpriteDrawer {
 		SpriteSheet:      ss,
 		SpriteSheetSizeV: logical.V(SpriteSize, SpriteSize),
 		WinSizeV:         logical.V(CharPixels, CharPixels),
+	}
+}
+
+func NewSpriteQuarterDrawer(ss pixel.Picture) SpriteDrawer {
+	return SpriteDrawer{
+		SpriteSheet:      ss,
+		SpriteSheetSizeV: logical.V(SpriteSize, SpriteSize),
+		WinSizeV:         logical.V(CharPixels/4, CharPixels/4),
 	}
 }
 
