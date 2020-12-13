@@ -176,43 +176,46 @@ func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) screenifa
 	}
 	nextScreen := NextSpellCastOrMove(screen.PlayerIdx, screen.WithBoard, false)
 
-	takeOver := spell.TakeOverScreen(screen.WithBoard.Grid, cleanupFunc, nextScreen, targetVec)
-	if takeOver == nil {
-		var success bool
-		var canCastMore bool
-		var anim *fx.Fx
-		if screen.CastBefore || spell.CastSucceeds(p.CastIllusion, screen.LawRating) {
-			canCastMore = true
-			success, anim = spell.DoCast(p.CastIllusion, targetVec, screen.WithBoard.Grid, p)
-		}
+	takeOver := spell.TakeOverScreen(screen.WithBoard.Grid, cleanupFunc, nextScreen, p.BoardPosition, targetVec)
+	if takeOver != nil {
+		return takeOver
+	}
 
-		fmt.Printf("Finished player CastSpell method\n")
-		if !screen.CastBefore {
-			if (canCastMore && castsRemaining > 0) || success {
-				fmt.Printf("Spell Succeeds\n")
-				textBottom("Spell Succeeds", ss, batch)
-				screen.WithBoard.LawRating += spell.GetLawRating()
-			} else {
-				fmt.Printf("Spell failed\n")
-				textBottom("Spell Failed", ss, batch)
-			}
-		}
-		batch.Draw(win)
-		if castsRemaining > 0 && canCastMore {
-			nextScreen = &TargetSpellScreen{
-				WithBoard:      screen.WithBoard,
-				PlayerIdx:      screen.PlayerIdx,
-				CastsRemaining: castsRemaining,
-				CastBefore:     true,
-			}
+	// Do the spell cast here
+	var success bool
+	var canCastMore bool
+	var anim *fx.Fx
+	if screen.CastBefore || spell.CastSucceeds(p.CastIllusion, screen.LawRating) {
+		canCastMore = true
+		success, anim = spell.DoCast(p.CastIllusion, targetVec, screen.WithBoard.Grid, p)
+	}
+
+	fmt.Printf("Finished player CastSpell method\n")
+	if !screen.CastBefore {
+		if (canCastMore && castsRemaining > 0) || success {
+			fmt.Printf("Spell Succeeds\n")
+			textBottom("Spell Succeeds", ss, batch)
+			screen.WithBoard.LawRating += spell.GetLawRating()
 		} else {
-			cleanupFunc()
-		}
-		return &WaitForFx{
-			NextScreen: nextScreen,
-			Grid:       screen.Grid,
-			Fx:         anim,
+			fmt.Printf("Spell failed\n")
+			textBottom("Spell Failed", ss, batch)
 		}
 	}
-	return takeOver
+	batch.Draw(win)
+	if castsRemaining > 0 && canCastMore {
+		nextScreen = &TargetSpellScreen{
+			WithBoard:      screen.WithBoard,
+			PlayerIdx:      screen.PlayerIdx,
+			CastsRemaining: castsRemaining,
+			CastBefore:     true,
+		}
+	} else {
+		cleanupFunc()
+	}
+	return &WaitForFx{
+		NextScreen: nextScreen,
+		Grid:       screen.Grid,
+		Fx:         anim,
+	}
+
 }

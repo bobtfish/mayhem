@@ -127,7 +127,7 @@ type CharacterSpell struct {
 }
 
 // Spell interface begin
-func (s CharacterSpell) TakeOverScreen(grid *grid.GameGrid, cleanup func(), nextScreen screeniface.GameScreen, target logical.Vec) screeniface.GameScreen {
+func (s CharacterSpell) TakeOverScreen(grid *grid.GameGrid, cleanup func(), nextScreen screeniface.GameScreen, source, target logical.Vec) screeniface.GameScreen {
 	return nil
 }
 func (s CharacterSpell) GetName() string {
