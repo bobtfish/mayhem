@@ -17,26 +17,11 @@ import (
 
 type ScreenSpell struct {
 	spells.ASpell
+	TakeOverFunc func(*grid.GameGrid, func(), screeniface.GameScreen, logical.Vec, logical.Vec) screeniface.GameScreen
 }
 
 func (s ScreenSpell) TakeOverScreen(grid *grid.GameGrid, cleanupFunc func(), nextScreen screeniface.GameScreen, source, target logical.Vec) screeniface.GameScreen {
-	four := logical.V(4, 4)
-	mtarget := target.Multiply(four)
-	msource := source.Multiply(four)
-	anim := mtarget.Subtract(msource).Path()
-	for i, s := range anim {
-		anim[i] = msource.Add(s)
-	}
-	anim = append(anim, mtarget)
-	return &LightningSpellScreen{
-		Grid:        grid,
-		NextScreen:  nextScreen,
-		CleanupFunc: cleanupFunc,
-		Source:      source,
-		Target:      target,
-		Anim:        anim,
-		AnimCount:   -1,
-	}
+	return s.TakeOverFunc(grid, cleanupFunc, nextScreen, source, target)
 }
 
 func (s ScreenSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
@@ -55,6 +40,7 @@ type LightningSpellScreen struct {
 	Target      logical.Vec
 	Anim        []logical.Vec
 	AnimCount   int
+	Lightning   bool
 }
 
 func (screen *LightningSpellScreen) DrawBoard(ss pixel.Picture, win *pixelgl.Window) *pixel.Batch {
@@ -76,7 +62,13 @@ func (screen *LightningSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) 
 
 	color := render.GetColor(255, 255, 255)
 	sd := render.NewSpriteQuarterDrawer(ss).WithOffset(render.GameBoardV())
-	for i := 0; i < screen.AnimCount; i++ {
+	startAt := 0
+	if !screen.Lightning { // Magic bolt - lightning is a solid animation, bolt isn't
+		if screen.AnimCount > 1 {
+			startAt = screen.AnimCount - 1
+		}
+	}
+	for i := startAt; i < screen.AnimCount; i++ {
 		winPos := screen.Anim[i]
 		//fmt.Printf("Draw at %d %d\n", winPos.X, winPos.Y)
 		sd.DrawSpriteColor(logical.V(7, 25), winPos, color, batch)
@@ -95,23 +87,35 @@ func (screen *LightningSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) 
 }
 
 func init() {
+	lightningTakeOver := func(isLightning bool) func(grid *grid.GameGrid, cleanupFunc func(), nextScreen screeniface.GameScreen, source, target logical.Vec) screeniface.GameScreen {
+		return func(grid *grid.GameGrid, cleanupFunc func(), nextScreen screeniface.GameScreen, source, target logical.Vec) screeniface.GameScreen {
+			four := logical.V(4, 4)
+			mtarget := target.Multiply(four)
+			msource := source.Multiply(four)
+			anim := mtarget.Subtract(msource).Path()
+			for i, s := range anim {
+				anim[i] = msource.Add(s)
+			}
+			anim = append(anim, mtarget)
+			return &LightningSpellScreen{
+				Lightning:   isLightning,
+				Grid:        grid,
+				NextScreen:  nextScreen,
+				CleanupFunc: cleanupFunc,
+				Source:      source,
+				Target:      target,
+				Anim:        anim,
+				AnimCount:   -1,
+			}
+		}
+	}
 	spells.CreateSpell(ScreenSpell{
 		ASpell: spells.ASpell{ // Uses disbelive animation if it kills a thing. No corpse
 			Name:          "Lightning",
 			CastingChance: 100,
 			CastRange:     4,
 		},
-		/*MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
-			a, isAttackable := grid.GetGameObject(target).(movable.Attackable)
-			if !isAttackable {
-				return false, nil
-			}
-			if rand.Intn(9)+3 > a.GetDefence() {
-				fmt.Printf("Killed by lightning\n")
-				return true, nil
-			}
-			return true, nil
-		},*/
+		TakeOverFunc: lightningTakeOver(true),
 	})
 	spells.CreateSpell(ScreenSpell{
 		ASpell: spells.ASpell{ // as above, just less strong
@@ -119,8 +123,6 @@ func init() {
 			CastingChance: 100,
 			CastRange:     6,
 		},
-		/*MutateFunc: func(target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
-			return false, nil
-		},*/
+		TakeOverFunc: lightningTakeOver(false),
 	})
 }

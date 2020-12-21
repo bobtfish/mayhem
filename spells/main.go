@@ -137,7 +137,7 @@ func ChooseSpells() []Spell {
 	}
 	var thisSpell Spell
 	for i := 0; i < len(AllSpells); i++ {
-		if AllSpells[i].GetName() == "Lightning" {
+		if AllSpells[i].GetName() == "Magic Bolt" {
 			thisSpell = AllSpells[i]
 		}
 	}
