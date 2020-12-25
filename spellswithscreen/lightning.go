@@ -1,11 +1,15 @@
 package spellswithscreen
 
 import (
+	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/movable"
+	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
 	screens "github.com/bobtfish/mayhem/screen"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
@@ -17,11 +21,11 @@ import (
 
 type ScreenSpell struct {
 	spells.ASpell
-	TakeOverFunc func(*grid.GameGrid, func(), screeniface.GameScreen, logical.Vec, logical.Vec) screeniface.GameScreen
+	TakeOverFunc func(*grid.GameGrid, []*player.Player, func(), screeniface.GameScreen, logical.Vec, logical.Vec) screeniface.GameScreen
 }
 
-func (s ScreenSpell) TakeOverScreen(grid *grid.GameGrid, cleanupFunc func(), nextScreen screeniface.GameScreen, source, target logical.Vec) screeniface.GameScreen {
-	return s.TakeOverFunc(grid, cleanupFunc, nextScreen, source, target)
+func (s ScreenSpell) TakeOverScreen(grid *grid.GameGrid, players []*player.Player, cleanupFunc func(), nextScreen screeniface.GameScreen, source, target logical.Vec) screeniface.GameScreen {
+	return s.TakeOverFunc(grid, players, cleanupFunc, nextScreen, source, target)
 }
 
 func (s ScreenSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
@@ -41,6 +45,7 @@ type LightningSpellScreen struct {
 	Anim        []logical.Vec
 	AnimCount   int
 	Lightning   bool
+	Players     []*player.Player
 }
 
 func (screen *LightningSpellScreen) DrawBoard(ss pixel.Picture, win *pixelgl.Window) *pixel.Batch {
@@ -76,7 +81,25 @@ func (screen *LightningSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) 
 
 	batch.Draw(win)
 	if screen.AnimCount+1 == len(screen.Anim) {
-		// Do something?
+		ob := screen.Grid.GetGameObject(screen.Target)
+		a, isAttackable := ob.(movable.Attackable)
+		if isAttackable {
+			chance := rand.Intn(5) // Defence is 1-5 for a player
+			if screen.Lightning {
+				chance += 2
+			}
+			fmt.Printf("Chance %d > Defence %d\n", chance, a.GetDefence())
+			if chance > a.GetDefence() {
+				died := screen.Grid.GetGameObjectStack(screen.Target).RemoveTopObject()
+				if screens.KillIfPlayer(died, screen.Grid) {
+					if screens.WeHaveAWinner(screen.Players) {
+						return &screens.WinnerScreen{
+							Players: screen.Players,
+						}
+					}
+				}
+			}
+		}
 		screen.CleanupFunc()
 		return screen.NextScreen
 	}
@@ -87,8 +110,8 @@ func (screen *LightningSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) 
 }
 
 func init() {
-	lightningTakeOver := func(isLightning bool) func(grid *grid.GameGrid, cleanupFunc func(), nextScreen screeniface.GameScreen, source, target logical.Vec) screeniface.GameScreen {
-		return func(grid *grid.GameGrid, cleanupFunc func(), nextScreen screeniface.GameScreen, source, target logical.Vec) screeniface.GameScreen {
+	lightningTakeOver := func(isLightning bool) func(grid *grid.GameGrid, players []*player.Player, cleanupFunc func(), nextScreen screeniface.GameScreen, source, target logical.Vec) screeniface.GameScreen {
+		return func(grid *grid.GameGrid, players []*player.Player, cleanupFunc func(), nextScreen screeniface.GameScreen, source, target logical.Vec) screeniface.GameScreen {
 			four := logical.V(4, 4)
 			mtarget := target.Multiply(four)
 			msource := source.Multiply(four)
@@ -106,6 +129,7 @@ func init() {
 				Target:      target,
 				Anim:        anim,
 				AnimCount:   -1,
+				Players:     players,
 			}
 		}
 	}

@@ -13,7 +13,7 @@ import (
 )
 
 type WinnerScreen struct {
-	*WithBoard
+	Players []*player.Player
 }
 
 func (screen *WinnerScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
@@ -22,9 +22,9 @@ func (screen *WinnerScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	td.DrawText("  WE HAVE A WINNER", logical.V(0, 9), win)
 
 	var winner *player.Player
-	for i := 0; i < len(screen.WithBoard.Players); i++ {
-		if screen.WithBoard.Players[i].Alive {
-			winner = screen.WithBoard.Players[i]
+	for i := 0; i < len(screen.Players); i++ {
+		if screen.Players[i].Alive {
+			winner = screen.Players[i]
 			break
 		}
 	}

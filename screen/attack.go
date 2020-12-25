@@ -224,7 +224,7 @@ func PostSuccessfulAttack(target grid.GameObject, withBoard *WithBoard, canMakeC
 		if KillIfPlayer(died, withBoard.Grid) {
 			if WeHaveAWinner(withBoard.Players) {
 				return canMoveOnto, &WinnerScreen{
-					WithBoard: withBoard,
+					Players: withBoard.Players,
 				}
 			}
 		}
