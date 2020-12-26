@@ -3,7 +3,6 @@ package screen
 import (
 	"fmt"
 
-	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/grid"
@@ -18,7 +17,9 @@ type ExamineOneSpellScreen struct {
 	ReturnScreen screeniface.GameScreen
 }
 
-func (screen *ExamineOneSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *ExamineOneSpellScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	textBottom("   Press any key to continue", ss, win)
 	td := TextDrawer(ss)
@@ -26,7 +27,8 @@ func (screen *ExamineOneSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window
 	td.DrawText("FIXME add stuff per spell", logical.V(0, 7), win)
 }
 
-func (screen *ExamineOneSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *ExamineOneSpellScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
 	if win.Typed() != "" {
 		return screen.ReturnScreen
 	}
@@ -40,7 +42,9 @@ type SpellListScreen struct {
 	LawRating int
 }
 
-func (screen *SpellListScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *SpellListScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	textBottom("Press 0 to return to main menu", ss, win)
 	td := TextDrawer(ss)
@@ -68,11 +72,12 @@ type ExamineSpellsScreen struct {
 	SpellToExamine *spells.Spell
 }
 
-//func (screen *ExamineSpellsScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+//func (screen *ExamineSpellsScreen) Enter(ctx screeniface.GameCtx) {
 //	screen.SpellListScreen.Enter(ss, win)
 //}
 
-func (screen *ExamineSpellsScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *ExamineSpellsScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
 	c := captureNumKey(win)
 	if c == 0 {
 		return screen.MainMenu
@@ -94,11 +99,12 @@ type SelectSpellScreen struct {
 	SpellListScreen
 }
 
-//func (screen *SelectSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+//func (screen *SelectSpellScreen) Enter(ctx screeniface.GameCtx) {
 //	screen.SpellListScreen.Enter(ss, win)
 //}
 
-func (screen *SelectSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *SelectSpellScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
 	c := captureNumKey(win)
 	if c == 0 {
 		return screen.MainMenu
@@ -123,12 +129,15 @@ type IsIllusionScreen struct {
 	SpellListScreen
 }
 
-func (screen *IsIllusionScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *IsIllusionScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	textBottom("Illusion? (Press Y or N)", ss, win)
 	screen.Player.CastIllusion = false
 }
 
-func (screen *IsIllusionScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *IsIllusionScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
 	if win.JustPressed(pixelgl.KeyY) {
 		screen.Player.CastIllusion = true
 	}
@@ -146,7 +155,9 @@ type TurnMenuScreen struct {
 	LawRating int
 }
 
-func (screen *TurnMenuScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *TurnMenuScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	fmt.Printf("index %d\n", screen.PlayerIdx)
 	textBottom("      Press Keys 1 to 4", ss, win)
@@ -185,7 +196,8 @@ func lawRatingSymbolText(r int) string {
 	return string(ra)
 }
 
-func (screen *TurnMenuScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *TurnMenuScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
 	c := captureNumKey(win)
 	if c == 1 {
 		return &ExamineSpellsScreen{

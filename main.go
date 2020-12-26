@@ -11,14 +11,18 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/character"
+	"github.com/bobtfish/mayhem/game"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
 	"github.com/bobtfish/mayhem/screen"
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 
 	_ "github.com/bobtfish/mayhem/otherspells"
-	_ "github.com/bobtfish/mayhem/spellswithscreen"
 )
+
+//	_ "github.com/bobtfish/mayhem/spellswithscreen"
+//)
 
 func loadSpriteSheet() io.Reader {
 	data, err := base64.StdEncoding.DecodeString(sprite_sheet_base64)
@@ -39,7 +43,10 @@ func run() {
 	spriteReader := loadSpriteSheet()
 	ss := render.GetSpriteSheet(spriteReader)
 
-	gw := screen.NewGameWindow(ss)
+	gw := game.NewWindow(ss)
+	var s screeniface.GameScreen
+	s = &screen.InitialScreen{}
+	s.Enter(gw)
 
 	if *quickPtr {
 		fred := player.NewPlayer()
@@ -50,10 +57,10 @@ func run() {
 		bob.Name = "bob"
 		bob.CharacterIcon = logical.V(1, 23)
 		bob.Color = render.GetColor(255, 0, 255)
-		gw.Screen = &screen.StartMainGame{
+		s = &screen.StartMainGame{
 			Players: []*player.Player{&fred, &bob},
 		}
-		gw.Screen.Enter(gw.SpriteSheet, gw.Window)
+		s.Enter(gw)
 	}
 
 	//	players := getPlayers()
@@ -70,7 +77,7 @@ func run() {
 		//batch := grid.DrawBatch(sd)
 		//batch.Draw(gw.Window)
 
-		gw.Update()
+		s = gw.Update(s)
 
 		frames++
 		select {

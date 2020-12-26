@@ -3,7 +3,6 @@ package screen
 import (
 	"fmt"
 
-	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/character"
@@ -25,13 +24,15 @@ type RangedCombat struct {
 	DisplayRange    bool
 }
 
-func (screen *RangedCombat) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *RangedCombat) Enter(ctx screeniface.GameCtx) {
 	fmt.Printf("In ranged combat state\n")
 	screen.DisplayRange = true
 	screen.WithBoard.CursorSprite = CursorRangedAttack
 }
 
-func (screen *RangedCombat) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	attacker := screen.Character.(movable.Attackerable)
 	attackRange := attacker.GetAttackRange()
 	if attackRange == 0 || win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) { // No ranged combat
@@ -98,11 +99,13 @@ type DoRangedAttack struct {
 	Attacker        movable.Attackerable
 }
 
-func (screen *DoRangedAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *DoRangedAttack) Enter(ctx screeniface.GameCtx) {
 	fmt.Printf("Do ranged attack\n")
 }
 
-func (screen *DoRangedAttack) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *DoRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	target := screen.WithBoard.Grid.GetGameObject(screen.WithBoard.CursorPosition)
 	needPause := false
 	if !target.IsEmpty() {
@@ -149,12 +152,16 @@ type EngagedAttack struct {
 	ClearMsg        bool
 }
 
-func (screen *EngagedAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *EngagedAttack) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	fmt.Printf("In engaged attack state\n")
 	textBottom("Engaged to enemy", ss, win)
 }
 
-func (screen *EngagedAttack) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *EngagedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	if screen.ClearMsg {
 		textBottom("", ss, batch)
@@ -199,7 +206,7 @@ type DoAttack struct {
 	IsDismount      bool
 }
 
-func (screen *DoAttack) Enter(ss pixel.Picture, win *pixelgl.Window) {}
+func (screen *DoAttack) Enter(ctx screeniface.GameCtx) {}
 
 func PostSuccessfulAttack(target grid.GameObject, withBoard *WithBoard, canMakeCorpse bool) (bool, screeniface.GameScreen) {
 	canMoveOnto := true
@@ -240,7 +247,7 @@ func PostSuccessfulAttack(target grid.GameObject, withBoard *WithBoard, canMakeC
 	return canMoveOnto, nil
 }
 
-func (screen *DoAttack) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *DoAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	// Work out what happened. This is overly simple, but equivalent to what the original game does :)
 	defender := screen.WithBoard.Grid.GetGameObject(screen.DefenderV)
 	defenceRating := defender.(movable.Attackable).GetDefence() + rand.Intn(9)

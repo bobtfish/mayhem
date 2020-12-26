@@ -1,9 +1,6 @@
 package screen
 
 import (
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
-
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/player"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
@@ -15,14 +12,14 @@ type StartMainGame struct {
 }
 
 // Initialize stuff for the main game
-func (screen *StartMainGame) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *StartMainGame) Enter(ctx screeniface.GameCtx) {
 	screen.Grid = grid.MakeGameGrid(GridWidth, GridHeight)
 	for i, pos := range player.GetStartPositions(len(screen.Players)) {
 		screen.Grid.PlaceGameObject(pos, screen.Players[i])
 	}
 }
 
-func (screen *StartMainGame) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *StartMainGame) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	return &TurnMenuScreen{
 		Players: screen.Players,
 		Grid:    screen.Grid,

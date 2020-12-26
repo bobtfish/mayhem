@@ -4,8 +4,6 @@ import (
 	"fmt"
 
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 )
 
 type ExamineBoardScreen struct {
@@ -13,11 +11,15 @@ type ExamineBoardScreen struct {
 	*WithBoard
 }
 
-func (screen *ExamineBoardScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *ExamineBoardScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 }
 
-func (screen *ExamineBoardScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *ExamineBoardScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	screen.WithBoard.MoveAndDrawCursor(ss, win, batch)
 	batch.Draw(win)

@@ -1,7 +1,6 @@
 package screen
 
 import (
-	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/logical"
@@ -10,7 +9,9 @@ import (
 
 type HelpScreenMenu struct{}
 
-func (screen *HelpScreenMenu) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *HelpScreenMenu) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)
 	td.DrawText("         Help screen", logical.V(0, 9), win)
@@ -24,7 +25,8 @@ func (screen *HelpScreenMenu) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("Press Keys 1-6 or 0 to return", ss, win)
 }
 
-func (screen *HelpScreenMenu) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *HelpScreenMenu) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
 	if win.JustPressed(pixelgl.Key0) {
 		return &InitialScreen{}
 	}
@@ -52,7 +54,9 @@ func (screen *HelpScreenMenu) Step(ss pixel.Picture, win *pixelgl.Window) screen
 type HelpScreenKeys struct{}
 
 // nolint
-func (screen *HelpScreenKeys) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *HelpScreenKeys) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)
 	td.DrawText("              Keys", logical.V(0, 9), win)
@@ -67,7 +71,8 @@ func (screen *HelpScreenKeys) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("   Press any key to continue", ss, win)
 }
 
-func (screen *HelpScreenKeys) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *HelpScreenKeys) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
 	if win.Typed() != "" {
 		return &HelpScreenMenu{}
 	}
@@ -76,7 +81,9 @@ func (screen *HelpScreenKeys) Step(ss pixel.Picture, win *pixelgl.Window) screen
 
 type HelpScreenSpells struct{}
 
-func (screen *HelpScreenSpells) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *HelpScreenSpells) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)
 	td.DrawText("           Spells", logical.V(0, 9), win)
@@ -91,7 +98,8 @@ func (screen *HelpScreenSpells) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("   Press any key to continue", ss, win)
 }
 
-func (screen *HelpScreenSpells) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *HelpScreenSpells) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
 	if win.Typed() != "" {
 		return &HelpScreenMenu{}
 	}
@@ -100,7 +108,9 @@ func (screen *HelpScreenSpells) Step(ss pixel.Picture, win *pixelgl.Window) scre
 
 type HelpScreenCombat struct{}
 
-func (screen *HelpScreenCombat) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *HelpScreenCombat) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)
 	td.DrawText("           Combat", logical.V(0, 9), win)
@@ -115,7 +125,8 @@ func (screen *HelpScreenCombat) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("   Press any key to continue", ss, win)
 }
 
-func (screen *HelpScreenCombat) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *HelpScreenCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
 	if win.Typed() != "" {
 		return &HelpScreenCombatRanged{}
 	}
@@ -125,7 +136,9 @@ func (screen *HelpScreenCombat) Step(ss pixel.Picture, win *pixelgl.Window) scre
 type HelpScreenCombatRanged struct{}
 
 // nolint
-func (screen *HelpScreenCombatRanged) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *HelpScreenCombatRanged) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)
 	td.DrawText("        Ranged Combat", logical.V(0, 9), win)
@@ -141,7 +154,8 @@ func (screen *HelpScreenCombatRanged) Enter(ss pixel.Picture, win *pixelgl.Windo
 	textBottom("   Press any key to continue", ss, win)
 }
 
-func (screen *HelpScreenCombatRanged) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *HelpScreenCombatRanged) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
 	if win.Typed() != "" {
 		return &HelpScreenMenu{}
 	}
@@ -150,7 +164,9 @@ func (screen *HelpScreenCombatRanged) Step(ss pixel.Picture, win *pixelgl.Window
 
 type HelpScreenUndead struct{}
 
-func (screen *HelpScreenUndead) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *HelpScreenUndead) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)
 	td.DrawText("           Undead", logical.V(0, 9), win)
@@ -165,7 +181,8 @@ func (screen *HelpScreenUndead) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("   Press any key to continue", ss, win)
 }
 
-func (screen *HelpScreenUndead) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *HelpScreenUndead) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
 	if win.Typed() != "" {
 		return &HelpScreenMenu{}
 	}
@@ -175,7 +192,9 @@ func (screen *HelpScreenUndead) Step(ss pixel.Picture, win *pixelgl.Window) scre
 type HelpScreenMounts struct{}
 
 // nolint
-func (screen *HelpScreenMounts) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *HelpScreenMounts) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)
 	td.DrawText("           Mounts", logical.V(0, 9), win)
@@ -191,7 +210,8 @@ func (screen *HelpScreenMounts) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("   Press any key to continue", ss, win)
 }
 
-func (screen *HelpScreenMounts) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *HelpScreenMounts) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
 	if win.Typed() != "" {
 		return &HelpScreenMenu{}
 	}
@@ -200,7 +220,9 @@ func (screen *HelpScreenMounts) Step(ss pixel.Picture, win *pixelgl.Window) scre
 
 type HelpScreenVictory struct{}
 
-func (screen *HelpScreenVictory) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *HelpScreenVictory) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)
 	td.DrawText("          Victory", logical.V(0, 9), win)
@@ -213,7 +235,8 @@ func (screen *HelpScreenVictory) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("   Press any key to continue", ss, win)
 }
 
-func (screen *HelpScreenVictory) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *HelpScreenVictory) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
 	if win.Typed() != "" {
 		return &HelpScreenMenu{}
 	}

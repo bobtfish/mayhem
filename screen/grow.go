@@ -3,9 +3,6 @@ package screen
 import (
 	"fmt"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
-
 	"github.com/bobtfish/mayhem/character"
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/logical"
@@ -47,11 +44,15 @@ type GrowScreen struct {
 	Grew     bool
 }
 
-func (screen *GrowScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *GrowScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 }
 
-func (screen *GrowScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *GrowScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	batch.Draw(win)
 

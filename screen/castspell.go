@@ -3,7 +3,6 @@ package screen
 import (
 	"fmt"
 
-	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/fx"
@@ -41,7 +40,9 @@ type DisplaySpellCastScreen struct {
 	PlayerIdx int
 }
 
-func (screen *DisplaySpellCastScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *DisplaySpellCastScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	thisPlayer := screen.Players[screen.PlayerIdx]
 	screen.WithBoard.CursorPosition = thisPlayer.BoardPosition
@@ -53,7 +54,8 @@ func (screen *DisplaySpellCastScreen) Enter(ss pixel.Picture, win *pixelgl.Windo
 	}
 }
 
-func (screen *DisplaySpellCastScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *DisplaySpellCastScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
 	thisPlayer := screen.Players[screen.PlayerIdx]
 	if (thisPlayer.ChosenSpell < 0) || win.JustPressed(pixelgl.Key0) {
 		return NextSpellCastOrMove(screen.PlayerIdx, screen.WithBoard, true)
@@ -78,11 +80,15 @@ type TargetSpellScreen struct {
 	CastBefore     bool
 }
 
-func (screen *TargetSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *TargetSpellScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	textBottom("", ss, win) // clear bottom bar
 }
 
-func (screen *TargetSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *TargetSpellScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	thisPlayer := screen.Players[screen.PlayerIdx]
 	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
 	batch := screen.WithBoard.DrawBoard(ss, win)
@@ -152,10 +158,12 @@ type DoSpellCast struct {
 	CastBefore     bool
 }
 
-func (screen *DoSpellCast) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *DoSpellCast) Enter(ctx screeniface.GameCtx) {
 }
 
-func (screen *DoSpellCast) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	castsRemaining := screen.CastsRemaining - 1
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	// Fx for spell cast finished

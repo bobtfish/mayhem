@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
-
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
@@ -16,7 +13,9 @@ type WinnerScreen struct {
 	Players []*player.Player
 }
 
-func (screen *WinnerScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *WinnerScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)
 	td.DrawText("  WE HAVE A WINNER", logical.V(0, 9), win)
@@ -32,7 +31,8 @@ func (screen *WinnerScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	td.DrawText(fmt.Sprintf("%s%s", strings.Repeat(" ", spaceLen), winner.Name), logical.V(0, 8), win)
 }
 
-func (screen *WinnerScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *WinnerScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
 	if win.Typed() != "" {
 		return &InitialScreen{}
 	}

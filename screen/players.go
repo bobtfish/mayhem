@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"image/color"
 
-	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/logical"
@@ -25,7 +24,9 @@ type PlayerNameScreen struct {
 	PlayersScreen
 }
 
-func (screen *PlayerNameScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *PlayerNameScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	if screen.Players == nil {
 		screen.Players = make([]*player.Player, 0)
@@ -36,7 +37,9 @@ func (screen *PlayerNameScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	td.DrawText("Enter name (12 letters max.)", logical.V(0, 8), win)
 }
 
-func (screen *PlayerNameScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *PlayerNameScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	if win.JustPressed(pixelgl.KeyEnter) && len(screen.CurrentPlayer.Name) > 0 {
 		return &PlayerAIScreen{PlayersScreen: screen.PlayersScreen}
 	}
@@ -59,11 +62,15 @@ type PlayerAIScreen struct {
 	PlayersScreen
 }
 
-func (screen *PlayerAIScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *PlayerAIScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	TextDrawer(ss).DrawText("Computer controlled?", logical.V(0, 5), win)
 }
 
-func (screen *PlayerAIScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *PlayerAIScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	td := TextDrawer(ss)
 	if win.JustPressed(pixelgl.KeyY) || win.JustPressed(pixelgl.KeyN) {
 		if win.JustPressed(pixelgl.KeyY) {
@@ -82,7 +89,9 @@ type PlayerIconScreen struct {
 	PlayersScreen
 }
 
-func (screen *PlayerIconScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *PlayerIconScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	td := TextDrawer(ss)
 	sd := SpriteDrawer(ss)
 	td.DrawText("Which character?", logical.V(0, 4), win)
@@ -93,7 +102,9 @@ func (screen *PlayerIconScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	}
 }
 
-func (screen *PlayerIconScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *PlayerIconScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	c := captureNumKey(win)
 	if c >= 1 && c <= 8 {
 		screen.CurrentPlayer.CharacterIcon = logical.V(c-1, 23)
@@ -123,7 +134,9 @@ func characterColorChoices() []color.Color {
 	}
 }
 
-func (screen *PlayerColorScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *PlayerColorScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	td := TextDrawer(ss)
 	sd := SpriteDrawer(ss)
 	td.DrawText("Which color?", logical.V(0, 2), win)
@@ -135,7 +148,9 @@ func (screen *PlayerColorScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	}
 }
 
-func (screen *PlayerColorScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *PlayerColorScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	td := TextDrawer(ss)
 	sd := SpriteDrawer(ss)
 	c := captureNumKey(win)

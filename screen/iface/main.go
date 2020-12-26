@@ -6,6 +6,11 @@ import (
 )
 
 type GameScreen interface {
-	Enter(pixel.Picture, *pixelgl.Window)
-	Step(pixel.Picture, *pixelgl.Window) GameScreen
+	Enter(GameCtx)
+	Step(GameCtx) GameScreen
+}
+
+type GameCtx interface {
+	GetWindow() *pixelgl.Window
+	GetSpriteSheet() pixel.Picture
 }

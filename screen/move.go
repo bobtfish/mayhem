@@ -3,7 +3,6 @@ package screen
 import (
 	"fmt"
 
-	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/character"
@@ -20,12 +19,16 @@ type MoveAnnounceScreen struct {
 	PlayerIdx int
 }
 
-func (screen *MoveAnnounceScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *MoveAnnounceScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	screen.WithBoard.CursorPosition = screen.Players[screen.PlayerIdx].BoardPosition
 }
 
-func (screen *MoveAnnounceScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *MoveAnnounceScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	textBottom(fmt.Sprintf("%s's turn", screen.Players[screen.PlayerIdx].Name), ss, batch)
 	batch.Draw(win)
@@ -51,7 +54,9 @@ type MoveFindCharacterScreen struct {
 	MovedCharacters map[movable.Movable]bool
 }
 
-func (screen *MoveFindCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *MoveFindCharacterScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	screen.WithBoard.CursorSprite = CursorBox
 	if screen.MovedCharacters == nil {
@@ -60,7 +65,9 @@ func (screen *MoveFindCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Wind
 	fmt.Printf("Enter move find character screen for player %d\n", screen.PlayerIdx+1)
 }
 
-func (screen *MoveFindCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *MoveFindCharacterScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	screen.WithBoard.DrawCursor(ss, batch)
 	screen.WithBoard.MoveCursor(win)
@@ -147,9 +154,11 @@ type MaybeDismount struct {
 	Character       movable.Movable
 }
 
-func (screen *MaybeDismount) Enter(ss pixel.Picture, win *pixelgl.Window) {}
+func (screen *MaybeDismount) Enter(ctx screeniface.GameCtx) {}
 
-func (screen *MaybeDismount) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *MaybeDismount) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	isStaticCharacter := false
 	if screen.Character.GetMovement() == 0 { // Magic castle / dark citadel
@@ -227,12 +236,16 @@ type MoveGroundCharacterScreen struct {
 	IsDismount      bool
 }
 
-func (screen *MoveGroundCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *MoveGroundCharacterScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	fmt.Printf("Enter move ground character screen for player %d\n", screen.PlayerIdx+1)
 }
 
-func (screen *MoveGroundCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *MoveGroundCharacterScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	textBottom(fmt.Sprintf("Movement range=%d", screen.MovementLeft), ss, batch)
 
@@ -460,7 +473,9 @@ type MoveFlyingCharacterScreen struct {
 	IsDismount      bool
 }
 
-func (screen *MoveFlyingCharacterScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *MoveFlyingCharacterScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	screen.WithBoard.CursorSprite = CursorFly
 	fmt.Printf("Enter move flying character screen for player %d\n", screen.PlayerIdx+1)
@@ -474,7 +489,9 @@ type MoveStatus struct {
 	MountMove           bool
 }
 
-func (screen *MoveFlyingCharacterScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *MoveFlyingCharacterScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	batch := screen.WithBoard.DrawBoard(ss, win)
 	if screen.DisplayRange {
 		textBottom(fmt.Sprintf("Movement range=%d (flying)", screen.Character.GetMovement()), ss, batch)

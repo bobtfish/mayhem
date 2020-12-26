@@ -3,7 +3,6 @@ package screen
 import (
 	"fmt"
 
-	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/logical"
@@ -15,7 +14,9 @@ type ComputerDifficultyScreen struct {
 	WizardCount int
 }
 
-func (screen *InitialScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *InitialScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)
 	td.DrawText("  MAYHEM - Remake of Chaos", logical.V(0, 9), win)
@@ -25,7 +26,9 @@ func (screen *InitialScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
 	textBottom("       Press H for help", ss, win)
 }
 
-func (screen *InitialScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *InitialScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	if win.JustPressed(pixelgl.KeyH) {
 		return &HelpScreenMenu{}
 	}
@@ -42,13 +45,17 @@ func (screen *InitialScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeni
 	return screen
 }
 
-func (screen *ComputerDifficultyScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *ComputerDifficultyScreen) Enter(ctx screeniface.GameCtx) {
+	win := ctx.GetWindow()
+	ss := ctx.GetSpriteSheet()
 	td := TextDrawer(ss)
 	td.DrawText("Level of computer wizards?", logical.V(0, 3), win)
 	td.DrawText("(Press 1 to 8)", logical.V(0, 2), win)
 }
 
-func (screen *ComputerDifficultyScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
+func (screen *ComputerDifficultyScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	ss := ctx.GetSpriteSheet()
+	win := ctx.GetWindow()
 	c := captureNumKey(win)
 	if c >= 1 && c <= 8 {
 		TextDrawer(ss).DrawText(fmt.Sprintf("%d", c), logical.V(27, 3), win)
