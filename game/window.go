@@ -1,29 +1,41 @@
 package game
 
 import (
+	"github.com/bobtfish/mayhem/grid"
+	"github.com/bobtfish/mayhem/player"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 )
 
-type GameWindow struct {
+type Window struct {
 	Window      *pixelgl.Window
 	SpriteSheet pixel.Picture
+	Grid        *grid.GameGrid
+	Players     []*player.Player
 }
 
-func (gw *GameWindow) GetWindow() *pixelgl.Window {
+func (gw *Window) GetWindow() *pixelgl.Window {
 	return gw.Window
 }
 
-func (gw *GameWindow) GetSpriteSheet() pixel.Picture {
+func (gw *Window) GetSpriteSheet() pixel.Picture {
 	return gw.SpriteSheet
 }
 
-func (gw *GameWindow) Closed() bool {
+func (gw *Window) AddPlayer(p player.Player) {
+	gw.Players = append(gw.Players, &p)
+}
+
+func (gw *Window) GetPlayers() []*player.Player {
+	return gw.Players
+}
+
+func (gw *Window) Closed() bool {
 	return gw.Window.Closed()
 }
 
-func (gw *GameWindow) Update(screen screeniface.GameScreen) screeniface.GameScreen {
+func (gw *Window) Update(screen screeniface.GameScreen) screeniface.GameScreen {
 	newScreen := screen.Step(gw)
 	gw.Window.Update()
 	if newScreen != screen {
@@ -33,7 +45,7 @@ func (gw *GameWindow) Update(screen screeniface.GameScreen) screeniface.GameScre
 	return screen
 }
 
-func NewWindow(ss pixel.Picture) *GameWindow {
+func NewWindow(ss pixel.Picture) *Window {
 	title := "Mayhem!"
 
 	cfg := pixelgl.WindowConfig{
@@ -46,8 +58,9 @@ func NewWindow(ss pixel.Picture) *GameWindow {
 		panic(err)
 	}
 
-	return &GameWindow{
+	return &Window{
 		Window:      win,
 		SpriteSheet: ss,
+		Players:     make([]*player.Player, 0),
 	}
 }

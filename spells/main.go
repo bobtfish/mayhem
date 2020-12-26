@@ -104,6 +104,9 @@ func (s ASpell) NeedsLineOfSight() bool {
 }
 
 func LawRatingSymbol(s Spell) string {
+	if s == nil {
+		panic("nil spell")
+	}
 	if s.GetLawRating() == 0 {
 		return "-"
 	}
@@ -135,13 +138,12 @@ func ChooseSpells() []Spell {
 		idx := rand.Intn(len(AllSpells)-1) + 1
 		spells[i] = AllSpells[idx]
 	}
-	var thisSpell Spell
-	for i := 0; i < len(AllSpells); i++ {
-		if AllSpells[i].GetName() == "Magic Bolt" {
-			thisSpell = AllSpells[i]
-		}
-	}
-	spells[1] = thisSpell
+	/*
+		for i := 0; i < len(AllSpells); i++ {
+			if AllSpells[i].GetName() == "Magic Bolt" {
+				spells[1] = AllSpells[i]
+			}
+		}*/
 	return spells
 }
 

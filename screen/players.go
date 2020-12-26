@@ -6,6 +6,7 @@ import (
 
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/bobtfish/mayhem/game"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
@@ -16,7 +17,6 @@ type PlayersScreen struct {
 	WizardCount        int
 	ComputerDifficulty int
 
-	Players       []*player.Player
 	CurrentPlayer player.Player
 }
 
@@ -28,9 +28,6 @@ func (screen *PlayerNameScreen) Enter(ctx screeniface.GameCtx) {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
-	if screen.Players == nil {
-		screen.Players = make([]*player.Player, 0)
-	}
 	screen.CurrentPlayer = player.NewPlayer()
 	td := TextDrawer(ss)
 	td.DrawText(fmt.Sprintf("PLAYER %d", screen.WizardCount), logical.V(0, 9), win)
@@ -160,14 +157,13 @@ func (screen *PlayerColorScreen) Step(ctx screeniface.GameCtx) screeniface.GameS
 		offset := sd.WinOffsetV.Add(logical.V(render.CharPixels/4, 0))
 		sd.WithOffset(offset).DrawSpriteColor(screen.CurrentPlayer.CharacterIcon, logical.V(7, 2), colors[c-1], win)
 		screen.CurrentPlayer.Color = colors[c-1]
-		newPlayer := screen.CurrentPlayer
-		screen.Players = append(screen.Players, &newPlayer)
+		ctx.(*game.Window).AddPlayer(screen.CurrentPlayer)
 		screen.CurrentPlayer = player.NewPlayer()
-		if len(screen.Players) == screen.WizardCount {
+		if len(ctx.(*game.Window).GetPlayers()) == screen.WizardCount {
 			// FIXME do something with ComputerDifficulty here
 
 			return &StartMainGame{
-				Players: screen.Players,
+				Players: ctx.(*game.Window).GetPlayers(),
 			}
 		}
 		return &PlayerNameScreen{PlayersScreen: screen.PlayersScreen}
