@@ -57,9 +57,9 @@ func run() {
 		bob.Name = "bob"
 		bob.CharacterIcon = logical.V(1, 23)
 		bob.Color = render.GetColor(255, 0, 255)
-		s = &screen.StartMainGame{
-			Players: []*player.Player{&fred, &bob},
-		}
+		gw.AddPlayer(fred)
+		gw.AddPlayer(bob)
+		s = &screen.StartMainGame{}
 		s.Enter(gw)
 	}
 

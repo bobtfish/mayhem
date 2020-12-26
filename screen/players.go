@@ -162,9 +162,7 @@ func (screen *PlayerColorScreen) Step(ctx screeniface.GameCtx) screeniface.GameS
 		if len(ctx.(*game.Window).GetPlayers()) == screen.WizardCount {
 			// FIXME do something with ComputerDifficulty here
 
-			return &StartMainGame{
-				Players: ctx.(*game.Window).GetPlayers(),
-			}
+			return &StartMainGame{}
 		}
 		return &PlayerNameScreen{PlayersScreen: screen.PlayersScreen}
 	}

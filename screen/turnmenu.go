@@ -5,7 +5,7 @@ import (
 
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/bobtfish/mayhem/grid"
+	"github.com/bobtfish/mayhem/game"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
@@ -149,20 +149,19 @@ func (screen *IsIllusionScreen) Step(ctx screeniface.GameCtx) screeniface.GameSc
 
 // Begin main turn menu screen
 type TurnMenuScreen struct {
-	Players   []*player.Player
 	PlayerIdx int
-	Grid      *grid.GameGrid
 	LawRating int
 }
 
 func (screen *TurnMenuScreen) Enter(ctx screeniface.GameCtx) {
+	players := ctx.(*game.Window).GetPlayers()
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	fmt.Printf("index %d\n", screen.PlayerIdx)
 	textBottom("      Press Keys 1 to 4", ss, win)
 	td := TextDrawer(ss)
-	td.DrawText(screen.Players[screen.PlayerIdx].Name, logical.V(3, 7), win)
+	td.DrawText(players[screen.PlayerIdx].Name, logical.V(3, 7), win)
 	td.DrawText(lawRatingText(screen.LawRating), logical.V(3, 6), win)
 	td.DrawText("1. Examine Spells", logical.V(3, 5), win)
 	td.DrawText("2. Select Spell", logical.V(3, 4), win)
@@ -199,12 +198,14 @@ func lawRatingSymbolText(r int) string {
 func (screen *TurnMenuScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	c := captureNumKey(win)
+	players := ctx.(*game.Window).GetPlayers()
+	grid := ctx.GetGrid()
 	if c == 1 {
 		return &ExamineSpellsScreen{
 			SpellListScreen: SpellListScreen{
 				LawRating: screen.LawRating,
 				MainMenu:  screen,
-				Player:    screen.Players[screen.PlayerIdx],
+				Player:    players[screen.PlayerIdx],
 			},
 		}
 	}
@@ -213,7 +214,7 @@ func (screen *TurnMenuScreen) Step(ctx screeniface.GameCtx) screeniface.GameScre
 			SpellListScreen: SpellListScreen{
 				LawRating: screen.LawRating,
 				MainMenu:  screen,
-				Player:    screen.Players[screen.PlayerIdx],
+				Player:    players[screen.PlayerIdx],
 			},
 		}
 	}
@@ -221,25 +222,23 @@ func (screen *TurnMenuScreen) Step(ctx screeniface.GameCtx) screeniface.GameScre
 		return &ExamineBoardScreen{
 			MainMenu: screen,
 			WithBoard: &WithBoard{
-				Grid:    screen.Grid,
-				Players: screen.Players,
+				Grid:    grid,
+				Players: players,
 			},
 		}
 	}
 	if c == 4 {
-		if len(screen.Players) == screen.PlayerIdx+1 {
+		if len(players) == screen.PlayerIdx+1 {
 			return &DisplaySpellCastScreen{
 				WithBoard: &WithBoard{
-					Grid:      screen.Grid,
-					Players:   screen.Players,
+					Grid:      grid,
+					Players:   players,
 					LawRating: screen.LawRating,
 				},
 			}
 		}
 		return &TurnMenuScreen{
-			Players:   screen.Players,
 			PlayerIdx: screen.PlayerIdx + 1,
-			Grid:      screen.Grid,
 			LawRating: screen.LawRating,
 		}
 	}

@@ -31,6 +31,10 @@ func (gw *Window) GetPlayers() []*player.Player {
 	return gw.Players
 }
 
+func (gw *Window) GetGrid() *grid.GameGrid {
+	return gw.Grid
+}
+
 func (gw *Window) Closed() bool {
 	return gw.Window.Closed()
 }
@@ -57,10 +61,12 @@ func NewWindow(ss pixel.Picture) *Window {
 	if err != nil {
 		panic(err)
 	}
+	grid := grid.MakeGameGrid(GridWidth, GridHeight)
 
 	return &Window{
 		Window:      win,
 		SpriteSheet: ss,
+		Grid:        grid,
 		Players:     make([]*player.Player, 0),
 	}
 }

@@ -5,9 +5,6 @@ import (
 	"github.com/bobtfish/mayhem/render"
 )
 
-const GridWidth = 15
-const GridHeight = 10
-
 const CursorSpell = 0
 const CursorBox = 1
 const CursorFly = 2
