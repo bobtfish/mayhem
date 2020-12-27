@@ -5,20 +5,17 @@ import (
 	"time"
 
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/bobtfish/mayhem/grid"
+	"github.com/bobtfish/mayhem/game"
 	"github.com/bobtfish/mayhem/logical"
-	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
 type WithBoard struct {
 	CursorPosition  logical.Vec
 	CursorShow      bool
 	CursorFlashTime time.Time
-	Grid            *grid.GameGrid
-	Players         []*player.Player
 	CursorSprite    int // Defaults to CursorSpell
 	LawRating       int
 }
@@ -36,28 +33,34 @@ func (screen *WithBoard) ShouldIDrawCursor() bool {
 	return screen.CursorShow
 }
 
-func (screen *WithBoard) DrawBoard(ss pixel.Picture, win *pixelgl.Window) *pixel.Batch {
+func (screen *WithBoard) DrawBoard(ctx screeniface.GameCtx) *pixel.Batch {
+	ss := ctx.GetSpriteSheet()
 	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
-	return screen.Grid.DrawBatch(sd)
+	return ctx.GetGrid().DrawBatch(sd)
 }
 
-func (screen *WithBoard) MoveCursor(win *pixelgl.Window) bool {
+func (screen *WithBoard) MoveCursor(ctx screeniface.GameCtx) bool {
+	win := ctx.GetWindow()
+	grid := ctx.GetGrid()
+	players := ctx.(*game.Window).GetPlayers()
 	c := captureNumKey(win)
-	if c > 0 && c <= len(screen.Players) {
+	if c > 0 && c <= len(players) {
 		fmt.Printf("Flash player %d characters\n", c)
 	}
 	v := captureDirectionKey(win)
 	if !v.Equals(logical.ZeroVec()) {
 		fmt.Printf("Move cursor V(%d, %d)\n", v.X, v.Y)
-		screen.CursorPosition = screen.Grid.AsRect().Clamp(screen.CursorPosition.Add(v))
+		screen.CursorPosition = grid.AsRect().Clamp(screen.CursorPosition.Add(v))
 		return true
 	}
 	return false
 }
 
-func (screen *WithBoard) DrawCursor(ss pixel.Picture, batch pixel.Target) {
+func (screen *WithBoard) DrawCursor(ctx screeniface.GameCtx, batch pixel.Target) {
+	ss := ctx.GetSpriteSheet()
+	grid := ctx.GetGrid()
 	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
-	objectAtCursor := screen.Grid.GetGameObject(screen.CursorPosition)
+	objectAtCursor := grid.GetGameObject(screen.CursorPosition)
 	cursorColor := render.GetColor(0, 255, 255)
 	if !objectAtCursor.IsEmpty() {
 		cursorColor = objectAtCursor.GetColor()
@@ -69,7 +72,7 @@ func (screen *WithBoard) DrawCursor(ss pixel.Picture, batch pixel.Target) {
 	}
 }
 
-func (screen *WithBoard) MoveAndDrawCursor(ss pixel.Picture, win *pixelgl.Window, batch pixel.Target) {
-	screen.MoveCursor(win)
-	screen.DrawCursor(ss, batch)
+func (screen *WithBoard) MoveAndDrawCursor(ctx screeniface.GameCtx, batch pixel.Target) {
+	screen.MoveCursor(ctx)
+	screen.DrawCursor(ctx, batch)
 }

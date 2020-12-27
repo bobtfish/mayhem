@@ -5,6 +5,7 @@ import (
 
 	"github.com/bobtfish/mayhem/character"
 	"github.com/bobtfish/mayhem/fx"
+	"github.com/bobtfish/mayhem/game"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/rand"
@@ -52,17 +53,16 @@ func (screen *GrowScreen) Enter(ctx screeniface.GameCtx) {
 
 func (screen *GrowScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
-	ss := ctx.GetSpriteSheet()
-	batch := screen.WithBoard.DrawBoard(ss, win)
+	players := ctx.(*game.Window).GetPlayers()
+	batch := screen.WithBoard.DrawBoard(ctx)
 	batch.Draw(win)
 
-	screen.IterateGrowVanish()
+	screen.IterateGrowVanish(ctx)
 
-	firstAlivePlayerIdx := NextPlayerIdx(-1, screen.WithBoard.Players)
+	firstAlivePlayerIdx := NextPlayerIdx(-1, players)
 	fmt.Printf("First alive player index %d\n", firstAlivePlayerIdx)
 	nextScreen := &Pause{
 		Skip: !screen.Grew,
-		Grid: screen.WithBoard.Grid,
 		NextScreen: &TurnMenuScreen{
 			PlayerIdx: firstAlivePlayerIdx,
 			LawRating: screen.WithBoard.LawRating,
@@ -70,17 +70,17 @@ func (screen *GrowScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	}
 
 	return &WaitForFx{
-		Grid:       screen.WithBoard.Grid,
 		Fx:         screen.Fx,
 		NextScreen: nextScreen,
 	}
 }
 
 // FIXME - lots of puke worthy type casting in here, should not need this special casing really....
-func (screen *GrowScreen) IterateGrowVanish() {
-	for screen.Consider.X < screen.WithBoard.Grid.MaxX() && screen.Consider.Y < screen.WithBoard.Grid.MaxY() {
+func (screen *GrowScreen) IterateGrowVanish(ctx screeniface.GameCtx) {
+	grid := ctx.GetGrid()
+	for screen.Consider.X < grid.MaxX() && screen.Consider.Y < grid.MaxY() {
 		// If the current tile contains a character
-		char, ok := screen.WithBoard.Grid.GetGameObject(screen.Consider).(*character.Character)
+		char, ok := grid.GetGameObject(screen.Consider).(*character.Character)
 		if ok {
 			for name, replace := range growable {
 				// If we're a special growable character (blob or fire)
@@ -89,12 +89,12 @@ func (screen *GrowScreen) IterateGrowVanish() {
 					if doesItGrow() {
 						adjIdx := 0
 						adjNew := false
-						adj := screen.WithBoard.Grid.AsRect().Adjacents(screen.Consider)
+						adj := grid.AsRect().Adjacents(screen.Consider)
 						rand.Shuffle(len(adj), func(i, j int) { adj[i], adj[j] = adj[j], adj[i] })
 
 						// Try to grow into an uncovered square
 						for !adjNew && adjIdx < len(adj) {
-							adjChar, isChar := screen.WithBoard.Grid.GetGameObject(adj[adjIdx]).(*character.Character)
+							adjChar, isChar := grid.GetGameObject(adj[adjIdx]).(*character.Character)
 							if isChar && adjChar.Name == char.Name {
 								adjIdx++
 							} else {
@@ -109,7 +109,7 @@ func (screen *GrowScreen) IterateGrowVanish() {
 
 						// Never grow to cover a player, if we try to do that just skip the grow
 						// FIXME - should be able to grow onto players who didn't cast it
-						currentObj := screen.WithBoard.Grid.GetGameObject(adj[adjIdx])
+						currentObj := grid.GetGameObject(adj[adjIdx])
 						_, isPlayer := currentObj.(*player.Player)
 						if isPlayer {
 							break
@@ -119,15 +119,15 @@ func (screen *GrowScreen) IterateGrowVanish() {
 						c.BoardPosition = adj[adjIdx]
 						// FIXME - growable objects should always replace each other, so blob doesn't cover fire, it removes it
 						if replace { // Fire burns things - remove everything already stacked
-							removedObject := screen.WithBoard.Grid.GetGameObjectStack(adj[adjIdx]).RemoveTopObject()
+							removedObject := grid.GetGameObjectStack(adj[adjIdx]).RemoveTopObject()
 							for removedObject != nil {
-								removedObject = screen.WithBoard.Grid.GetGameObjectStack(adj[adjIdx]).RemoveTopObject()
+								removedObject = grid.GetGameObjectStack(adj[adjIdx]).RemoveTopObject()
 							}
 						}
-						screen.WithBoard.Grid.PlaceGameObject(adj[adjIdx], c)
+						grid.PlaceGameObject(adj[adjIdx], c)
 						screen.Grew = true
 					} else if doesItVanish() {
-						screen.WithBoard.Grid.GetGameObjectStack(screen.Consider).RemoveTopObject()
+						grid.GetGameObjectStack(screen.Consider).RemoveTopObject()
 						screen.Grew = true
 					}
 					// Don't bother to check if we're another character type, we already matched
@@ -139,11 +139,11 @@ func (screen *GrowScreen) IterateGrowVanish() {
 				if name == char.Name {
 					if char.CarryingPlayer && rand.Intn(9)+1 <= 2 { // 20% chance
 						screen.Grew = true
-						screen.WithBoard.Grid.GetGameObjectStack(screen.Consider).RemoveTopObject()
-						screen.WithBoard.Grid.PlaceGameObject(screen.Consider, char.BelongsTo) // Put the wizard back down
+						grid.GetGameObjectStack(screen.Consider).RemoveTopObject()
+						grid.PlaceGameObject(screen.Consider, char.BelongsTo) // Put the wizard back down
 						f := fx.Disbelieve()
 						screen.Fx = f
-						screen.WithBoard.Grid.PlaceGameObject(screen.Consider, f) // Also put a nice animation down
+						grid.PlaceGameObject(screen.Consider, f) // Also put a nice animation down
 					}
 				}
 			}
@@ -151,7 +151,7 @@ func (screen *GrowScreen) IterateGrowVanish() {
 
 		// Bump tile counter
 		screen.Consider.X++
-		if screen.Consider.X == screen.WithBoard.Grid.MaxX() {
+		if screen.Consider.X == grid.MaxX() {
 			screen.Consider.X = 0
 			screen.Consider.Y++
 		}

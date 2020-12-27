@@ -7,6 +7,7 @@ import (
 
 	"github.com/bobtfish/mayhem/character"
 	"github.com/bobtfish/mayhem/fx"
+	"github.com/bobtfish/mayhem/game"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
@@ -23,19 +24,21 @@ func (screen *MoveAnnounceScreen) Enter(ctx screeniface.GameCtx) {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
-	screen.WithBoard.CursorPosition = screen.Players[screen.PlayerIdx].BoardPosition
+	players := ctx.(*game.Window).GetPlayers()
+	screen.WithBoard.CursorPosition = players[screen.PlayerIdx].BoardPosition
 }
 
 func (screen *MoveAnnounceScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
-	batch := screen.WithBoard.DrawBoard(ss, win)
-	textBottom(fmt.Sprintf("%s's turn", screen.Players[screen.PlayerIdx].Name), ss, batch)
+	players := ctx.(*game.Window).GetPlayers()
+	batch := screen.WithBoard.DrawBoard(ctx)
+	textBottom(fmt.Sprintf("%s's turn", players[screen.PlayerIdx].Name), ss, batch)
 	batch.Draw(win)
 
 	// 0 skips movement turn
 	if win.JustPressed(pixelgl.Key0) {
-		return NextPlayerMove(screen.PlayerIdx, screen.Players, screen.WithBoard)
+		return NextPlayerMove(screen.PlayerIdx, players, ctx)
 	}
 
 	// any other key displays the cursor
@@ -67,21 +70,22 @@ func (screen *MoveFindCharacterScreen) Enter(ctx screeniface.GameCtx) {
 
 func (screen *MoveFindCharacterScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
-	ss := ctx.GetSpriteSheet()
-	batch := screen.WithBoard.DrawBoard(ss, win)
-	screen.WithBoard.DrawCursor(ss, batch)
-	screen.WithBoard.MoveCursor(win)
+	grid := ctx.GetGrid()
+	players := ctx.(*game.Window).GetPlayers()
+	batch := screen.WithBoard.DrawBoard(ctx)
+	screen.WithBoard.DrawCursor(ctx, batch)
+	screen.WithBoard.MoveCursor(ctx)
 	batch.Draw(win)
 
 	if win.JustPressed(pixelgl.Key0) {
-		return NextPlayerMove(screen.PlayerIdx, screen.Players, screen.WithBoard)
+		return NextPlayerMove(screen.PlayerIdx, players, ctx)
 	}
 	if win.JustPressed(pixelgl.KeyS) {
 		// work out what's in this square, start moving it if movable and it belongs to the current player
-		ob, isMovable := screen.WithBoard.Grid.GetGameObject(screen.WithBoard.CursorPosition).(movable.Movable)
+		ob, isMovable := grid.GetGameObject(screen.WithBoard.CursorPosition).(movable.Movable)
 		if isMovable {
 			fmt.Printf("Is movable\n")
-			if ob.CheckBelongsTo(screen.Players[screen.PlayerIdx]) {
+			if ob.CheckBelongsTo(players[screen.PlayerIdx]) {
 				fmt.Printf("Belongs to this player\n")
 				// Definitely something we can move
 
@@ -110,7 +114,7 @@ func (screen *MoveFindCharacterScreen) Step(ctx screeniface.GameCtx) screeniface
 				}
 
 				// Is it engaged?
-				if IsNextToEngageable(screen.WithBoard.CursorPosition, screen.PlayerIdx, screen.WithBoard) {
+				if IsNextToEngageable(screen.WithBoard.CursorPosition, screen.PlayerIdx, ctx) {
 					fmt.Printf("Is next to engageable character\n")
 					if !ob.BreakEngagement() {
 						fmt.Printf("Did not break engagement, must do engaged attack\n")
@@ -159,7 +163,7 @@ func (screen *MaybeDismount) Enter(ctx screeniface.GameCtx) {}
 func (screen *MaybeDismount) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
-	batch := screen.WithBoard.DrawBoard(ss, win)
+	batch := screen.WithBoard.DrawBoard(ctx)
 	isStaticCharacter := false
 	if screen.Character.GetMovement() == 0 { // Magic castle / dark citadel
 		isStaticCharacter = true
@@ -175,7 +179,6 @@ func (screen *MaybeDismount) Step(ctx screeniface.GameCtx) screeniface.GameScree
 		screen.MovedCharacters[wizard] = true
 		if wizard.IsFlying() {
 			return &MoveFlyingCharacterScreen{
-				WithBoard:       screen.WithBoard,
 				PlayerIdx:       screen.PlayerIdx,
 				Character:       wizard,
 				MovedCharacters: screen.MovedCharacters,
@@ -183,7 +186,6 @@ func (screen *MaybeDismount) Step(ctx screeniface.GameCtx) screeniface.GameScree
 			}
 		}
 		return &MoveGroundCharacterScreen{
-			WithBoard:       screen.WithBoard,
 			PlayerIdx:       screen.PlayerIdx,
 			Character:       wizard,
 			MovementLeft:    wizard.GetMovement(),
@@ -196,14 +198,12 @@ func (screen *MaybeDismount) Step(ctx screeniface.GameCtx) screeniface.GameScree
 		// Note in the original game, characters with a player never seem to get engaged, so I deliberately skip that here
 		if screen.Character.IsFlying() {
 			return &MoveFlyingCharacterScreen{
-				WithBoard:       screen.WithBoard,
 				PlayerIdx:       screen.PlayerIdx,
 				Character:       screen.Character,
 				MovedCharacters: screen.MovedCharacters,
 			}
 		}
 		return &MoveGroundCharacterScreen{
-			WithBoard:       screen.WithBoard,
 			PlayerIdx:       screen.PlayerIdx,
 			Character:       screen.Character,
 			MovementLeft:    screen.Character.GetMovement(),
@@ -213,15 +213,12 @@ func (screen *MaybeDismount) Step(ctx screeniface.GameCtx) screeniface.GameScree
 	return screen
 }
 
-func NextPlayerMove(playerIdx int, players []*player.Player, withBoard *WithBoard) screeniface.GameScreen {
+func NextPlayerMove(playerIdx int, players []*player.Player, ctx screeniface.GameCtx) screeniface.GameScreen {
 	nextIdx := NextPlayerIdx(playerIdx, players)
-	if nextIdx == len(withBoard.Players) {
-		return &GrowScreen{
-			WithBoard: withBoard,
-		}
+	if nextIdx == len(players) {
+		return &GrowScreen{}
 	}
 	return &MoveAnnounceScreen{
-		WithBoard: withBoard,
 		PlayerIdx: nextIdx,
 	}
 }
@@ -246,7 +243,8 @@ func (screen *MoveGroundCharacterScreen) Enter(ctx screeniface.GameCtx) {
 func (screen *MoveGroundCharacterScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
-	batch := screen.WithBoard.DrawBoard(ss, win)
+	grid := ctx.GetGrid()
+	batch := screen.WithBoard.DrawBoard(ctx)
 	textBottom(fmt.Sprintf("Movement range=%d", screen.MovementLeft), ss, batch)
 
 	currentLocation := screen.Character.GetBoardPosition()
@@ -256,12 +254,12 @@ func (screen *MoveGroundCharacterScreen) Step(ctx screeniface.GameCtx) screenifa
 		fmt.Printf("Try to move in v(%d, %d)\n", direction.X, direction.Y)
 		// work out if we can move to this square at all - if not ignore, if nothing move to it, if something attack it if owned by other player
 		newLocation := currentLocation.Add(direction)
-		if !screen.WithBoard.Grid.AsRect().Contains(newLocation) {
+		if !grid.AsRect().Contains(newLocation) {
 			fmt.Printf("Cannot move out of screen\n")
 			return screen
 		}
 
-		ms := MoveDoAttackMaybe(currentLocation, newLocation, screen.PlayerIdx, screen.WithBoard, screen.MovedCharacters, screen.IsDismount)
+		ms := MoveDoAttackMaybe(currentLocation, newLocation, screen.PlayerIdx, ctx, screen.MovedCharacters, screen.IsDismount)
 		if ms.NextScreen != nil {
 			return ms.NextScreen
 		}
@@ -272,7 +270,7 @@ func (screen *MoveGroundCharacterScreen) Step(ctx screeniface.GameCtx) screenifa
 			screen.WithBoard.CursorPosition = newLocation
 
 			if ms.MountMove {
-				screen.Character = screen.WithBoard.Grid.GetGameObject(newLocation).(movable.Movable)
+				screen.Character = grid.GetGameObject(newLocation).(movable.Movable)
 				screen.MovedCharacters[screen.Character] = true
 				return screen.MoveGroundCharacterScreenFinished()
 			}
@@ -301,8 +299,9 @@ func (screen *MoveGroundCharacterScreen) Step(ctx screeniface.GameCtx) screenifa
 // If moving to an empty square does the move then returns true allowing progress to continue (and ground/air specific logic to follow)
 // If moving to a square which can be attacked, returns the attack screen to make the attack happen
 // If moving to a square with something that cannot be moved into or attacked, return false
-func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, movedCharacters map[movable.Movable]bool, isDismount bool) MoveStatus {
-	as := DoAttackMaybe(from, to, playerIdx, withBoard, movedCharacters, isDismount)
+func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, ctx screeniface.GameCtx, movedCharacters map[movable.Movable]bool, isDismount bool) MoveStatus {
+	as := DoAttackMaybe(from, to, playerIdx, ctx, movedCharacters, isDismount)
+	grid := ctx.GetGrid()
 	if as.NotEmpty {
 		fmt.Printf("Do attack maybe, was not empty\n")
 		// FIXME AttackStatus.ToMoveStatus method?
@@ -314,7 +313,8 @@ func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard
 		}
 
 		if as.IsMount {
-			doMount(from, to, withBoard.Grid)
+
+			doMount(from, to, grid)
 			return MoveStatus{
 				DidMove:   true,
 				MountMove: true,
@@ -329,16 +329,15 @@ func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard
 	}
 
 	// Is an empty square, move to it
-	doCharacterMove(from, to, withBoard.Grid, isDismount)
+	doCharacterMove(from, to, grid, isDismount)
 
 	// If you move next to an engageable character, you always become engaged in combat
-	if IsNextToEngageable(to, playerIdx, withBoard) {
+	if IsNextToEngageable(to, playerIdx, ctx) {
 		fmt.Printf("Has moved next to engageable character, should be engaged\n")
 		return MoveStatus{
 			NextScreen: &EngagedAttack{
-				WithBoard:       withBoard,
 				PlayerIdx:       playerIdx,
-				Character:       withBoard.Grid.GetGameObject(to).(movable.Movable),
+				Character:       grid.GetGameObject(to).(movable.Movable),
 				MovedCharacters: movedCharacters,
 			},
 			DidMove: true,
@@ -364,15 +363,17 @@ func getAttacker(ob grid.GameObject, isDismount bool) movable.Attackerable {
 	return ob.(*character.Character).BelongsTo
 }
 
-func DoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, movedCharacters map[movable.Movable]bool, isDismount bool) AttackStatus {
-	target := withBoard.Grid.GetGameObject(to)
+func DoAttackMaybe(from, to logical.Vec, playerIdx int, ctx screeniface.GameCtx, movedCharacters map[movable.Movable]bool, isDismount bool) AttackStatus {
+	grid := ctx.GetGrid()
+	players := ctx.(*game.Window).GetPlayers()
+	target := grid.GetGameObject(to)
 	if !target.IsEmpty() {
 		fmt.Printf("Target square is not empty\n")
 		ob, attackable := target.(movable.Attackable)
 		if attackable {
 			fmt.Printf("Target square is attackable\n")
-			if !ob.CheckBelongsTo(withBoard.Players[playerIdx]) {
-				attacker := getAttacker(withBoard.Grid.GetGameObject(from), isDismount)
+			if !ob.CheckBelongsTo(players[playerIdx]) {
+				attacker := getAttacker(grid.GetGameObject(from), isDismount)
 				if ob.IsUndead() && !attacker.CanAttackUndead() {
 					fmt.Printf("Cannot attack undead\n")
 					return AttackStatus{
@@ -382,25 +383,23 @@ func DoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, mo
 				}
 				fmt.Printf("Target square belongs to a different player do attack\n")
 				fx := fx.Attack()
-				withBoard.Grid.PlaceGameObject(to, fx)
+				grid.PlaceGameObject(to, fx)
 				return AttackStatus{
 					NotEmpty: true,
 					NextScreen: &WaitForFx{
 						NextScreen: &DoAttack{
 							AttackerV:       from,
 							DefenderV:       to,
-							WithBoard:       withBoard,
 							PlayerIdx:       playerIdx,
 							MovedCharacters: movedCharacters,
 							IsDismount:      isDismount,
 						},
-						Grid: withBoard.Grid,
-						Fx:   fx,
+						Fx: fx,
 					},
 				}
 			}
 			// Does belong to this player, see if it's mountable, if so we can move to it
-			_, isPlayer := withBoard.Grid.GetGameObject(from).(*player.Player)
+			_, isPlayer := grid.GetGameObject(from).(*player.Player)
 			if isPlayer { // We're moving the player, lets see if target is something we can mount
 				fmt.Printf("Moving player, check for mount\n")
 				if ob.IsMount() {
@@ -414,13 +413,15 @@ func DoAttackMaybe(from, to logical.Vec, playerIdx int, withBoard *WithBoard, mo
 	return AttackStatus{}
 }
 
-func IsNextToEngageable(location logical.Vec, playerIdx int, withBoard *WithBoard) bool {
-	for _, adjVec := range withBoard.Grid.AsRect().Adjacents(location) {
-		adj := withBoard.Grid.GetGameObject(adjVec)
+func IsNextToEngageable(location logical.Vec, playerIdx int, ctx screeniface.GameCtx) bool {
+	grid := ctx.GetGrid()
+	players := ctx.(*game.Window).GetPlayers()
+	for _, adjVec := range grid.AsRect().Adjacents(location) {
+		adj := grid.GetGameObject(adjVec)
 		if !adj.IsEmpty() {
 			ob, attackable := adj.(movable.Attackable)
 			if attackable {
-				if !ob.CheckBelongsTo(withBoard.Players[playerIdx]) {
+				if !ob.CheckBelongsTo(players[playerIdx]) {
 					if ob.Engageable() {
 						return true
 					}
@@ -492,15 +493,16 @@ type MoveStatus struct {
 func (screen *MoveFlyingCharacterScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
-	batch := screen.WithBoard.DrawBoard(ss, win)
+	grid := ctx.GetGrid()
+	batch := screen.WithBoard.DrawBoard(ctx)
 	if screen.DisplayRange {
 		textBottom(fmt.Sprintf("Movement range=%d (flying)", screen.Character.GetMovement()), ss, batch)
 	}
-	cursorMoved := screen.WithBoard.MoveCursor(win)
+	cursorMoved := screen.WithBoard.MoveCursor(ctx)
 	if cursorMoved || (!screen.OutOfRange && !screen.DisplayRange) {
 		screen.OutOfRange = false
 		screen.DisplayRange = false
-		screen.WithBoard.DrawCursor(ss, batch)
+		screen.WithBoard.DrawCursor(ctx, batch)
 	}
 
 	if win.JustPressed(pixelgl.KeyS) {
@@ -512,7 +514,7 @@ func (screen *MoveFlyingCharacterScreen) Step(ctx screeniface.GameCtx) screenifa
 			screen.OutOfRange = true
 		} else {
 			// work out what's in this square, if nothing move to it, if something attack it
-			ms := MoveDoAttackMaybe(currentLocation, screen.WithBoard.CursorPosition, screen.PlayerIdx, screen.WithBoard, screen.MovedCharacters, screen.IsDismount)
+			ms := MoveDoAttackMaybe(currentLocation, screen.WithBoard.CursorPosition, screen.PlayerIdx, ctx, screen.MovedCharacters, screen.IsDismount)
 			if ms.NextScreen != nil {
 				return ms.NextScreen
 			}
@@ -525,7 +527,7 @@ func (screen *MoveFlyingCharacterScreen) Step(ctx screeniface.GameCtx) screenifa
 				fmt.Printf("Did do flying move, finish screen\n")
 
 				if ms.MountMove {
-					screen.Character = screen.WithBoard.Grid.GetGameObject(screen.WithBoard.CursorPosition).(movable.Movable)
+					screen.Character = grid.GetGameObject(screen.WithBoard.CursorPosition).(movable.Movable)
 					screen.MovedCharacters[screen.Character] = true
 				}
 
@@ -545,7 +547,6 @@ func (screen *MoveFlyingCharacterScreen) Step(ctx screeniface.GameCtx) screenifa
 
 func (screen *MoveFlyingCharacterScreen) MoveFlyingCharacterScreenFinished() screeniface.GameScreen {
 	return &RangedCombat{
-		WithBoard:       screen.WithBoard,
 		PlayerIdx:       screen.PlayerIdx,
 		Character:       screen.Character,
 		MovedCharacters: screen.MovedCharacters,

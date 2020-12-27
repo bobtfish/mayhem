@@ -6,6 +6,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/character"
+	"github.com/bobtfish/mayhem/game"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
@@ -33,6 +34,7 @@ func (screen *RangedCombat) Enter(ctx screeniface.GameCtx) {
 func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
+	grid := ctx.GetGrid()
 	attacker := screen.Character.(movable.Attackerable)
 	attackRange := attacker.GetAttackRange()
 	if attackRange == 0 || win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) { // No ranged combat
@@ -43,17 +45,17 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 		}
 	}
 
-	batch := screen.WithBoard.DrawBoard(ss, win)
+	batch := screen.WithBoard.DrawBoard(ctx)
 
 	// FIXME - this code is stolen from flying movement, can we consolidate?
 	if screen.DisplayRange {
 		textBottom(fmt.Sprintf("Ranged attack (range=%d)", attackRange), ss, batch)
 	}
-	cursorMoved := screen.WithBoard.MoveCursor(win)
+	cursorMoved := screen.WithBoard.MoveCursor(ctx)
 	if cursorMoved || (!screen.OutOfRange && !screen.DisplayRange) {
 		screen.OutOfRange = false
 		screen.DisplayRange = false
-		screen.WithBoard.DrawCursor(ss, batch)
+		screen.WithBoard.DrawCursor(ctx, batch)
 	}
 
 	if win.JustPressed(pixelgl.KeyS) {
@@ -65,17 +67,16 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 				textBottom("Out of range", ss, batch)
 				screen.OutOfRange = true
 			} else {
-				if !HaveLineOfSight(characterLocation, screen.WithBoard.CursorPosition, screen.WithBoard.Grid) {
+				if !HaveLineOfSight(characterLocation, screen.WithBoard.CursorPosition, grid) {
 					textBottom("No line of sight", ss, batch)
 					screen.OutOfRange = true
 				} else {
 					// Do ranged attack
 					fx := attacker.GetAttackFx()
-					screen.WithBoard.Grid.PlaceGameObject(screen.WithBoard.CursorPosition, fx)
+					grid.PlaceGameObject(screen.WithBoard.CursorPosition, fx)
 
 					return &WaitForFx{
-						Fx:   fx,
-						Grid: screen.WithBoard.Grid,
+						Fx: fx,
 						NextScreen: &DoRangedAttack{
 							WithBoard:       screen.WithBoard,
 							PlayerIdx:       screen.PlayerIdx,
@@ -106,7 +107,7 @@ func (screen *DoRangedAttack) Enter(ctx screeniface.GameCtx) {
 func (screen *DoRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
-	target := screen.WithBoard.Grid.GetGameObject(screen.WithBoard.CursorPosition)
+	target := ctx.GetGrid().GetGameObject(screen.WithBoard.CursorPosition)
 	needPause := false
 	if !target.IsEmpty() {
 		fmt.Printf("Target square is not empty\n")
@@ -121,7 +122,7 @@ func (screen *DoRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScre
 				fmt.Printf("Attack rating %d defence rating %d\n", attackRating, defenceRating)
 				if attackRating > defenceRating {
 					fmt.Printf("Attack kills defender\n")
-					_, newScreen := PostSuccessfulAttack(target, screen.WithBoard, false)
+					_, newScreen := PostSuccessfulAttack(target, ctx, false)
 					if newScreen != nil {
 						return newScreen
 					}
@@ -135,7 +136,6 @@ func (screen *DoRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScre
 
 	return &Pause{
 		Skip: !needPause,
-		Grid: screen.WithBoard.Grid,
 		NextScreen: &MoveFindCharacterScreen{
 			WithBoard:       screen.WithBoard,
 			PlayerIdx:       screen.PlayerIdx,
@@ -162,7 +162,7 @@ func (screen *EngagedAttack) Enter(ctx screeniface.GameCtx) {
 func (screen *EngagedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
-	batch := screen.WithBoard.DrawBoard(ss, win)
+	batch := screen.WithBoard.DrawBoard(ctx)
 	if screen.ClearMsg {
 		textBottom("", ss, batch)
 	}
@@ -174,7 +174,7 @@ func (screen *EngagedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScree
 		currentLocation := screen.Character.GetBoardPosition()
 		newLocation := currentLocation.Add(direction)
 
-		as := DoAttackMaybe(currentLocation, newLocation, screen.PlayerIdx, screen.WithBoard, screen.MovedCharacters, false)
+		as := DoAttackMaybe(currentLocation, newLocation, screen.PlayerIdx, ctx, screen.MovedCharacters, false)
 		if as.NextScreen != nil {
 			fmt.Printf("Can attack in that direction")
 			return as.NextScreen
@@ -208,7 +208,8 @@ type DoAttack struct {
 
 func (screen *DoAttack) Enter(ctx screeniface.GameCtx) {}
 
-func PostSuccessfulAttack(target grid.GameObject, withBoard *WithBoard, canMakeCorpse bool) (bool, screeniface.GameScreen) {
+func PostSuccessfulAttack(target grid.GameObject, ctx screeniface.GameCtx, canMakeCorpse bool) (bool, screeniface.GameScreen) {
+	grid := ctx.GetGrid()
 	canMoveOnto := true
 	// If the defender can be killed, kill them. Otherwise remove them
 	ob, corpsable := target.(movable.Corpseable)
@@ -227,11 +228,12 @@ func PostSuccessfulAttack(target grid.GameObject, withBoard *WithBoard, canMakeC
 		ob.MakeCorpse()
 	} else {
 		fmt.Printf("remove defender as no corpse\n")
-		died := withBoard.Grid.GetGameObjectStack(target.(movable.Movable).GetBoardPosition()).RemoveTopObject()
-		if KillIfPlayer(died, withBoard.Grid) {
-			if WeHaveAWinner(withBoard.Players) {
+		died := grid.GetGameObjectStack(target.(movable.Movable).GetBoardPosition()).RemoveTopObject()
+		if KillIfPlayer(died, grid) {
+			players := ctx.(*game.Window).GetPlayers()
+			if WeHaveAWinner(players) {
 				return canMoveOnto, &WinnerScreen{
-					Players: withBoard.Players,
+					Players: players,
 				}
 			}
 		}
@@ -241,35 +243,36 @@ func PostSuccessfulAttack(target grid.GameObject, withBoard *WithBoard, canMakeC
 	if isCharacter && char.CarryingPlayer {
 		canMoveOnto = false
 		fmt.Printf("Was carrying player, put back: %T %v\n", p, p)
-		withBoard.Grid.PlaceGameObject(char.BoardPosition, p)
+		grid.PlaceGameObject(char.BoardPosition, p)
 	}
 
 	return canMoveOnto, nil
 }
 
 func (screen *DoAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	grid := ctx.GetGrid()
 	// Work out what happened. This is overly simple, but equivalent to what the original game does :)
-	defender := screen.WithBoard.Grid.GetGameObject(screen.DefenderV)
+	defender := grid.GetGameObject(screen.DefenderV)
 	defenceRating := defender.(movable.Attackable).GetDefence() + rand.Intn(9)
-	attacker := getAttacker(screen.WithBoard.Grid.GetGameObject(screen.AttackerV), screen.IsDismount)
+	attacker := getAttacker(grid.GetGameObject(screen.AttackerV), screen.IsDismount)
 	attackRating := attacker.(movable.Attackerable).GetCombat() + rand.Intn(9)
 
 	fmt.Printf("Attack rating %d defence rating %d\n", attackRating, defenceRating)
 	if attackRating > defenceRating {
-		canMoveOnto, newScreen := PostSuccessfulAttack(defender, screen.WithBoard, true)
+		canMoveOnto, newScreen := PostSuccessfulAttack(defender, ctx, true)
 		if newScreen != nil {
 			return newScreen
 		}
 
 		if canMoveOnto {
-			doCharacterMove(screen.AttackerV, screen.DefenderV, screen.WithBoard.Grid, screen.IsDismount)
+			doCharacterMove(screen.AttackerV, screen.DefenderV, grid, screen.IsDismount)
 			screen.AttackerV = screen.DefenderV
 		}
 	}
 	return &RangedCombat{
 		WithBoard:       screen.WithBoard,
 		PlayerIdx:       screen.PlayerIdx,
-		Character:       screen.WithBoard.Grid.GetGameObject(screen.AttackerV).(movable.Movable),
+		Character:       grid.GetGameObject(screen.AttackerV).(movable.Movable),
 		MovedCharacters: screen.MovedCharacters,
 	}
 }

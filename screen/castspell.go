@@ -6,29 +6,27 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/fx"
+	"github.com/bobtfish/mayhem/game"
 	"github.com/bobtfish/mayhem/logical"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
 // Move state onto next player spell cast (if there are players left)
 // or onto the movement phase if all spells have been cast
-func NextSpellCastOrMove(playerIdx int, wb *WithBoard, skipPause bool) screeniface.GameScreen {
+func NextSpellCastOrMove(playerIdx int, ctx screeniface.GameCtx, skipPause bool) screeniface.GameScreen {
+	players := ctx.(*game.Window).GetPlayers()
 	var nextScreen screeniface.GameScreen
-	nextIdx := NextPlayerIdx(playerIdx, wb.Players)
+	nextIdx := NextPlayerIdx(playerIdx, players)
 	nextScreen = &DisplaySpellCastScreen{
-		WithBoard: wb,
 		PlayerIdx: nextIdx,
 	}
 
-	if nextIdx == len(wb.Players) {
+	if nextIdx == len(players) {
 		// All players have cast their spells, movement comes next
-		nextScreen = &MoveAnnounceScreen{
-			WithBoard: wb,
-		}
+		nextScreen = &MoveAnnounceScreen{}
 	}
 	return &Pause{
 		Skip:       skipPause,
-		Grid:       wb.Grid,
 		NextScreen: nextScreen,
 	}
 }
@@ -43,12 +41,13 @@ type DisplaySpellCastScreen struct {
 func (screen *DisplaySpellCastScreen) Enter(ctx screeniface.GameCtx) {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
+	players := ctx.(*game.Window).GetPlayers()
 	ClearScreen(ss, win)
-	thisPlayer := screen.Players[screen.PlayerIdx]
+	thisPlayer := players[screen.PlayerIdx]
 	screen.WithBoard.CursorPosition = thisPlayer.BoardPosition
 	if thisPlayer.ChosenSpell >= 0 {
 		spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
-		batch := screen.WithBoard.DrawBoard(ss, win)
+		batch := screen.WithBoard.DrawBoard(ctx)
 		textBottom(fmt.Sprintf("%s %s %d", thisPlayer.Name, spell.GetName(), spell.GetCastRange()), ss, batch)
 		batch.Draw(win)
 	}
@@ -56,9 +55,10 @@ func (screen *DisplaySpellCastScreen) Enter(ctx screeniface.GameCtx) {
 
 func (screen *DisplaySpellCastScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
-	thisPlayer := screen.Players[screen.PlayerIdx]
+	players := ctx.(*game.Window).GetPlayers()
+	thisPlayer := players[screen.PlayerIdx]
 	if (thisPlayer.ChosenSpell < 0) || win.JustPressed(pixelgl.Key0) {
-		return NextSpellCastOrMove(screen.PlayerIdx, screen.WithBoard, true)
+		return NextSpellCastOrMove(screen.PlayerIdx, ctx, true)
 	}
 	if win.JustPressed(pixelgl.KeyS) || !captureDirectionKey(win).Equals(logical.ZeroVec()) {
 		return &TargetSpellScreen{
@@ -89,33 +89,36 @@ func (screen *TargetSpellScreen) Enter(ctx screeniface.GameCtx) {
 func (screen *TargetSpellScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
-	thisPlayer := screen.Players[screen.PlayerIdx]
+	grid := ctx.GetGrid()
+	players := ctx.(*game.Window).GetPlayers()
+	thisPlayer := players[screen.PlayerIdx]
 	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
-	batch := screen.WithBoard.DrawBoard(ss, win)
+	batch := screen.WithBoard.DrawBoard(ctx)
 
 	if spell.GetCastRange() == 0 {
 		target := screen.WithBoard.CursorPosition
 		fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetCastRange(), target.X, target.Y)
-		return screen.AnimateAndCast()
+		return screen.AnimateAndCast(ctx)
 	}
-	if screen.WithBoard.MoveCursor(win) || !screen.MessageShown {
+	if screen.WithBoard.MoveCursor(ctx) || !screen.MessageShown {
 		screen.MessageShown = false
-		screen.WithBoard.DrawCursor(ss, batch)
+		screen.WithBoard.DrawCursor(ctx, batch)
 	}
 	if win.JustPressed(pixelgl.KeyS) {
 		target := screen.WithBoard.CursorPosition
-		if spell.GetCastRange() < target.Distance(screen.Players[screen.PlayerIdx].BoardPosition) {
+		if spell.GetCastRange() < target.Distance(thisPlayer.BoardPosition) {
 			textBottom("Out of range", ss, batch)
-			fmt.Printf("Out of range! Spell cast range %d but distance to target is %d\n", spell.GetCastRange(), target.Distance(screen.Players[screen.PlayerIdx].BoardPosition))
+			fmt.Printf("Out of range! Spell cast range %d but distance to target is %d\n", spell.GetCastRange(), target.Distance(thisPlayer.BoardPosition))
 			screen.MessageShown = true
 		} else {
-			if spell.NeedsLineOfSight() && !HaveLineOfSight(screen.Players[screen.PlayerIdx].BoardPosition, screen.WithBoard.CursorPosition, screen.WithBoard.Grid) {
+			if spell.NeedsLineOfSight() && !HaveLineOfSight(thisPlayer.BoardPosition, screen.WithBoard.CursorPosition, grid) {
 				textBottom("No line of sight", ss, batch)
 				screen.MessageShown = true
 			} else {
-				if spell.CanCast(screen.WithBoard.Grid.GetGameObject(target)) {
+				grid := ctx.GetGrid()
+				if spell.CanCast(grid.GetGameObject(target)) {
 					fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetCastRange(), target.X, target.Y)
-					return screen.AnimateAndCast()
+					return screen.AnimateAndCast(ctx)
 				}
 				fmt.Printf("Cannot cast '%s' on non-empty square\n", spell.GetName())
 			}
@@ -123,28 +126,28 @@ func (screen *TargetSpellScreen) Step(ctx screeniface.GameCtx) screeniface.GameS
 	}
 	batch.Draw(win)
 	if win.JustPressed(pixelgl.Key0) {
-		return NextSpellCastOrMove(screen.PlayerIdx, screen.WithBoard, true)
+		return NextSpellCastOrMove(screen.PlayerIdx, ctx, true)
 	}
 	return screen
 }
 
-func (screen *TargetSpellScreen) AnimateAndCast() screeniface.GameScreen {
-	thisPlayer := screen.Players[screen.PlayerIdx]
+func (screen *TargetSpellScreen) AnimateAndCast(ctx screeniface.GameCtx) screeniface.GameScreen {
+	players := ctx.(*game.Window).GetPlayers()
+	grid := ctx.GetGrid()
+	thisPlayer := players[screen.PlayerIdx]
 	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
 	target := screen.WithBoard.CursorPosition
 	anim := spell.CastFx()
 	if anim != nil {
-		screen.WithBoard.Grid.PlaceGameObject(target, anim)
+		grid.PlaceGameObject(target, anim)
 	}
 	return &WaitForFx{
 		NextScreen: &DoSpellCast{
-			WithBoard:      screen.WithBoard,
 			PlayerIdx:      screen.PlayerIdx,
 			CastsRemaining: screen.CastsRemaining,
 			CastBefore:     screen.CastBefore,
 		},
-		Grid: screen.WithBoard.Grid,
-		Fx:   anim,
+		Fx: anim,
 	}
 }
 
@@ -164,13 +167,15 @@ func (screen *DoSpellCast) Enter(ctx screeniface.GameCtx) {
 func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
+	grid := ctx.GetGrid()
+	players := ctx.(*game.Window).GetPlayers()
 	castsRemaining := screen.CastsRemaining - 1
-	batch := screen.WithBoard.DrawBoard(ss, win)
+	batch := screen.WithBoard.DrawBoard(ctx)
 	// Fx for spell cast finished
 	// Work out what happened :)
 	targetVec := screen.WithBoard.CursorPosition
 	fmt.Printf("About to call player CastSpell method\n")
-	p := screen.Players[screen.PlayerIdx]
+	p := players[screen.PlayerIdx]
 
 	fmt.Printf("IN Player spell cast\n")
 	spell := p.Spells[p.ChosenSpell]
@@ -182,12 +187,13 @@ func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen 
 		}
 		p.ChosenSpell = -1
 	}
-	nextScreen := NextSpellCastOrMove(screen.PlayerIdx, screen.WithBoard, false)
+	nextScreen := NextSpellCastOrMove(screen.PlayerIdx, ctx, false)
 
-	takeOver := spell.TakeOverScreen(screen.WithBoard.Grid, cleanupFunc, nextScreen, p.BoardPosition, targetVec)
+	// FIXME
+	/*takeOver := spell.TakeOverScreen(screen.WithBoard.Grid, cleanupFunc, nextScreen, p.BoardPosition, targetVec)
 	if takeOver != nil {
 		return takeOver
-	}
+	}*/
 
 	// Do the spell cast here
 	var success bool
@@ -195,7 +201,7 @@ func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen 
 	var anim *fx.Fx
 	if screen.CastBefore || spell.CastSucceeds(p.CastIllusion, screen.LawRating) {
 		canCastMore = true
-		success, anim = spell.DoCast(p.CastIllusion, targetVec, screen.WithBoard.Grid, p)
+		success, anim = spell.DoCast(p.CastIllusion, targetVec, grid, p)
 	}
 
 	fmt.Printf("Finished player CastSpell method\n")
@@ -222,7 +228,6 @@ func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen 
 	}
 	return &WaitForFx{
 		NextScreen: nextScreen,
-		Grid:       screen.Grid,
 		Fx:         anim,
 	}
 

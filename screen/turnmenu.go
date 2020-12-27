@@ -199,7 +199,6 @@ func (screen *TurnMenuScreen) Step(ctx screeniface.GameCtx) screeniface.GameScre
 	win := ctx.GetWindow()
 	c := captureNumKey(win)
 	players := ctx.(*game.Window).GetPlayers()
-	grid := ctx.GetGrid()
 	if c == 1 {
 		return &ExamineSpellsScreen{
 			SpellListScreen: SpellListScreen{
@@ -220,19 +219,14 @@ func (screen *TurnMenuScreen) Step(ctx screeniface.GameCtx) screeniface.GameScre
 	}
 	if c == 3 {
 		return &ExamineBoardScreen{
-			MainMenu: screen,
-			WithBoard: &WithBoard{
-				Grid:    grid,
-				Players: players,
-			},
+			MainMenu:  screen,
+			WithBoard: &WithBoard{},
 		}
 	}
 	if c == 4 {
 		if len(players) == screen.PlayerIdx+1 {
 			return &DisplaySpellCastScreen{
 				WithBoard: &WithBoard{
-					Grid:      grid,
-					Players:   players,
 					LawRating: screen.LawRating,
 				},
 			}
