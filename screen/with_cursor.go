@@ -12,14 +12,14 @@ import (
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
-type WithBoard struct {
+type WithCursor struct {
 	CursorPosition  logical.Vec
 	CursorShow      bool
 	CursorFlashTime time.Time
 	CursorSprite    int // Defaults to CursorSpell
 }
 
-func (screen *WithBoard) ShouldIDrawCursor() bool {
+func (screen *WithCursor) ShouldIDrawCursor() bool {
 	now := time.Now()
 	if screen.CursorFlashTime.Before(now) {
 		newFlash := true
@@ -32,13 +32,13 @@ func (screen *WithBoard) ShouldIDrawCursor() bool {
 	return screen.CursorShow
 }
 
-func (screen *WithBoard) DrawBoard(ctx screeniface.GameCtx) *pixel.Batch {
+func (screen *WithCursor) DrawBoard(ctx screeniface.GameCtx) *pixel.Batch {
 	ss := ctx.GetSpriteSheet()
 	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
 	return ctx.GetGrid().DrawBatch(sd)
 }
 
-func (screen *WithBoard) MoveCursor(ctx screeniface.GameCtx) bool {
+func (screen *WithCursor) MoveCursor(ctx screeniface.GameCtx) bool {
 	win := ctx.GetWindow()
 	grid := ctx.GetGrid()
 	players := ctx.(*game.Window).GetPlayers()
@@ -55,7 +55,7 @@ func (screen *WithBoard) MoveCursor(ctx screeniface.GameCtx) bool {
 	return false
 }
 
-func (screen *WithBoard) DrawCursor(ctx screeniface.GameCtx, batch pixel.Target) {
+func (screen *WithCursor) DrawCursor(ctx screeniface.GameCtx, batch pixel.Target) {
 	ss := ctx.GetSpriteSheet()
 	grid := ctx.GetGrid()
 	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
@@ -71,7 +71,7 @@ func (screen *WithBoard) DrawCursor(ctx screeniface.GameCtx, batch pixel.Target)
 	}
 }
 
-func (screen *WithBoard) MoveAndDrawCursor(ctx screeniface.GameCtx, batch pixel.Target) {
+func (screen *WithCursor) MoveAndDrawCursor(ctx screeniface.GameCtx, batch pixel.Target) {
 	screen.MoveCursor(ctx)
 	screen.DrawCursor(ctx, batch)
 }

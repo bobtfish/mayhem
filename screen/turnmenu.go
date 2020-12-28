@@ -215,14 +215,14 @@ func (screen *TurnMenuScreen) Step(ctx screeniface.GameCtx) screeniface.GameScre
 	}
 	if c == 3 {
 		return &ExamineBoardScreen{
-			MainMenu:  screen,
-			WithBoard: &WithBoard{},
+			MainMenu:   screen,
+			WithCursor: &WithCursor{},
 		}
 	}
 	if c == 4 {
 		if len(players) == screen.PlayerIdx+1 {
 			return &DisplaySpellCastScreen{
-				WithBoard: &WithBoard{},
+				WithCursor: &WithCursor{},
 			}
 		}
 		return &TurnMenuScreen{

@@ -8,7 +8,7 @@ import (
 
 type ExamineBoardScreen struct {
 	MainMenu screeniface.GameScreen
-	*WithBoard
+	*WithCursor
 }
 
 func (screen *ExamineBoardScreen) Enter(ctx screeniface.GameCtx) {
@@ -19,8 +19,8 @@ func (screen *ExamineBoardScreen) Enter(ctx screeniface.GameCtx) {
 
 func (screen *ExamineBoardScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
-	batch := screen.WithBoard.DrawBoard(ctx)
-	screen.WithBoard.MoveAndDrawCursor(ctx, batch)
+	batch := screen.WithCursor.DrawBoard(ctx)
+	screen.WithCursor.MoveAndDrawCursor(ctx, batch)
 	batch.Draw(win)
 
 	c := captureNumKey(win)

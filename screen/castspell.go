@@ -34,7 +34,7 @@ func NextSpellCastOrMove(playerIdx int, ctx screeniface.GameCtx, skipPause bool)
 // Display the spell name in the bottom bar until player presses a direction key or s
 
 type DisplaySpellCastScreen struct {
-	*WithBoard
+	*WithCursor
 	PlayerIdx int
 }
 
@@ -44,10 +44,10 @@ func (screen *DisplaySpellCastScreen) Enter(ctx screeniface.GameCtx) {
 	players := ctx.(*game.Window).GetPlayers()
 	ClearScreen(ss, win)
 	thisPlayer := players[screen.PlayerIdx]
-	screen.WithBoard.CursorPosition = thisPlayer.BoardPosition
+	screen.WithCursor.CursorPosition = thisPlayer.BoardPosition
 	if thisPlayer.ChosenSpell >= 0 {
 		spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
-		batch := screen.WithBoard.DrawBoard(ctx)
+		batch := screen.WithCursor.DrawBoard(ctx)
 		textBottom(fmt.Sprintf("%s %s %d", thisPlayer.Name, spell.GetName(), spell.GetCastRange()), ss, batch)
 		batch.Draw(win)
 	}
@@ -62,7 +62,7 @@ func (screen *DisplaySpellCastScreen) Step(ctx screeniface.GameCtx) screeniface.
 	}
 	if win.JustPressed(pixelgl.KeyS) || !captureDirectionKey(win).Equals(logical.ZeroVec()) {
 		return &TargetSpellScreen{
-			WithBoard:      screen.WithBoard,
+			WithCursor:     screen.WithCursor,
 			PlayerIdx:      screen.PlayerIdx,
 			CastsRemaining: thisPlayer.Spells[thisPlayer.ChosenSpell].CastQuantity(),
 		}
@@ -73,7 +73,7 @@ func (screen *DisplaySpellCastScreen) Step(ctx screeniface.GameCtx) screeniface.
 // If range 0 then cast the spell straight away (on the wizard
 // If range > 0 then move cursor around to find a target until S is pressed
 type TargetSpellScreen struct {
-	*WithBoard
+	*WithCursor
 	PlayerIdx      int
 	CastsRemaining int
 	MessageShown   bool
@@ -93,25 +93,25 @@ func (screen *TargetSpellScreen) Step(ctx screeniface.GameCtx) screeniface.GameS
 	players := ctx.(*game.Window).GetPlayers()
 	thisPlayer := players[screen.PlayerIdx]
 	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
-	batch := screen.WithBoard.DrawBoard(ctx)
+	batch := screen.WithCursor.DrawBoard(ctx)
 
 	if spell.GetCastRange() == 0 {
-		target := screen.WithBoard.CursorPosition
+		target := screen.WithCursor.CursorPosition
 		fmt.Printf("Cast spell %s (%d) on V(%d, %d)\n", spell.GetName(), spell.GetCastRange(), target.X, target.Y)
 		return screen.AnimateAndCast(ctx)
 	}
-	if screen.WithBoard.MoveCursor(ctx) || !screen.MessageShown {
+	if screen.WithCursor.MoveCursor(ctx) || !screen.MessageShown {
 		screen.MessageShown = false
-		screen.WithBoard.DrawCursor(ctx, batch)
+		screen.WithCursor.DrawCursor(ctx, batch)
 	}
 	if win.JustPressed(pixelgl.KeyS) {
-		target := screen.WithBoard.CursorPosition
+		target := screen.WithCursor.CursorPosition
 		if spell.GetCastRange() < target.Distance(thisPlayer.BoardPosition) {
 			textBottom("Out of range", ss, batch)
 			fmt.Printf("Out of range! Spell cast range %d but distance to target is %d\n", spell.GetCastRange(), target.Distance(thisPlayer.BoardPosition))
 			screen.MessageShown = true
 		} else {
-			if spell.NeedsLineOfSight() && !HaveLineOfSight(thisPlayer.BoardPosition, screen.WithBoard.CursorPosition, grid) {
+			if spell.NeedsLineOfSight() && !HaveLineOfSight(thisPlayer.BoardPosition, screen.WithCursor.CursorPosition, grid) {
 				textBottom("No line of sight", ss, batch)
 				screen.MessageShown = true
 			} else {
@@ -136,7 +136,7 @@ func (screen *TargetSpellScreen) AnimateAndCast(ctx screeniface.GameCtx) screeni
 	grid := ctx.GetGrid()
 	thisPlayer := players[screen.PlayerIdx]
 	spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
-	target := screen.WithBoard.CursorPosition
+	target := screen.WithCursor.CursorPosition
 	anim := spell.CastFx()
 	if anim != nil {
 		grid.PlaceGameObject(target, anim)
@@ -155,7 +155,7 @@ func (screen *TargetSpellScreen) AnimateAndCast(ctx screeniface.GameCtx) screeni
 // and then casting the spell once animation is finished
 
 type DoSpellCast struct {
-	*WithBoard
+	*WithCursor
 	PlayerIdx      int
 	CastsRemaining int
 	CastBefore     bool
@@ -170,10 +170,10 @@ func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen 
 	grid := ctx.GetGrid()
 	players := ctx.(*game.Window).GetPlayers()
 	castsRemaining := screen.CastsRemaining - 1
-	batch := screen.WithBoard.DrawBoard(ctx)
+	batch := screen.WithCursor.DrawBoard(ctx)
 	// Fx for spell cast finished
 	// Work out what happened :)
-	targetVec := screen.WithBoard.CursorPosition
+	targetVec := screen.WithCursor.CursorPosition
 	fmt.Printf("About to call player CastSpell method\n")
 	p := players[screen.PlayerIdx]
 
@@ -190,7 +190,7 @@ func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen 
 	nextScreen := NextSpellCastOrMove(screen.PlayerIdx, ctx, false)
 
 	// FIXME
-	/*takeOver := spell.TakeOverScreen(screen.WithBoard.Grid, cleanupFunc, nextScreen, p.BoardPosition, targetVec)
+	/*takeOver := spell.TakeOverScreen(screen.WithCursor.Grid, cleanupFunc, nextScreen, p.BoardPosition, targetVec)
 	if takeOver != nil {
 		return takeOver
 	}*/
@@ -218,7 +218,7 @@ func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen 
 	batch.Draw(win)
 	if castsRemaining > 0 && canCastMore {
 		nextScreen = &TargetSpellScreen{
-			WithBoard:      screen.WithBoard,
+			WithCursor:     screen.WithCursor,
 			PlayerIdx:      screen.PlayerIdx,
 			CastsRemaining: castsRemaining,
 			CastBefore:     true,

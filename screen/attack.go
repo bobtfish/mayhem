@@ -17,7 +17,7 @@ import (
 )
 
 type RangedCombat struct {
-	*WithBoard
+	*WithCursor
 	PlayerIdx       int
 	Character       movable.Movable
 	MovedCharacters map[movable.Movable]bool
@@ -28,7 +28,7 @@ type RangedCombat struct {
 func (screen *RangedCombat) Enter(ctx screeniface.GameCtx) {
 	fmt.Printf("In ranged combat state\n")
 	screen.DisplayRange = true
-	screen.WithBoard.CursorSprite = CursorRangedAttack
+	screen.WithCursor.CursorSprite = CursorRangedAttack
 }
 
 func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -39,46 +39,45 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 	attackRange := attacker.GetAttackRange()
 	if attackRange == 0 || win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) { // No ranged combat
 		return &MoveFindCharacterScreen{
-			WithBoard:       screen.WithBoard,
 			PlayerIdx:       screen.PlayerIdx,
 			MovedCharacters: screen.MovedCharacters,
 		}
 	}
 
-	batch := screen.WithBoard.DrawBoard(ctx)
+	batch := screen.WithCursor.DrawBoard(ctx)
 
 	// FIXME - this code is stolen from flying movement, can we consolidate?
 	if screen.DisplayRange {
 		textBottom(fmt.Sprintf("Ranged attack (range=%d)", attackRange), ss, batch)
 	}
-	cursorMoved := screen.WithBoard.MoveCursor(ctx)
+	cursorMoved := screen.WithCursor.MoveCursor(ctx)
 	if cursorMoved || (!screen.OutOfRange && !screen.DisplayRange) {
 		screen.OutOfRange = false
 		screen.DisplayRange = false
-		screen.WithBoard.DrawCursor(ctx, batch)
+		screen.WithCursor.DrawCursor(ctx, batch)
 	}
 
 	if win.JustPressed(pixelgl.KeyS) {
 		characterLocation := screen.Character.GetBoardPosition()
-		attackDistance := screen.WithBoard.CursorPosition.Distance(characterLocation)
+		attackDistance := screen.WithCursor.CursorPosition.Distance(characterLocation)
 		if attackDistance > 0 { // You can't ranged attack yourself
 			if attackDistance > attackRange {
 				fmt.Printf("Out of range\n")
 				textBottom("Out of range", ss, batch)
 				screen.OutOfRange = true
 			} else {
-				if !HaveLineOfSight(characterLocation, screen.WithBoard.CursorPosition, grid) {
+				if !HaveLineOfSight(characterLocation, screen.WithCursor.CursorPosition, grid) {
 					textBottom("No line of sight", ss, batch)
 					screen.OutOfRange = true
 				} else {
 					// Do ranged attack
 					fx := attacker.GetAttackFx()
-					grid.PlaceGameObject(screen.WithBoard.CursorPosition, fx)
+					grid.PlaceGameObject(screen.WithCursor.CursorPosition, fx)
 
 					return &WaitForFx{
 						Fx: fx,
 						NextScreen: &DoRangedAttack{
-							WithBoard:       screen.WithBoard,
+							WithCursor:      screen.WithCursor,
 							PlayerIdx:       screen.PlayerIdx,
 							MovedCharacters: screen.MovedCharacters,
 							Attacker:        attacker,
@@ -94,7 +93,7 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 }
 
 type DoRangedAttack struct {
-	*WithBoard
+	*WithCursor
 	PlayerIdx       int
 	MovedCharacters map[movable.Movable]bool
 	Attacker        movable.Attackerable
@@ -107,7 +106,7 @@ func (screen *DoRangedAttack) Enter(ctx screeniface.GameCtx) {
 func (screen *DoRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
-	target := ctx.GetGrid().GetGameObject(screen.WithBoard.CursorPosition)
+	target := ctx.GetGrid().GetGameObject(screen.WithCursor.CursorPosition)
 	needPause := false
 	if !target.IsEmpty() {
 		fmt.Printf("Target square is not empty\n")
@@ -137,7 +136,7 @@ func (screen *DoRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScre
 	return &Pause{
 		Skip: !needPause,
 		NextScreen: &MoveFindCharacterScreen{
-			WithBoard:       screen.WithBoard,
+			WithCursor:      screen.WithCursor,
 			PlayerIdx:       screen.PlayerIdx,
 			MovedCharacters: screen.MovedCharacters,
 		},
@@ -145,7 +144,7 @@ func (screen *DoRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScre
 }
 
 type EngagedAttack struct {
-	*WithBoard
+	*WithCursor
 	PlayerIdx       int
 	Character       movable.Movable
 	MovedCharacters map[movable.Movable]bool
@@ -162,7 +161,7 @@ func (screen *EngagedAttack) Enter(ctx screeniface.GameCtx) {
 func (screen *EngagedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
-	batch := screen.WithBoard.DrawBoard(ctx)
+	batch := screen.WithCursor.DrawBoard(ctx)
 	if screen.ClearMsg {
 		textBottom("", ss, batch)
 	}
@@ -187,7 +186,7 @@ func (screen *EngagedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScree
 
 	if win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) {
 		return &RangedCombat{
-			WithBoard:       screen.WithBoard,
+			WithCursor:      screen.WithCursor,
 			PlayerIdx:       screen.PlayerIdx,
 			Character:       screen.Character,
 			MovedCharacters: screen.MovedCharacters,
@@ -198,7 +197,7 @@ func (screen *EngagedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScree
 }
 
 type DoAttack struct {
-	*WithBoard
+	*WithCursor
 	AttackerV       logical.Vec
 	DefenderV       logical.Vec
 	PlayerIdx       int
@@ -270,7 +269,7 @@ func (screen *DoAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 		}
 	}
 	return &RangedCombat{
-		WithBoard:       screen.WithBoard,
+		WithCursor:      screen.WithCursor,
 		PlayerIdx:       screen.PlayerIdx,
 		Character:       grid.GetGameObject(screen.AttackerV).(movable.Movable),
 		MovedCharacters: screen.MovedCharacters,
