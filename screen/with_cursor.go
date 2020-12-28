@@ -32,12 +32,6 @@ func (screen *WithCursor) ShouldIDrawCursor() bool {
 	return screen.CursorShow
 }
 
-func (screen *WithCursor) DrawBoard(ctx screeniface.GameCtx) *pixel.Batch {
-	ss := ctx.GetSpriteSheet()
-	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
-	return ctx.GetGrid().DrawBatch(sd)
-}
-
 func (screen *WithCursor) MoveCursor(ctx screeniface.GameCtx) bool {
 	win := ctx.GetWindow()
 	grid := ctx.GetGrid()

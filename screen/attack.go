@@ -44,7 +44,7 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 		}
 	}
 
-	batch := screen.WithCursor.DrawBoard(ctx)
+	batch := DrawBoard(ctx)
 
 	// FIXME - this code is stolen from flying movement, can we consolidate?
 	if screen.DisplayRange {
@@ -58,26 +58,27 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 	}
 
 	if win.JustPressed(pixelgl.KeyS) {
+		attackPosition := screen.WithCursor.CursorPosition
 		characterLocation := screen.Character.GetBoardPosition()
-		attackDistance := screen.WithCursor.CursorPosition.Distance(characterLocation)
+		attackDistance := attackPosition.Distance(characterLocation)
 		if attackDistance > 0 { // You can't ranged attack yourself
 			if attackDistance > attackRange {
 				fmt.Printf("Out of range\n")
 				textBottom("Out of range", ss, batch)
 				screen.OutOfRange = true
 			} else {
-				if !HaveLineOfSight(characterLocation, screen.WithCursor.CursorPosition, grid) {
+				if !HaveLineOfSight(characterLocation, attackPosition, grid) {
 					textBottom("No line of sight", ss, batch)
 					screen.OutOfRange = true
 				} else {
 					// Do ranged attack
 					fx := attacker.GetAttackFx()
-					grid.PlaceGameObject(screen.WithCursor.CursorPosition, fx)
+					grid.PlaceGameObject(attackPosition, fx)
 
 					return &WaitForFx{
 						Fx: fx,
 						NextScreen: &DoRangedAttack{
-							WithCursor:      screen.WithCursor,
+							AttackPosition:  attackPosition,
 							PlayerIdx:       screen.PlayerIdx,
 							MovedCharacters: screen.MovedCharacters,
 							Attacker:        attacker,
@@ -93,7 +94,7 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 }
 
 type DoRangedAttack struct {
-	*WithCursor
+	AttackPosition  logical.Vec
 	PlayerIdx       int
 	MovedCharacters map[movable.Movable]bool
 	Attacker        movable.Attackerable
@@ -106,7 +107,7 @@ func (screen *DoRangedAttack) Enter(ctx screeniface.GameCtx) {
 func (screen *DoRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
-	target := ctx.GetGrid().GetGameObject(screen.WithCursor.CursorPosition)
+	target := ctx.GetGrid().GetGameObject(screen.AttackPosition)
 	needPause := false
 	if !target.IsEmpty() {
 		fmt.Printf("Target square is not empty\n")
@@ -136,7 +137,6 @@ func (screen *DoRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScre
 	return &Pause{
 		Skip: !needPause,
 		NextScreen: &MoveFindCharacterScreen{
-			WithCursor:      screen.WithCursor,
 			PlayerIdx:       screen.PlayerIdx,
 			MovedCharacters: screen.MovedCharacters,
 		},
@@ -144,7 +144,6 @@ func (screen *DoRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScre
 }
 
 type EngagedAttack struct {
-	*WithCursor
 	PlayerIdx       int
 	Character       movable.Movable
 	MovedCharacters map[movable.Movable]bool
@@ -161,7 +160,7 @@ func (screen *EngagedAttack) Enter(ctx screeniface.GameCtx) {
 func (screen *EngagedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
-	batch := screen.WithCursor.DrawBoard(ctx)
+	batch := DrawBoard(ctx)
 	if screen.ClearMsg {
 		textBottom("", ss, batch)
 	}
@@ -186,7 +185,6 @@ func (screen *EngagedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScree
 
 	if win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) {
 		return &RangedCombat{
-			WithCursor:      screen.WithCursor,
 			PlayerIdx:       screen.PlayerIdx,
 			Character:       screen.Character,
 			MovedCharacters: screen.MovedCharacters,
@@ -197,7 +195,6 @@ func (screen *EngagedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScree
 }
 
 type DoAttack struct {
-	*WithCursor
 	AttackerV       logical.Vec
 	DefenderV       logical.Vec
 	PlayerIdx       int
@@ -269,7 +266,6 @@ func (screen *DoAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 		}
 	}
 	return &RangedCombat{
-		WithCursor:      screen.WithCursor,
 		PlayerIdx:       screen.PlayerIdx,
 		Character:       grid.GetGameObject(screen.AttackerV).(movable.Movable),
 		MovedCharacters: screen.MovedCharacters,

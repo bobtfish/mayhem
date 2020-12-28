@@ -13,7 +13,12 @@ import (
 	"github.com/bobtfish/mayhem/movable"
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
+
+func DrawBoard(ctx screeniface.GameCtx) *pixel.Batch {
+	return ctx.GetGrid().DrawBatch(render.NewSpriteDrawer(ctx.GetSpriteSheet()).WithOffset(render.GameBoardV()))
+}
 
 func KillIfPlayer(g grid.GameObject, grid *grid.GameGrid) bool {
 	player, isPlayer := g.(*player.Player)

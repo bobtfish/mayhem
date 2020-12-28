@@ -39,7 +39,6 @@ func doesItVanish() bool {
 }
 
 type GrowScreen struct {
-	*WithCursor
 	Consider logical.Vec
 	Fx       *fx.Fx
 	Grew     bool
@@ -54,7 +53,7 @@ func (screen *GrowScreen) Enter(ctx screeniface.GameCtx) {
 func (screen *GrowScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	players := ctx.(*game.Window).GetPlayers()
-	batch := screen.WithCursor.DrawBoard(ctx)
+	batch := DrawBoard(ctx)
 	batch.Draw(win)
 
 	screen.IterateGrowVanish(ctx)

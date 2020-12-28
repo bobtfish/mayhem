@@ -19,7 +19,7 @@ func (screen *ExamineBoardScreen) Enter(ctx screeniface.GameCtx) {
 
 func (screen *ExamineBoardScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
-	batch := screen.WithCursor.DrawBoard(ctx)
+	batch := DrawBoard(ctx)
 	screen.WithCursor.MoveAndDrawCursor(ctx, batch)
 	batch.Draw(win)
 
