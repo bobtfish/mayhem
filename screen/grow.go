@@ -65,7 +65,6 @@ func (screen *GrowScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 		Skip: !screen.Grew,
 		NextScreen: &TurnMenuScreen{
 			PlayerIdx: firstAlivePlayerIdx,
-			LawRating: screen.WithBoard.LawRating,
 		},
 	}
 

@@ -199,7 +199,7 @@ func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen 
 	var success bool
 	var canCastMore bool
 	var anim *fx.Fx
-	if screen.CastBefore || spell.CastSucceeds(p.CastIllusion, screen.LawRating) {
+	if screen.CastBefore || spell.CastSucceeds(p.CastIllusion, ctx.GetLawRating()) {
 		canCastMore = true
 		success, anim = spell.DoCast(p.CastIllusion, targetVec, grid, p)
 	}
@@ -209,7 +209,7 @@ func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen 
 		if (canCastMore && castsRemaining > 0) || success {
 			fmt.Printf("Spell Succeeds\n")
 			textBottom("Spell Succeeds", ss, batch)
-			screen.WithBoard.LawRating += spell.GetLawRating()
+			ctx.AdjustLawRating(spell.GetLawRating())
 		} else {
 			fmt.Printf("Spell failed\n")
 			textBottom("Spell Failed", ss, batch)

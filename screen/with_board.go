@@ -17,7 +17,6 @@ type WithBoard struct {
 	CursorShow      bool
 	CursorFlashTime time.Time
 	CursorSprite    int // Defaults to CursorSpell
-	LawRating       int
 }
 
 func (screen *WithBoard) ShouldIDrawCursor() bool {

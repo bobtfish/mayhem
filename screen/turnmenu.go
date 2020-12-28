@@ -37,9 +37,8 @@ func (screen *ExamineOneSpellScreen) Step(ctx screeniface.GameCtx) screeniface.G
 
 // Shared SpellListScreen is common functionality
 type SpellListScreen struct {
-	MainMenu  *TurnMenuScreen
-	Player    *player.Player
-	LawRating int
+	MainMenu *TurnMenuScreen
+	Player   *player.Player
 }
 
 func (screen *SpellListScreen) Enter(ctx screeniface.GameCtx) {
@@ -58,7 +57,7 @@ func (screen *SpellListScreen) Enter(ctx screeniface.GameCtx) {
 		td.DrawTextColor(
 			fmt.Sprintf("%s%s%s", intToChar(i), spells.LawRatingSymbol(spell), spell.GetName()),
 			logical.V(mod, 8-(i/2)),
-			spells.CastingChanceColor(spell.GetCastingChance(screen.LawRating)),
+			spells.CastingChanceColor(spell.GetCastingChance(ctx.GetLawRating())),
 			win,
 		)
 	}
@@ -150,7 +149,6 @@ func (screen *IsIllusionScreen) Step(ctx screeniface.GameCtx) screeniface.GameSc
 // Begin main turn menu screen
 type TurnMenuScreen struct {
 	PlayerIdx int
-	LawRating int
 }
 
 func (screen *TurnMenuScreen) Enter(ctx screeniface.GameCtx) {
@@ -162,7 +160,7 @@ func (screen *TurnMenuScreen) Enter(ctx screeniface.GameCtx) {
 	textBottom("      Press Keys 1 to 4", ss, win)
 	td := TextDrawer(ss)
 	td.DrawText(players[screen.PlayerIdx].Name, logical.V(3, 7), win)
-	td.DrawText(lawRatingText(screen.LawRating), logical.V(3, 6), win)
+	td.DrawText(lawRatingText(ctx.GetLawRating()), logical.V(3, 6), win)
 	td.DrawText("1. Examine Spells", logical.V(3, 5), win)
 	td.DrawText("2. Select Spell", logical.V(3, 4), win)
 	td.DrawText("3. Examine Board", logical.V(3, 3), win)
@@ -202,18 +200,16 @@ func (screen *TurnMenuScreen) Step(ctx screeniface.GameCtx) screeniface.GameScre
 	if c == 1 {
 		return &ExamineSpellsScreen{
 			SpellListScreen: SpellListScreen{
-				LawRating: screen.LawRating,
-				MainMenu:  screen,
-				Player:    players[screen.PlayerIdx],
+				MainMenu: screen,
+				Player:   players[screen.PlayerIdx],
 			},
 		}
 	}
 	if c == 2 {
 		return &SelectSpellScreen{
 			SpellListScreen: SpellListScreen{
-				LawRating: screen.LawRating,
-				MainMenu:  screen,
-				Player:    players[screen.PlayerIdx],
+				MainMenu: screen,
+				Player:   players[screen.PlayerIdx],
 			},
 		}
 	}
@@ -226,14 +222,11 @@ func (screen *TurnMenuScreen) Step(ctx screeniface.GameCtx) screeniface.GameScre
 	if c == 4 {
 		if len(players) == screen.PlayerIdx+1 {
 			return &DisplaySpellCastScreen{
-				WithBoard: &WithBoard{
-					LawRating: screen.LawRating,
-				},
+				WithBoard: &WithBoard{},
 			}
 		}
 		return &TurnMenuScreen{
 			PlayerIdx: screen.PlayerIdx + 1,
-			LawRating: screen.LawRating,
 		}
 	}
 	return screen

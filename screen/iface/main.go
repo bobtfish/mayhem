@@ -15,4 +15,6 @@ type GameCtx interface {
 	GetWindow() *pixelgl.Window
 	GetSpriteSheet() pixel.Picture
 	GetGrid() *grid.GameGrid
+	GetLawRating() int
+	AdjustLawRating(int)
 }

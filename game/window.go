@@ -13,6 +13,7 @@ type Window struct {
 	SpriteSheet pixel.Picture
 	Grid        *grid.GameGrid
 	Players     []*player.Player
+	LawRating   int
 }
 
 func (gw *Window) GetWindow() *pixelgl.Window {
@@ -33,6 +34,14 @@ func (gw *Window) GetPlayers() []*player.Player {
 
 func (gw *Window) GetGrid() *grid.GameGrid {
 	return gw.Grid
+}
+
+func (gw *Window) GetLawRating() int {
+	return gw.LawRating
+}
+
+func (gw *Window) AdjustLawRating(a int) {
+	gw.LawRating += a
 }
 
 func (gw *Window) Closed() bool {
