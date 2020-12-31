@@ -41,7 +41,7 @@ func (screen *MoveAnnounceScreen) Step(ctx screeniface.GameCtx) screeniface.Game
 	// any other key displays the cursor
 	if win.JustPressed(pixelgl.KeyS) || captureDirectionKey(win) != logical.ZeroVec() {
 		return &MoveFindCharacterScreen{
-			WithCursor: &WithCursor{CursorPosition: players[screen.PlayerIdx].BoardPosition},
+			WithCursor: WithCursor{CursorPosition: players[screen.PlayerIdx].BoardPosition},
 			PlayerIdx:  screen.PlayerIdx,
 		}
 	}
@@ -49,7 +49,7 @@ func (screen *MoveAnnounceScreen) Step(ctx screeniface.GameCtx) screeniface.Game
 }
 
 type MoveFindCharacterScreen struct {
-	*WithCursor
+	WithCursor
 	PlayerIdx       int
 	MovedCharacters map[movable.Movable]bool
 }
@@ -453,7 +453,7 @@ func (screen *MoveGroundCharacterScreen) MoveGroundCharacterScreenFinished() scr
 }
 
 type MoveFlyingCharacterScreen struct {
-	*WithCursor
+	WithCursor
 	PlayerIdx       int
 	Character       movable.Movable
 	OutOfRange      bool
@@ -467,6 +467,7 @@ func (screen *MoveFlyingCharacterScreen) Enter(ctx screeniface.GameCtx) {
 	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	screen.WithCursor.CursorSprite = CursorFly
+	screen.WithCursor.CursorPosition = screen.Character.GetBoardPosition()
 	fmt.Printf("Enter move flying character screen for player %d\n", screen.PlayerIdx+1)
 	screen.DisplayRange = true // Set this to start to suppress cursor till we move it
 }

@@ -8,7 +8,7 @@ import (
 
 type ExamineBoardScreen struct {
 	MainMenu screeniface.GameScreen
-	*WithCursor
+	WithCursor
 }
 
 func (screen *ExamineBoardScreen) Enter(ctx screeniface.GameCtx) {

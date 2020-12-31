@@ -1,6 +1,8 @@
 package game
 
 import (
+	"fmt"
+
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/player"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
@@ -52,6 +54,7 @@ func (gw *Window) Update(screen screeniface.GameScreen) screeniface.GameScreen {
 	newScreen := screen.Step(gw)
 	gw.Window.Update()
 	if newScreen != screen {
+		fmt.Printf("New screen %T %V", newScreen, newScreen)
 		newScreen.Enter(gw)
 		return newScreen
 	}

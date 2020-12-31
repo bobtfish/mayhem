@@ -55,6 +55,8 @@ func (screen *DisplaySpellCastScreen) Step(ctx screeniface.GameCtx) screeniface.
 	win := ctx.GetWindow()
 	players := ctx.(*game.Window).GetPlayers()
 	thisPlayer := players[screen.PlayerIdx]
+	batch := DrawBoard(ctx)
+	batch.Draw(win)
 	if (thisPlayer.ChosenSpell < 0) || win.JustPressed(pixelgl.Key0) {
 		return NextSpellCastOrMove(screen.PlayerIdx, ctx, true)
 	}

@@ -17,7 +17,7 @@ import (
 )
 
 type RangedCombat struct {
-	*WithCursor
+	WithCursor
 	PlayerIdx       int
 	Character       movable.Movable
 	MovedCharacters map[movable.Movable]bool
@@ -29,6 +29,7 @@ func (screen *RangedCombat) Enter(ctx screeniface.GameCtx) {
 	fmt.Printf("In ranged combat state\n")
 	screen.DisplayRange = true
 	screen.WithCursor.CursorSprite = CursorRangedAttack
+	screen.WithCursor.CursorPosition = screen.Character.GetBoardPosition()
 }
 
 func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -39,6 +40,7 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 	attackRange := attacker.GetAttackRange()
 	if attackRange == 0 || win.JustPressed(pixelgl.Key0) || win.JustPressed(pixelgl.KeyK) { // No ranged combat
 		return &MoveFindCharacterScreen{
+			WithCursor:      WithCursor{CursorPosition: screen.WithCursor.CursorPosition},
 			PlayerIdx:       screen.PlayerIdx,
 			MovedCharacters: screen.MovedCharacters,
 		}
@@ -137,6 +139,7 @@ func (screen *DoRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScre
 	return &Pause{
 		Skip: !needPause,
 		NextScreen: &MoveFindCharacterScreen{
+			WithCursor:      WithCursor{CursorPosition: screen.AttackPosition},
 			PlayerIdx:       screen.PlayerIdx,
 			MovedCharacters: screen.MovedCharacters,
 		},

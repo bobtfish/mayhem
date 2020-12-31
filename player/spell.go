@@ -28,7 +28,16 @@ func (s PlayerSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGr
 	tile := grid.GetGameObject(target)
 	player, isPlayer := tile.(*Player)
 	if !isPlayer {
+		// FIXME - bug here if a player is mounted!
 		panic(fmt.Sprintf("Player spell '%s' cast on non player - should never happen", s.Name))
+		/*rideable, isRideable := tile.(*movable.Rideable)
+		if !isRideable
+			panic(fmt.Sprintf("Player spell '%s' cast on non player - should never happen", s.Name))
+		}
+		player = rideable.GetRider();
+		if player == nil {
+			panic(fmt.Sprintf("Player spell '%s' cast on non player - should never happen", s.Name))
+		}*/
 	}
 	s.MutateFunc(player)
 	return true, nil
