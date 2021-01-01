@@ -1,7 +1,7 @@
 package iface
 
 import (
-	"math/rand"
+	"github.com/bobtfish/mayhem/rand"
 
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
@@ -57,10 +57,10 @@ func ChooseSpells() []Spell {
 		spells[i] = AllSpells[idx]
 	}
 
-	for i := 0; i < len(AllSpells); i++ {
+	/*for i := 0; i < len(AllSpells); i++ {
 		if AllSpells[i].GetName() == "Magic Bolt" {
 			spells[1] = AllSpells[i]
 		}
-	}
+	}*/
 	return spells
 }

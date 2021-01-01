@@ -2,8 +2,9 @@ package spellswithscreen
 
 import (
 	"fmt"
-	"math/rand"
 	"time"
+
+	"github.com/bobtfish/mayhem/rand"
 
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/game"
