@@ -7,7 +7,7 @@ import (
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/rand"
-	"github.com/bobtfish/mayhem/spells"
+	spelliface "github.com/bobtfish/mayhem/spells/iface"
 )
 
 func NewPlayer() Player {
@@ -18,14 +18,14 @@ func NewPlayer() Player {
 		MagicResistance: rand.Intn(2) + 6, // 6-8
 		Movement:        1,
 		ChosenSpell:     -1,
-		Spells:          spells.ChooseSpells(),
+		Spells:          spelliface.ChooseSpells(),
 		Alive:           true,
 	}
 }
 
 type Player struct {
 	Name            string
-	Spells          []spells.Spell
+	Spells          []spelliface.Spell
 	HumanPlayer     bool
 	CharacterIcon   logical.Vec
 	ChosenSpell     int

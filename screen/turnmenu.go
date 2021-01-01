@@ -10,10 +10,11 @@ import (
 	"github.com/bobtfish/mayhem/player"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 	"github.com/bobtfish/mayhem/spells"
+	spelliface "github.com/bobtfish/mayhem/spells/iface"
 )
 
 type ExamineOneSpellScreen struct {
-	Spell        spells.Spell
+	Spell        spelliface.Spell
 	ReturnScreen screeniface.GameScreen
 }
 
@@ -55,7 +56,7 @@ func (screen *SpellListScreen) Enter(ctx screeniface.GameCtx) {
 		}
 		spell := screen.Player.Spells[i]
 		td.DrawTextColor(
-			fmt.Sprintf("%s%s%s", intToChar(i), spells.LawRatingSymbol(spell), spell.GetName()),
+			fmt.Sprintf("%s%s%s", intToChar(i), spelliface.LawRatingSymbol(spell), spell.GetName()),
 			logical.V(mod, 8-(i/2)),
 			spells.CastingChanceColor(spell.GetCastingChance(ctx.GetLawRating())),
 			win,
@@ -68,7 +69,7 @@ func (screen *SpellListScreen) Enter(ctx screeniface.GameCtx) {
 // Begin Examine Spells list screen
 type ExamineSpellsScreen struct {
 	SpellListScreen
-	SpellToExamine *spells.Spell
+	SpellToExamine *spelliface.Spell
 }
 
 //func (screen *ExamineSpellsScreen) Enter(ctx screeniface.GameCtx) {

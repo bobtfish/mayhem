@@ -4,6 +4,7 @@ import (
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
+	spelliface "github.com/bobtfish/mayhem/spells/iface"
 )
 
 type LawSpell struct {
@@ -15,25 +16,25 @@ func (s LawSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid,
 }
 
 func init() {
-	CreateSpell(LawSpell{ASpell{
+	spelliface.CreateSpell(LawSpell{ASpell{
 		Name:          "Law-1",
 		CastingChance: 100,
 		LawRating:     4,
 		NoCastFx:      true,
 	}})
-	CreateSpell(LawSpell{ASpell{
+	spelliface.CreateSpell(LawSpell{ASpell{
 		Name:          "Law-2",
 		CastingChance: 60,
 		LawRating:     8,
 		NoCastFx:      true,
 	}})
-	CreateSpell(LawSpell{ASpell{
+	spelliface.CreateSpell(LawSpell{ASpell{
 		Name:          "Chaos-1",
 		CastingChance: 80,
 		LawRating:     -4,
 		NoCastFx:      true,
 	}})
-	CreateSpell(LawSpell{ASpell{
+	spelliface.CreateSpell(LawSpell{ASpell{
 		Name:          "Chaos-2",
 		CastingChance: 60,
 		LawRating:     -8,

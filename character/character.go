@@ -14,6 +14,7 @@ import (
 	"github.com/bobtfish/mayhem/render"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 	"github.com/bobtfish/mayhem/spells"
+	spelliface "github.com/bobtfish/mayhem/spells/iface"
 )
 
 // Abstract character that can be created
@@ -67,7 +68,7 @@ func LoadCharacterTemplates() {
 			fmt.Printf("Character spell %s has no 'base_casting_chance', setting chance to 100\n", v.Name)
 			v.BaseCastingChance = 100
 		}
-		spells.CreateSpell(CharacterSpell{
+		spelliface.CreateSpell(CharacterSpell{
 			Name:               v.Name,
 			LawRating:          v.LawChaos,
 			CastingChance:      v.BaseCastingChance,
@@ -93,7 +94,7 @@ func LoadCharacterTemplates() {
 
 	// We know that the spells array is initialised now, add the disbelieve spell
 	// This is done here as character depends on spells, and so we can't have spell depend on character
-	spells.AllSpells[0] = DisbelieveSpell{spells.ASpell{
+	spelliface.AllSpells[0] = DisbelieveSpell{spells.ASpell{
 		Name:          "Disbelieve",
 		LawRating:     0,
 		Reuseable:     true,
@@ -127,7 +128,7 @@ type CharacterSpell struct {
 }
 
 // Spell interface begin
-func (s CharacterSpell) TakeOverScreen(grid *grid.GameGrid, cleanup func(), nextScreen screeniface.GameScreen, source, target logical.Vec) screeniface.GameScreen {
+func (s CharacterSpell) TakeOverScreen(ctx screeniface.GameCtx, cleanupFunc func(), nextScreen screeniface.GameScreen, playeerIdx int, target logical.Vec) screeniface.GameScreen {
 	return nil
 }
 func (s CharacterSpell) GetName() string {

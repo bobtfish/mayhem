@@ -11,6 +11,7 @@ import (
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/rand"
 	"github.com/bobtfish/mayhem/spells"
+	spelliface "github.com/bobtfish/mayhem/spells/iface"
 )
 
 type OtherSpell struct {
@@ -23,7 +24,7 @@ func (s OtherSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGri
 }
 
 func init() {
-	spells.CreateSpell(OtherSpell{
+	spelliface.CreateSpell(OtherSpell{
 		ASpell: spells.ASpell{
 			Name:          "Raise Dead",
 			LawRating:     -1,
@@ -43,7 +44,7 @@ func init() {
 			return true, nil
 		},
 	})
-	spells.CreateSpell(OtherSpell{
+	spelliface.CreateSpell(OtherSpell{
 		ASpell: spells.ASpell{
 			Name:          "Subversion",
 			CastingChance: 100,
@@ -63,7 +64,7 @@ func init() {
 			return false, nil
 		},
 	})
-	spells.CreateSpell(OtherSpell{
+	spelliface.CreateSpell(OtherSpell{
 		ASpell: spells.ASpell{ // 1 chance only, makes creatures belonging to player explode
 			Name:                "Vengeance",
 			CastingChance:       80,
@@ -74,7 +75,7 @@ func init() {
 			return ExplodeCreatures(target, grid)
 		},
 	})
-	spells.CreateSpell(OtherSpell{
+	spelliface.CreateSpell(OtherSpell{
 		ASpell: spells.ASpell{ // 1 chance only, doesn't kill player - makes their creatures explode maybe?
 			Name:                "Decree",
 			CastingChance:       80,
@@ -86,7 +87,7 @@ func init() {
 			return ExplodeCreatures(target, grid)
 		},
 	})
-	spells.CreateSpell(OtherSpell{
+	spelliface.CreateSpell(OtherSpell{
 		ASpell: spells.ASpell{ // 3 tries, doesn't kill player - makes their creatures explode
 			Name:                "Dark Power",
 			CastingChance:       50,
@@ -99,7 +100,7 @@ func init() {
 			return ExplodeCreatures(target, grid)
 		},
 	})
-	spells.CreateSpell(OtherSpell{
+	spelliface.CreateSpell(OtherSpell{
 		ASpell: spells.ASpell{ // 3 tries, doesn't kill player - makes their creatures explode
 			Name:                "Justice",
 			CastingChance:       50,

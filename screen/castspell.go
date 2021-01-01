@@ -192,10 +192,10 @@ func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen 
 	nextScreen := NextSpellCastOrMove(screen.PlayerIdx, ctx, false)
 
 	// FIXME
-	/*takeOver := spell.TakeOverScreen(screen.WithCursor.Grid, cleanupFunc, nextScreen, p.BoardPosition, targetVec)
+	takeOver := spell.TakeOverScreen(ctx, cleanupFunc, nextScreen, screen.PlayerIdx, screen.Target)
 	if takeOver != nil {
 		return takeOver
-	}*/
+	}
 
 	// Do the spell cast here
 	var success bool

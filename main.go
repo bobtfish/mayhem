@@ -19,10 +19,8 @@ import (
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 
 	_ "github.com/bobtfish/mayhem/otherspells"
+	_ "github.com/bobtfish/mayhem/spellswithscreen"
 )
-
-//	_ "github.com/bobtfish/mayhem/spellswithscreen"
-//)
 
 func loadSpriteSheet() io.Reader {
 	data, err := base64.StdEncoding.DecodeString(sprite_sheet_base64)

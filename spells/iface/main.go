@@ -6,6 +6,8 @@ import (
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
+
+	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
 type Spell interface {
@@ -21,6 +23,8 @@ type Spell interface {
 	IsReuseable() bool
 	CastFx() *fx.Fx
 	NeedsLineOfSight() bool
+
+	TakeOverScreen(screeniface.GameCtx, func(), screeniface.GameScreen, int, logical.Vec) screeniface.GameScreen
 }
 
 func LawRatingSymbol(s Spell) string {
@@ -52,11 +56,11 @@ func ChooseSpells() []Spell {
 		idx := rand.Intn(len(AllSpells)-1) + 1
 		spells[i] = AllSpells[idx]
 	}
-	/*
-		for i := 0; i < len(AllSpells); i++ {
-			if AllSpells[i].GetName() == "Magic Bolt" {
-				spells[1] = AllSpells[i]
-			}
-		}*/
+
+	for i := 0; i < len(AllSpells); i++ {
+		if AllSpells[i].GetName() == "Magic Bolt" {
+			spells[1] = AllSpells[i]
+		}
+	}
 	return spells
 }

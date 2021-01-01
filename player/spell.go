@@ -9,6 +9,7 @@ import (
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/spells"
+	spelliface "github.com/bobtfish/mayhem/spells/iface"
 )
 
 type PlayerSpell struct {
@@ -17,27 +18,19 @@ type PlayerSpell struct {
 }
 
 func (s PlayerSpell) CanCast(target grid.GameObject) bool {
-	_, ok := target.(*Player)
-	return ok
+	// CanCast is never called, as CastRange is 0
+	return true
 }
 
 func (s PlayerSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, castor grid.GameObject) (bool, *fx.Fx) {
 	if illusion {
 		panic("PlayerSpells should never be illusions")
 	}
-	tile := grid.GetGameObject(target)
-	player, isPlayer := tile.(*Player)
+	// Player spells are always on the castor, and the target vec could be the thing they're riding, so just
+	// use the castor
+	player, isPlayer := castor.(*Player)
 	if !isPlayer {
-		// FIXME - bug here if a player is mounted!
 		panic(fmt.Sprintf("Player spell '%s' cast on non player - should never happen", s.Name))
-		/*rideable, isRideable := tile.(*movable.Rideable)
-		if !isRideable
-			panic(fmt.Sprintf("Player spell '%s' cast on non player - should never happen", s.Name))
-		}
-		player = rideable.GetRider();
-		if player == nil {
-			panic(fmt.Sprintf("Player spell '%s' cast on non player - should never happen", s.Name))
-		}*/
 	}
 	s.MutateFunc(player)
 	return true, nil
@@ -45,7 +38,7 @@ func (s PlayerSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGr
 
 // Setup all the player spells.
 func init() {
-	spells.CreateSpell(PlayerSpell{
+	spelliface.CreateSpell(PlayerSpell{
 		ASpell: spells.ASpell{
 			Name:          "Magic Armour",
 			LawRating:     1,
@@ -58,7 +51,7 @@ func init() {
 			p.Defence += 4
 		},
 	})
-	spells.CreateSpell(PlayerSpell{
+	spelliface.CreateSpell(PlayerSpell{
 		ASpell: spells.ASpell{
 			Name:          "Magic Shield",
 			LawRating:     1,
@@ -71,7 +64,7 @@ func init() {
 			p.Defence += 2
 		},
 	})
-	spells.CreateSpell(PlayerSpell{
+	spelliface.CreateSpell(PlayerSpell{
 		ASpell: spells.ASpell{
 			Name:          "Magic Knife",
 			LawRating:     1,
@@ -84,7 +77,7 @@ func init() {
 			p.HasMagicWeapon = true
 		},
 	})
-	spells.CreateSpell(PlayerSpell{
+	spelliface.CreateSpell(PlayerSpell{
 		ASpell: spells.ASpell{
 			Name:          "Magic Sword",
 			LawRating:     1,
@@ -97,7 +90,7 @@ func init() {
 			p.HasMagicWeapon = true
 		},
 	})
-	spells.CreateSpell(PlayerSpell{
+	spelliface.CreateSpell(PlayerSpell{
 		ASpell: spells.ASpell{
 			Name:          "Magic Bow",
 			LawRating:     1,
@@ -110,7 +103,7 @@ func init() {
 			p.RangedCombat = 3
 		},
 	})
-	spells.CreateSpell(PlayerSpell{
+	spelliface.CreateSpell(PlayerSpell{
 		ASpell: spells.ASpell{
 			Name:          "Shadow Form",
 			CastingChance: 80,
@@ -122,7 +115,7 @@ func init() {
 			}
 		},
 	})
-	spells.CreateSpell(PlayerSpell{
+	spelliface.CreateSpell(PlayerSpell{
 		ASpell: spells.ASpell{
 			Name:          "Magic Wings",
 			CastingChance: 60,

@@ -6,26 +6,30 @@ import (
 	"time"
 
 	"github.com/bobtfish/mayhem/fx"
+	"github.com/bobtfish/mayhem/game"
 	"github.com/bobtfish/mayhem/grid"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
-	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/render"
 	screens "github.com/bobtfish/mayhem/screen"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 	"github.com/bobtfish/mayhem/spells"
-
+	spelliface "github.com/bobtfish/mayhem/spells/iface"
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 )
+
+// FIXME this is duplicate
+func DrawBoard(ctx screeniface.GameCtx) *pixel.Batch {
+	return ctx.GetGrid().DrawBatch(render.NewSpriteDrawer(ctx.GetSpriteSheet()).WithOffset(render.GameBoardV()))
+}
 
 type ScreenSpell struct {
 	spells.ASpell
-	TakeOverFunc func(*grid.GameGrid, []*player.Player, func(), screeniface.GameScreen, logical.Vec, logical.Vec) screeniface.GameScreen
+	TakeOverFunc func(screeniface.GameCtx, func(), screeniface.GameScreen, int, logical.Vec) screeniface.GameScreen
 }
 
-func (s ScreenSpell) TakeOverScreen(grid *grid.GameGrid, players []*player.Player, cleanupFunc func(), nextScreen screeniface.GameScreen, source, target logical.Vec) screeniface.GameScreen {
-	return s.TakeOverFunc(grid, players, cleanupFunc, nextScreen, source, target)
+func (s ScreenSpell) TakeOverScreen(ctx screeniface.GameCtx, cleanupFunc func(), nextScreen screeniface.GameScreen, playerIdx int, target logical.Vec) screeniface.GameScreen {
+	return s.TakeOverFunc(ctx, cleanupFunc, nextScreen, playerIdx, target)
 }
 
 func (s ScreenSpell) DoCast(illusion bool, target logical.Vec, grid *grid.GameGrid, owner grid.GameObject) (bool, *fx.Fx) {
@@ -37,30 +41,25 @@ func (s ScreenSpell) CastFx() *fx.Fx {
 }
 
 type LightningSpellScreen struct {
-	Grid        *grid.GameGrid
 	NextScreen  screeniface.GameScreen
 	CleanupFunc func() // This is a closure that removes the spell from the player after casting, called when leaving
-	Source      logical.Vec
 	Target      logical.Vec
 	Anim        []logical.Vec
 	AnimCount   int
 	Lightning   bool
-	Players     []*player.Player
 }
 
-func (screen *LightningSpellScreen) DrawBoard(ss pixel.Picture, win *pixelgl.Window) *pixel.Batch {
-	sd := render.NewSpriteDrawer(ss).WithOffset(render.GameBoardV())
-	return screen.Grid.DrawBatch(sd)
-}
-
-func (screen *LightningSpellScreen) Enter(ss pixel.Picture, win *pixelgl.Window) {
+func (screen *LightningSpellScreen) Enter(ctx screeniface.GameCtx) {
 	//fmt.Printf("FOO\n")
 }
 
 // 25 Y, 0 X
 
-func (screen *LightningSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) screeniface.GameScreen {
-	batch := screen.DrawBoard(ss, win)
+func (screen *LightningSpellScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	batch := DrawBoard(ctx)
+	ss := ctx.GetSpriteSheet()
+	grid := ctx.GetGrid()
+	win := ctx.GetWindow()
 	screen.AnimCount++
 	//fmt.Printf("Source is X%dY%d Target is X%dY%d\n", screen.Source.X, screen.Source.Y, screen.Target.X, screen.Target.Y)
 	//fmt.Printf("AnimCount is %d Path is %d, %d\n", screen.AnimCount, screen.Anim[screen.AnimCount].X, screen.Anim[screen.AnimCount].Y)
@@ -81,7 +80,7 @@ func (screen *LightningSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) 
 
 	batch.Draw(win)
 	if screen.AnimCount+1 == len(screen.Anim) {
-		ob := screen.Grid.GetGameObject(screen.Target)
+		ob := grid.GetGameObject(screen.Target)
 		a, isAttackable := ob.(movable.Attackable)
 		if isAttackable {
 			chance := rand.Intn(5) // Defence is 1-5 for a player
@@ -90,11 +89,12 @@ func (screen *LightningSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) 
 			}
 			fmt.Printf("Chance %d > Defence %d\n", chance, a.GetDefence())
 			if chance > a.GetDefence() {
-				died := screen.Grid.GetGameObjectStack(screen.Target).RemoveTopObject()
-				if screens.KillIfPlayer(died, screen.Grid) {
-					if screens.WeHaveAWinner(screen.Players) {
+				died := grid.GetGameObjectStack(screen.Target).RemoveTopObject()
+				if screens.KillIfPlayer(died, grid) {
+					players := ctx.(*game.Window).GetPlayers()
+					if screens.WeHaveAWinner(players) {
 						return &screens.WinnerScreen{
-							Players: screen.Players,
+							Players: players,
 						}
 					}
 				}
@@ -110,10 +110,12 @@ func (screen *LightningSpellScreen) Step(ss pixel.Picture, win *pixelgl.Window) 
 }
 
 func init() {
-	lightningTakeOver := func(isLightning bool) func(grid *grid.GameGrid, players []*player.Player, cleanupFunc func(), nextScreen screeniface.GameScreen, source, target logical.Vec) screeniface.GameScreen {
-		return func(grid *grid.GameGrid, players []*player.Player, cleanupFunc func(), nextScreen screeniface.GameScreen, source, target logical.Vec) screeniface.GameScreen {
+	//ctx screeniface.GameCtx, cleanupFunc func(), nextScreen screeniface.GameScreen, playeerIdx int, target logical.Vec) screeniface.GameScreen
+	lightningTakeOver := func(isLightning bool) func(ctx screeniface.GameCtx, cleanupFunc func(), nextScreen screeniface.GameScreen, playerIdx int, target logical.Vec) screeniface.GameScreen {
+		return func(ctx screeniface.GameCtx, cleanupFunc func(), nextScreen screeniface.GameScreen, playerIdx int, target logical.Vec) screeniface.GameScreen {
 			four := logical.V(4, 4)
 			mtarget := target.Multiply(four)
+			source := ctx.(*game.Window).GetPlayers()[playerIdx].BoardPosition
 			msource := source.Multiply(four)
 			anim := mtarget.Subtract(msource).Path()
 			for i, s := range anim {
@@ -122,18 +124,15 @@ func init() {
 			anim = append(anim, mtarget)
 			return &LightningSpellScreen{
 				Lightning:   isLightning,
-				Grid:        grid,
 				NextScreen:  nextScreen,
 				CleanupFunc: cleanupFunc,
-				Source:      source,
 				Target:      target,
 				Anim:        anim,
 				AnimCount:   -1,
-				Players:     players,
 			}
 		}
 	}
-	spells.CreateSpell(ScreenSpell{
+	spelliface.CreateSpell(ScreenSpell{
 		ASpell: spells.ASpell{ // Uses disbelive animation if it kills a thing. No corpse
 			Name:          "Lightning",
 			CastingChance: 100,
@@ -141,7 +140,7 @@ func init() {
 		},
 		TakeOverFunc: lightningTakeOver(true),
 	})
-	spells.CreateSpell(ScreenSpell{
+	spelliface.CreateSpell(ScreenSpell{
 		ASpell: spells.ASpell{ // as above, just less strong
 			Name:          "Magic Bolt",
 			CastingChance: 100,
