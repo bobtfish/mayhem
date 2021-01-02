@@ -116,3 +116,20 @@ func (v Vec) Path() []Vec {
 	}
 	return path
 }
+
+type DistanceSortedVecs struct {
+	From Vec
+	List []Vec
+}
+
+func (a DistanceSortedVecs) Len() int {
+	return len(a.List)
+}
+
+func (a DistanceSortedVecs) Less(i, j int) bool {
+	return a.From.Distance(a.List[i]) < a.From.Distance(a.List[j])
+}
+
+func (a DistanceSortedVecs) Swap(i, j int) {
+	a.List[i], a.List[j] = a.List[j], a.List[i]
+}

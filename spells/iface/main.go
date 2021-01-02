@@ -57,10 +57,10 @@ func ChooseSpells() []Spell {
 		spells[i] = AllSpells[idx]
 	}
 
-	/*for i := 0; i < len(AllSpells); i++ {
-		if AllSpells[i].GetName() == "Magic Bolt" {
+	for i := 0; i < len(AllSpells); i++ {
+		if AllSpells[i].GetName() == "Magic Wood" {
 			spells[1] = AllSpells[i]
 		}
-	}*/
+	}
 	return spells
 }
