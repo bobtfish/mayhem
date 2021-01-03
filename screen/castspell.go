@@ -58,6 +58,7 @@ func (screen *DisplaySpellCastScreen) Step(ctx screeniface.GameCtx) screeniface.
 	batch := DrawBoard(ctx)
 	batch.Draw(win)
 	if (thisPlayer.ChosenSpell < 0) || win.JustPressed(pixelgl.Key0) {
+		thisPlayer.ChosenSpell = -1 // Make sure to un-choose spell
 		return NextSpellCastOrMove(screen.PlayerIdx, ctx, true)
 	}
 	if win.JustPressed(pixelgl.KeyS) || !captureDirectionKey(win).Equals(logical.ZeroVec()) {
@@ -191,7 +192,6 @@ func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen 
 	}
 	nextScreen := NextSpellCastOrMove(screen.PlayerIdx, ctx, false)
 
-	// FIXME
 	takeOver := spell.TakeOverScreen(ctx, cleanupFunc, nextScreen, screen.PlayerIdx, screen.Target)
 	if takeOver != nil {
 		return takeOver

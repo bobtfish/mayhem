@@ -216,7 +216,8 @@ func (screen *TurnMenuScreen) Step(ctx screeniface.GameCtx) screeniface.GameScre
 	}
 	if c == 3 {
 		return &ExamineBoardScreen{
-			MainMenu: screen,
+			MainMenu:   screen,
+			WithCursor: WithCursor{CursorPosition: players[screen.PlayerIdx].BoardPosition},
 		}
 	}
 	if c == 4 {
