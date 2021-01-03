@@ -1103,22 +1103,23 @@
 #    - - 5
 #      - 4
 
-# - name: Shadow Wood
-#   base_casting_chance: 40
-#   combat: 2
-#   ranged_combat: 0
-#   range: 0
-#   defence: 4
-#   movement: 0
-#   magical_resistance: 0
-#   manoeuvre: 9
-#   unknown: 4
-#   law_chaos: -2
-#   strength: 30
-#   cast_range: 8
-#   sprites:
-#    - - 5
-#      - 3
+ - name: Shadow Wood
+   base_casting_chance: 50
+   combat: 2
+   ranged_combat: 0
+   range: 0
+   defence: 4
+   movement: 0
+   magical_resistance: 0
+   manoeuvre: 10 # Means always engaged!
+   unknown: 4
+   law_chaos: -2
+   strength: 30
+   cast_range: 8
+   quantity: 8
+   sprites:
+    - - 5
+      - 3
 
  - name: Magic Castle
    base_casting_chance: 50

@@ -61,6 +61,9 @@ func ChooseSpells() []Spell {
 		if AllSpells[i].GetName() == "Magic Wood" {
 			spells[1] = AllSpells[i]
 		}
+		if AllSpells[i].GetName() == "Shadow Wood" {
+			spells[2] = AllSpells[i]
+		}
 	}
 	return spells
 }

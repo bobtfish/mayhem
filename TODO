@@ -16,3 +16,10 @@ Bug / missing feature list:
    AI Players
    Gooey blob / Fire character and player interactions
 
+Bugs:
+  - Players can attack walls?
+  - Examine board screen, cursor starts at 0, 0
+  - If you skip spell casting, then don't choose a spell next turn, you try to cast that same spell again the turn after
+  - Magic wood, make it gift players with a spell sometimes if they are mounted.
+  - Make magic wood casting be line of sight
+  - Line of sight calculation seems a bit harsh currently

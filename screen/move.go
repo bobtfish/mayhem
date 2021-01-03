@@ -103,12 +103,6 @@ func (screen *MoveFindCharacterScreen) Step(ctx screeniface.GameCtx) screeniface
 					}
 				}
 
-				// This check is after dismount for magic castle
-				if ob.GetMovement() == 0 {
-					fmt.Printf("Not movable (0 movement range)\n")
-					return screen
-				}
-
 				// Is it engaged?
 				if IsNextToEngageable(screen.WithCursor.CursorPosition, screen.PlayerIdx, ctx) {
 					fmt.Printf("Is next to engageable character\n")
@@ -121,6 +115,13 @@ func (screen *MoveFindCharacterScreen) Step(ctx screeniface.GameCtx) screeniface
 						}
 					}
 					fmt.Printf("Broke engagement, can move normally\n")
+				}
+
+				// This check is after dismount for magic castle
+				// and after engaged attack checking for shadow wood
+				if ob.GetMovement() == 0 {
+					fmt.Printf("Not movable (0 movement range)\n")
+					return screen
 				}
 
 				// Not engaged, so move

@@ -37,7 +37,6 @@ func (screen *MagicWoodSpellScreen) Step(ctx screeniface.GameCtx) screeniface.Ga
 	}
 
 	batch := DrawBoard(ctx)
-	//ss := ctx.GetSpriteSheet()
 	grid := ctx.GetGrid()
 	win := ctx.GetWindow()
 	players := ctx.(*game.Window).GetPlayers()
@@ -49,12 +48,10 @@ func (screen *MagicWoodSpellScreen) Step(ctx screeniface.GameCtx) screeniface.Ga
 		Name:            "Magic Wood",
 		Sprite:          magicWoodSpriteVec(),
 		Color:           render.GetColor(0, 252, 0),
-		Defence:         2, // FIXME
-		MagicResistance: 5, // FIXME
+		Defence:         5,
+		MagicResistance: 0,
 		Mountable:       true,
-
-		// FIXME - ugh this is gross - would it be better done up a level?
-		BelongsTo: player,
+		BelongsTo:       player,
 	})
 	screen.LaidTiles++
 
@@ -158,6 +155,4 @@ func init() {
 			}
 		},
 	})
-	// Shadow wood - get 8 tiles, must be 1 space between other shadow wood tiles, placed by player\
-	//               chaos 1,casting chance 50%, range 8
 }
