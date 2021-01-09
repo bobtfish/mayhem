@@ -87,7 +87,9 @@ func getMagicWoodTiles(ctx screeniface.GameCtx, playerIdx int) []logical.Vec {
 			if !grid.GetGameObject(possibleVec).IsEmpty() {
 				continue
 			}
-			// FIXME - adjacent to the player is OK
+			if !grid.HaveLineOfSight(fromPosition, possibleVec) {
+				continue
+			}
 			if adjacentsAreNotMagicWood(ctx, possibleVec) {
 				//fmt.Printf("Add possible Vec X%d Y%d\n", possibleVec.X, possibleVec.Y)
 				maybeTiles = append(maybeTiles, possibleVec)

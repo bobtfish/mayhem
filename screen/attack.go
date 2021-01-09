@@ -69,7 +69,7 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 				textBottom("Out of range", ss, batch)
 				screen.OutOfRange = true
 			} else {
-				if !HaveLineOfSight(characterLocation, attackPosition, grid) {
+				if !grid.HaveLineOfSight(characterLocation, attackPosition) {
 					textBottom("No line of sight", ss, batch)
 					screen.OutOfRange = true
 				} else {

@@ -114,7 +114,7 @@ func (screen *TargetSpellScreen) Step(ctx screeniface.GameCtx) screeniface.GameS
 			fmt.Printf("Out of range! Spell cast range %d but distance to target is %d\n", spell.GetCastRange(), target.Distance(thisPlayer.BoardPosition))
 			screen.MessageShown = true
 		} else {
-			if spell.NeedsLineOfSight() && !HaveLineOfSight(thisPlayer.BoardPosition, target, grid) {
+			if spell.NeedsLineOfSight() && !grid.HaveLineOfSight(thisPlayer.BoardPosition, target) {
 				textBottom("No line of sight", ss, batch)
 				screen.MessageShown = true
 			} else {

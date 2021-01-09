@@ -88,3 +88,12 @@ func (grid *GameGrid) AnimationTick(odd bool) {
 func (grid *GameGrid) AsRect() logical.Rect {
 	return logical.R(grid.MaxX(), grid.MaxY())
 }
+
+func (grid *GameGrid) HaveLineOfSight(from, to logical.Vec) bool {
+	for _, pathV := range to.Subtract(from).Path() {
+		if !grid.GetGameObject(from.Add(pathV)).IsEmpty() {
+			return false
+		}
+	}
+	return true
+}
