@@ -10,6 +10,7 @@ import (
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/rand"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
+	spelliface "github.com/bobtfish/mayhem/spells/iface"
 )
 
 const GrowChance = 15
@@ -76,7 +77,8 @@ func (screen *GrowScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 // FIXME - lots of puke worthy type casting in here, should not need this special casing really....
 func (screen *GrowScreen) IterateGrowVanish(ctx screeniface.GameCtx) {
 	grid := ctx.GetGrid()
-	for screen.Consider.X < grid.MaxX() && screen.Consider.Y < grid.MaxY() {
+	for screen.Consider.X <= grid.MaxX() && screen.Consider.Y <= grid.MaxY() {
+		fmt.Printf("Consider %d x %d\n", screen.Consider.X, screen.Consider.Y)
 		// If the current tile contains a character
 		char, ok := grid.GetGameObject(screen.Consider).(*character.Character)
 		if ok {
@@ -145,11 +147,20 @@ func (screen *GrowScreen) IterateGrowVanish(ctx screeniface.GameCtx) {
 					}
 				}
 			}
+			if char.Name == "Magic Wood" {
+				if char.CarryingPlayer && rand.Intn(9)+1 <= 2 { // 20% chance
+					screen.Grew = true
+					grid.GetGameObjectStack(screen.Consider).RemoveTopObject()
+					grid.PlaceGameObject(screen.Consider, char.BelongsTo) // Put the wizard back down
+					player := char.BelongsTo
+					player.Spells = append(player.Spells, spelliface.ChooseSpell())
+				}
+			}
 		}
 
 		// Bump tile counter
 		screen.Consider.X++
-		if screen.Consider.X == grid.MaxX() {
+		if screen.Consider.X > grid.MaxX() {
 			screen.Consider.X = 0
 			screen.Consider.Y++
 		}

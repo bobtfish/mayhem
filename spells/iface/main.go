@@ -49,12 +49,16 @@ func CreateSpell(s Spell) {
 	AllSpells = append(AllSpells, s)
 }
 
+func ChooseSpell() Spell {
+	idx := rand.Intn(len(AllSpells)-1) + 1
+	return AllSpells[idx]
+}
+
 func ChooseSpells() []Spell {
 	spells := make([]Spell, 14)
 	spells[0] = AllSpells[0]
 	for i := 1; i < 14; i++ {
-		idx := rand.Intn(len(AllSpells)-1) + 1
-		spells[i] = AllSpells[idx]
+		spells[i] = ChooseSpell()
 	}
 
 	for i := 0; i < len(AllSpells); i++ {

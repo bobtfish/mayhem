@@ -31,9 +31,8 @@ func (screen *MagicWoodSpellScreen) Enter(ctx screeniface.GameCtx) {
 func (screen *MagicWoodSpellScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	if len(screen.MaybeTiles) == 0 || screen.LaidTiles == 8 {
 		screen.CleanupFunc()
-		return &screens.Pause{
-			NextScreen: screen.NextScreen,
-		}
+		// We already paused before reentry
+		return screen.NextScreen
 	}
 
 	batch := DrawBoard(ctx)
