@@ -17,6 +17,5 @@ Bug / missing feature list:
    Gooey blob / Fire character and player interactions
 
 Bugs:
-  - Cannot move from magic wood tree to dark citadel
   - Players can attack walls?
   - Line of sight calculation seems a bit harsh currently

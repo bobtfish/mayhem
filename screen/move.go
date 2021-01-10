@@ -303,8 +303,7 @@ func MoveDoAttackMaybe(from, to logical.Vec, playerIdx int, ctx screeniface.Game
 		}
 
 		if as.IsMount {
-
-			doMount(from, to, grid)
+			doMount(from, to, grid, isDismount)
 			return MoveStatus{
 				DidMove:   true,
 				MountMove: true,
@@ -390,7 +389,7 @@ func DoAttackMaybe(from, to logical.Vec, playerIdx int, ctx screeniface.GameCtx,
 			}
 			// Does belong to this player, see if it's mountable, if so we can move to it
 			_, isPlayer := grid.GetGameObject(from).(*player.Player)
-			if isPlayer { // We're moving the player, lets see if target is something we can mount
+			if isPlayer || isDismount { // We're moving the player, lets see if target is something we can mount
 				fmt.Printf("Moving player, check for mount\n")
 				if ob.IsMount() {
 					fmt.Printf("  Is mount\n")
@@ -437,11 +436,18 @@ func doCharacterMove(from, to logical.Vec, grid *grid.GameGrid, isDismount bool)
 	grid.PlaceGameObject(to, character)
 }
 
-func doMount(from, to logical.Vec, grid *grid.GameGrid) {
+func doMount(from, to logical.Vec, grid *grid.GameGrid, isDismount bool) {
 	fmt.Printf("doMount\n")
-	// Take the player off the board (as we just track them as mounted on the character)
-	// but set their position (in case they dismount without moving first)
-	grid.GetGameObjectStack(from).RemoveTopObject().SetBoardPosition(to)
+	stack := grid.GetGameObjectStack(from)
+	if !isDismount {
+		// Take the player off the board (as we just track them as mounted on the character)
+		// but set their position (in case they dismount without moving first)
+		stack.RemoveTopObject().SetBoardPosition(to)
+	} else {
+		// Was already mounted, need to dismount old place
+		mount := stack.TopObject().(*character.Character)
+		mount.CarryingPlayer = false
+	}
 	grid.GetGameObject(to).(*character.Character).Mount()
 }
 
