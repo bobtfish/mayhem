@@ -434,3 +434,16 @@ func TestPathHalfDiagonalReverse(t *testing.T) {
 		t.Errorf("Path[2] not v(-3, -1) is v(%d, %d)", path[2].X, path[2].Y)
 	}
 }
+
+func TestPathFloatsAreAnnoying(t *testing.T) {
+	path := V(7, 3).Path()
+	if len(path) != 6 {
+		t.Errorf("Path len != 6 is %d: %v", len(path), path)
+	}
+	if path[5].Y != 2 {
+		t.Errorf("Path[5] Y not 2 is %d", path[5].Y)
+	}
+	if path[5].X != 6 {
+		t.Errorf("Path[5] X not 6 is %d", path[5].X)
+	}
+}

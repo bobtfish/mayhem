@@ -110,7 +110,12 @@ func (v Vec) Path() []Vec {
 	Xcurrent, Ycurrent = Xstep, Ystep
 	path := make([]Vec, 0)
 	for Xcurrent < float64(w.X) || Ycurrent < float64(w.Y) {
-		path = append(path, V(int(Xcurrent)*Xsign, int(Ycurrent)*Ysign))
+		nextV := V(int(Xcurrent)*Xsign, int(Ycurrent)*Ysign)
+		path = append(path, nextV)
+		// Deal with cases where we are 1 step away in integer terms, but not there yet in floats
+		if (int(Xcurrent) == w.X || int(Xcurrent)+1 == w.X) && (int(Ycurrent) == w.Y || int(Ycurrent)+1 == w.Y) {
+			break
+		}
 		Xcurrent += Xstep
 		Ycurrent += Ystep
 	}
