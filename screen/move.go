@@ -359,7 +359,7 @@ func DoAttackMaybe(from, to logical.Vec, playerIdx int, ctx screeniface.GameCtx,
 	if !target.IsEmpty() {
 		fmt.Printf("Target square is not empty\n")
 		ob, attackable := target.(movable.Attackable)
-		if attackable {
+		if attackable && ob.GetCombat() > 0 {
 			fmt.Printf("Target square is attackable\n")
 			if !ob.CheckBelongsTo(players[playerIdx]) {
 				attacker := getAttacker(grid.GetGameObject(from), isDismount)

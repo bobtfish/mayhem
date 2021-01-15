@@ -114,7 +114,7 @@ func (screen *DoRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScre
 	if !target.IsEmpty() {
 		fmt.Printf("Target square is not empty\n")
 		ob, attackable := target.(movable.Attackable)
-		if attackable {
+		if attackable && ob.GetCombat() > 0 {
 			fmt.Printf("Target square is attackable\n")
 			if !ob.IsUndead() || screen.Attacker.CanAttackUndead() {
 				// FIXME this is duplicate logic
