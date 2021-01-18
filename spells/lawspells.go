@@ -19,25 +19,25 @@ func init() {
 	spelliface.CreateSpell(LawSpell{ASpell{
 		Name:          "Law-1",
 		CastingChance: 100,
-		LawRating:     4,
+		LawRating:     2,
 		NoCastFx:      true,
 	}})
 	spelliface.CreateSpell(LawSpell{ASpell{
 		Name:          "Law-2",
 		CastingChance: 60,
-		LawRating:     8,
+		LawRating:     4,
 		NoCastFx:      true,
 	}})
 	spelliface.CreateSpell(LawSpell{ASpell{
 		Name:          "Chaos-1",
 		CastingChance: 80,
-		LawRating:     -4,
+		LawRating:     -2,
 		NoCastFx:      true,
 	}})
 	spelliface.CreateSpell(LawSpell{ASpell{
 		Name:          "Chaos-2",
 		CastingChance: 60,
-		LawRating:     -8,
+		LawRating:     -4,
 		NoCastFx:      true,
 	}})
 }

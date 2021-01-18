@@ -12,6 +12,7 @@ import (
 
 type Spell interface {
 	GetName() string
+	GetDescriptionArray(int) []string
 	GetLawRating() int
 	GetCastingChance(int) int
 	GetCastRange() int

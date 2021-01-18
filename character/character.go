@@ -137,8 +137,8 @@ func (s CharacterSpell) GetName() string {
 func (s CharacterSpell) GetLawRating() int {
 	return s.LawRating
 }
-func (s CharacterSpell) GetCastingChance(playerLawRating int) int {
-	// FIXME do something with playerLawRating
+func (s CharacterSpell) GetCastingChance(lawRating int) int {
+	// FIXME do something with lawRating
 	return s.CastingChance
 }
 func (s CharacterSpell) GetCastRange() int {
@@ -186,6 +186,18 @@ func (s CharacterSpell) CanCastAsIllusion() bool {
 
 func (s CharacterSpell) NeedsLineOfSight() bool {
 	return true
+}
+
+func (s CharacterSpell) GetDescriptionArray(lawRating int) []string {
+	desc := make([]string, 0)
+	desc = append(desc, fmt.Sprintf("Combat=%d", s.Combat))
+	desc = append(desc, fmt.Sprintf("Ranged Combat=%d Range=%d", s.RangedCombat, s.AttackRange))
+	desc = append(desc, fmt.Sprintf("Defence=%d", s.Defence))
+	desc = append(desc, fmt.Sprintf("Movement Allowance=%d", s.Movement))
+	desc = append(desc, fmt.Sprintf("Manoeuver Rating=%d", s.Manoeuvre))
+	desc = append(desc, fmt.Sprintf("Magic Resistance=%d", s.MagicResistance))
+	desc = append(desc, fmt.Sprintf("Casting Chance=%d%%", s.GetCastingChance(lawRating)))
+	return desc
 }
 
 // Spell interface end

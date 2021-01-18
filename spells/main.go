@@ -35,6 +35,15 @@ func (s ASpell) CastFx() *fx.Fx {
 func (s ASpell) GetName() string {
 	return s.Name
 }
+func (s ASpell) GetDescriptionArray(lawRating int) []string {
+	desc := make([]string, 0)
+	desc = append(desc, "")
+	desc = append(desc, fmt.Sprintf("Casting chance=%d%%", s.GetCastingChance(lawRating)))
+	desc = append(desc, "")
+	desc = append(desc, fmt.Sprintf("Range=%d", s.GetCastRange()))
+
+	return desc
+}
 func (s ASpell) GetLawRating() int {
 	return s.LawRating
 }

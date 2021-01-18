@@ -24,8 +24,20 @@ func (screen *ExamineOneSpellScreen) Enter(ctx screeniface.GameCtx) {
 	ClearScreen(ss, win)
 	textBottom("   Press any key to continue", ss, win)
 	td := TextDrawer(ss)
-	td.DrawText(screen.Spell.GetName(), logical.V(0, 9), win)
-	td.DrawText("FIXME add stuff per spell", logical.V(0, 7), win)
+
+	rating := screen.Spell.GetLawRating()
+	name := screen.Spell.GetName()
+	if rating > 0 {
+		name = fmt.Sprintf("%s (Law %d)", name, rating)
+	}
+	if rating < 0 {
+		name = fmt.Sprintf("%s (Chaos %d)", name, -rating)
+	}
+	td.DrawText(name, logical.V(3, 9), win)
+	desc := screen.Spell.GetDescriptionArray(ctx.GetLawRating())
+	for i, line := range desc {
+		td.DrawText(line, logical.V(3, 7-i), win)
+	}
 }
 
 func (screen *ExamineOneSpellScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
