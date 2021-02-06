@@ -30,7 +30,7 @@ func (screen *PlayerNameScreen) Enter(ctx screeniface.GameCtx) {
 	ClearScreen(ss, win)
 	screen.CurrentPlayer = player.NewPlayer()
 	td := TextDrawer(ss)
-	td.DrawText(fmt.Sprintf("PLAYER %d", screen.WizardCount), logical.V(0, 9), win)
+	td.DrawText(fmt.Sprintf("PLAYER %d", GetPlayerCount(ctx)+1), logical.V(0, 9), win)
 	td.DrawText("Enter name (12 letters max.)", logical.V(0, 8), win)
 }
 
@@ -145,6 +145,10 @@ func (screen *PlayerColorScreen) Enter(ctx screeniface.GameCtx) {
 	}
 }
 
+func GetPlayerCount(ctx screeniface.GameCtx) int {
+	return len(ctx.(*game.Window).GetPlayers())
+}
+
 func (screen *PlayerColorScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
@@ -159,7 +163,7 @@ func (screen *PlayerColorScreen) Step(ctx screeniface.GameCtx) screeniface.GameS
 		screen.CurrentPlayer.Color = colors[c-1]
 		ctx.(*game.Window).AddPlayer(screen.CurrentPlayer)
 		screen.CurrentPlayer = player.NewPlayer()
-		if len(ctx.(*game.Window).GetPlayers()) == screen.WizardCount {
+		if GetPlayerCount(ctx) == screen.WizardCount {
 			// FIXME do something with ComputerDifficulty here
 
 			return &StartMainGame{}

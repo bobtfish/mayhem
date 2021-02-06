@@ -61,14 +61,14 @@ func ChooseSpells() []Spell {
 	for i := 1; i < 14; i++ {
 		spells[i] = ChooseSpell()
 	}
-
-	for i := 0; i < len(AllSpells); i++ {
-		if AllSpells[i].GetName() == "Wall" {
-			spells[1] = AllSpells[i]
-		}
-		if AllSpells[i].GetName() == "Shadow Wood" {
-			spells[2] = AllSpells[i]
-		}
-	}
+	/*
+		for i := 0; i < len(AllSpells); i++ {
+			if AllSpells[i].GetName() == "Wall" {
+				spells[1] = AllSpells[i]
+			}
+			if AllSpells[i].GetName() == "Shadow Wood" {
+				spells[2] = AllSpells[i]
+			}
+		}*/
 	return spells
 }
