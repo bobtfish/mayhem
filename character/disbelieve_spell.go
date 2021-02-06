@@ -29,3 +29,7 @@ func (s DisbelieveSpell) CanCast(target grid.GameObject) bool {
 	_, isCharacter := target.(*Character)
 	return isCharacter
 }
+
+func (s DisbelieveSpell) NeedsLineOfSight() bool {
+	return false
+}
