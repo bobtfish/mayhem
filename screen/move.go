@@ -12,6 +12,7 @@ import (
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/movable"
 	"github.com/bobtfish/mayhem/player"
+	"github.com/bobtfish/mayhem/render"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
@@ -30,7 +31,7 @@ func (screen *MoveAnnounceScreen) Step(ctx screeniface.GameCtx) screeniface.Game
 	ss := ctx.GetSpriteSheet()
 	players := ctx.(*game.Window).GetPlayers()
 	batch := DrawBoard(ctx)
-	textBottom(fmt.Sprintf("%s's turn", players[screen.PlayerIdx].Name), ss, batch)
+	textBottomColor(fmt.Sprintf("%s's turn", players[screen.PlayerIdx].Name), render.GetColor(241, 241, 0), ss, batch)
 	batch.Draw(win)
 
 	// 0 skips movement turn
@@ -237,7 +238,10 @@ func (screen *MoveGroundCharacterScreen) Step(ctx screeniface.GameCtx) screenifa
 	ss := ctx.GetSpriteSheet()
 	grid := ctx.GetGrid()
 	batch := DrawBoard(ctx)
-	textBottom(fmt.Sprintf("Movement range=%d", screen.MovementLeft), ss, batch)
+	textBottomMulti([]TextWithColor{
+		TextWithColor{Text: "Movement range=", Color: render.GetColor(0, 247, 0)},
+		TextWithColor{Text: fmt.Sprintf("%d", screen.MovementLeft), Color: render.GetColor(237, 237, 0)},
+	}, ss, batch)
 
 	currentLocation := screen.Character.GetBoardPosition()
 
@@ -492,7 +496,11 @@ func (screen *MoveFlyingCharacterScreen) Step(ctx screeniface.GameCtx) screenifa
 	grid := ctx.GetGrid()
 	batch := DrawBoard(ctx)
 	if screen.DisplayRange {
-		textBottom(fmt.Sprintf("Movement range=%d (flying)", screen.Character.GetMovement()), ss, batch)
+		textBottomMulti([]TextWithColor{
+			TextWithColor{Text: "Movement range=", Color: render.GetColor(0, 247, 0)},
+			TextWithColor{Text: fmt.Sprintf("%d", screen.Character.GetMovement()), Color: render.GetColor(237, 237, 0)},
+			TextWithColor{Text: " (flying)", Color: render.GetColor(0, 245, 245)},
+		}, ss, batch)
 	}
 	cursorMoved := screen.WithCursor.MoveCursor(ctx)
 	if cursorMoved || (!screen.OutOfRange && !screen.DisplayRange) {

@@ -115,7 +115,7 @@ func (screen *TargetSpellScreen) Step(ctx screeniface.GameCtx) screeniface.GameS
 	if win.JustPressed(pixelgl.KeyS) {
 		target := screen.WithCursor.CursorPosition
 		if spell.GetCastRange() < target.Distance(thisPlayer.BoardPosition) {
-			textBottom("Out of range", ss, batch)
+			textBottomColor("Out of range", render.GetColor(0, 249, 249), ss, batch)
 			fmt.Printf("Out of range! Spell cast range %d but distance to target is %d\n", spell.GetCastRange(), target.Distance(thisPlayer.BoardPosition))
 			screen.MessageShown = true
 		} else {
@@ -219,7 +219,7 @@ func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen 
 			ctx.AdjustLawRating(spell.GetLawRating())
 		} else {
 			fmt.Printf("Spell failed\n")
-			textBottom("Spell Failed", ss, batch)
+			textBottomColor("Spell Failed", render.GetColor(255, 0, 255), ss, batch)
 		}
 	}
 	batch.Draw(win)
