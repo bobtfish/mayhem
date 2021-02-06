@@ -12,6 +12,7 @@ import (
 	"github.com/bobtfish/mayhem/movable"
 	"github.com/bobtfish/mayhem/player"
 	"github.com/bobtfish/mayhem/rand"
+	"github.com/bobtfish/mayhem/render"
 
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
@@ -50,7 +51,10 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 
 	// FIXME - this code is stolen from flying movement, can we consolidate?
 	if screen.DisplayRange {
-		textBottom(fmt.Sprintf("Ranged attack (range=%d)", attackRange), ss, batch)
+		textBottomMulti([]TextWithColor{
+			TextWithColor{Text: "Ranged attack, range=", Color: render.GetColor(0, 246, 0)},
+			TextWithColor{Text: fmt.Sprintf("%d", attackRange), Color: render.GetColor(241, 241, 0)},
+		}, ss, batch)
 	}
 	cursorMoved := screen.WithCursor.MoveCursor(ctx)
 	if cursorMoved || (!screen.OutOfRange && !screen.DisplayRange) {
@@ -66,11 +70,11 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 		if attackDistance > 0 { // You can't ranged attack yourself
 			if attackDistance > attackRange {
 				fmt.Printf("Out of range\n")
-				textBottom("Out of range", ss, batch)
+				textBottomColor("Out of range", render.GetColor(247, 247, 0), ss, batch)
 				screen.OutOfRange = true
 			} else {
 				if !grid.HaveLineOfSight(characterLocation, attackPosition) {
-					textBottom("No line of sight", ss, batch)
+					textBottomColor("No line of sight", render.GetColor(0, 233, 233), ss, batch)
 					screen.OutOfRange = true
 				} else {
 					// Do ranged attack
@@ -130,7 +134,7 @@ func (screen *DoRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScre
 					}
 				}
 			} else {
-				textBottom("Undead - Cannot be attacked", ss, win)
+				textBottomColor("Undead - Cannot be attacked", render.GetColor(0, 244, 244), ss, win)
 				needPause = true
 			}
 		}
@@ -157,7 +161,7 @@ func (screen *EngagedAttack) Enter(ctx screeniface.GameCtx) {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
 	fmt.Printf("In engaged attack state\n")
-	textBottom("Engaged to enemy", ss, win)
+	textBottomColor("Engaged to enemy", render.GetColor(247, 247, 0), ss, win)
 }
 
 func (screen *EngagedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -182,7 +186,7 @@ func (screen *EngagedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScree
 		}
 		if as.IllegalUndeadAttack {
 			screen.ClearMsg = false
-			textBottom("Undead - Cannot be attacked", ss, batch)
+			textBottomColor("Undead - Cannot be attacked", render.GetColor(0, 244, 244), ss, win)
 		}
 	}
 

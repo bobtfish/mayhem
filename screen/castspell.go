@@ -120,7 +120,7 @@ func (screen *TargetSpellScreen) Step(ctx screeniface.GameCtx) screeniface.GameS
 			screen.MessageShown = true
 		} else {
 			if spell.NeedsLineOfSight() && !grid.HaveLineOfSight(thisPlayer.BoardPosition, target) {
-				textBottom("No line of sight", ss, batch)
+				textBottomColor("No line of sight", render.GetColor(0, 233, 233), ss, batch)
 				screen.MessageShown = true
 			} else {
 				grid := ctx.GetGrid()

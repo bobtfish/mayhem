@@ -162,7 +162,7 @@ func (screen *MaybeDismount) Step(ctx screeniface.GameCtx) screeniface.GameScree
 	if screen.Character.GetMovement() == 0 { // Magic castle / dark citadel
 		isStaticCharacter = true
 	} else {
-		textBottom("Dismount wizard (Y or N)", ss, batch)
+		textBottomColor("Dismount wizard (Y or N)", render.GetColor(244, 244, 0), ss, batch)
 	}
 	batch.Draw(win)
 
@@ -260,7 +260,7 @@ func (screen *MoveGroundCharacterScreen) Step(ctx screeniface.GameCtx) screenifa
 			return ms.NextScreen
 		}
 		if ms.IllegalUndeadAttack {
-			textBottom("Undead - Cannot be attacked", ss, batch)
+			textBottomColor("Undead - Cannot be attacked", render.GetColor(0, 244, 244), ss, win)
 		}
 		if ms.DidMove {
 			if ms.MountMove {
@@ -515,7 +515,7 @@ func (screen *MoveFlyingCharacterScreen) Step(ctx screeniface.GameCtx) screenifa
 		target := screen.WithCursor.CursorPosition
 		if target.Distance(currentLocation) > screen.Character.GetMovement() {
 			fmt.Printf("Out of range\n")
-			textBottom("Out of range", ss, batch)
+			textBottomColor("Out of range", render.GetColor(0, 249, 249), ss, batch)
 			screen.OutOfRange = true
 		} else {
 			// work out what's in this square, if nothing move to it, if something attack it
@@ -526,7 +526,7 @@ func (screen *MoveFlyingCharacterScreen) Step(ctx screeniface.GameCtx) screenifa
 			if ms.IllegalUndeadAttack {
 				screen.OutOfRange = true
 				screen.DisplayRange = false
-				textBottom("Undead - Cannot be attacked", ss, batch)
+				textBottomColor("Undead - Cannot be attacked", render.GetColor(0, 244, 244), ss, win)
 			}
 			if ms.DidMove {
 				fmt.Printf("Did do flying move, finish screen\n")
