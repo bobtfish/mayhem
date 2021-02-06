@@ -8,6 +8,7 @@ import (
 	"github.com/bobtfish/mayhem/fx"
 	"github.com/bobtfish/mayhem/game"
 	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/render"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
@@ -46,7 +47,11 @@ func (screen *DisplaySpellCastScreen) Enter(ctx screeniface.GameCtx) {
 	if thisPlayer.ChosenSpell >= 0 {
 		spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
 		batch := DrawBoard(ctx)
-		textBottom(fmt.Sprintf("%s %s %d", thisPlayer.Name, spell.GetName(), spell.GetCastRange()), ss, batch)
+		textBottomMulti([]TextWithColor{
+			TextWithColor{Text: fmt.Sprintf("%s ", thisPlayer.Name), Color: render.GetColor(255, 255, 0)},
+			TextWithColor{Text: fmt.Sprintf("%s ", spell.GetName()), Color: render.GetColor(0, 242, 0)},
+			TextWithColor{Text: fmt.Sprintf("%d", spell.GetCastRange()), Color: render.GetColor(244, 244, 244)},
+		}, ss, batch)
 		batch.Draw(win)
 	}
 }

@@ -12,7 +12,7 @@ type GameObject interface {
 	GetSpriteSheetCoordinates() logical.Vec
 	GetColor() color.Color
 	IsEmpty() bool
-	Describe() string
+	Describe() (string, string)
 	SetBoardPosition(logical.Vec)
 }
 
@@ -62,7 +62,7 @@ func (s *GameObjectStack) GetColor() color.Color {
 	return (*s)[0].GetColor()
 }
 
-func (s *GameObjectStack) Describe() string {
+func (s *GameObjectStack) Describe() (string, string) {
 	return (*s)[0].Describe()
 }
 

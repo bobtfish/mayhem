@@ -44,8 +44,8 @@ func (f *Fx) GetColor() color.Color {
 	return f.Color
 }
 
-func (f *Fx) Describe() string {
-	return fmt.Sprintf("Fx:%T", *f)
+func (f *Fx) Describe() (string, string) {
+	return fmt.Sprintf("Fx:%T", *f), ""
 }
 
 func (f *Fx) SetBoardPosition(v logical.Vec) {}

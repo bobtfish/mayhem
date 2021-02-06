@@ -2,6 +2,7 @@ package screen
 
 import (
 	"fmt"
+	"image/color"
 	"strings"
 
 	"github.com/faiface/pixel"
@@ -173,4 +174,19 @@ func textBottom(text string, ss pixel.Picture, target pixel.Target) {
 	td := render.NewTextDrawer(ss)
 	td.DrawText(text, logical.ZeroVec(), target)
 	td.DrawText(strings.Repeat(" ", 32-len(text)), logical.V(len(text), 0), target)
+}
+
+type TextWithColor struct {
+	Color color.Color
+	Text  string
+}
+
+func textBottomMulti(texts []TextWithColor, ss pixel.Picture, target pixel.Target) {
+	var idx int
+	td := render.NewTextDrawer(ss)
+	for _, t := range texts {
+		td.DrawTextColor(t.Text, logical.V(idx, 0), t.Color, target)
+		idx = idx + len(t.Text)
+	}
+	td.DrawText(strings.Repeat(" ", 32-idx), logical.V(idx, 0), target)
 }

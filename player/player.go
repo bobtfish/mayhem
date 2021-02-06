@@ -73,8 +73,8 @@ func (p *Player) GetColor() color.Color {
 	return p.Color
 }
 
-func (p *Player) Describe() string {
-	return p.Name
+func (p *Player) Describe() (string, string) {
+	return p.Name, ""
 }
 
 // GameObjectStackable interface

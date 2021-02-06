@@ -30,8 +30,8 @@ func (e EmptyObject) GetColor() color.Color {
 	return render.GetColor(0, 0, 0)
 }
 
-func (e EmptyObject) Describe() string {
-	return ""
+func (e EmptyObject) Describe() (string, string) {
+	return "", ""
 }
 
 func (e EmptyObject) IsEmpty() bool {

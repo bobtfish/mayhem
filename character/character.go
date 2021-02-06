@@ -303,18 +303,18 @@ func (c *Character) GetColor() color.Color {
 	return c.Color
 }
 
-func (c *Character) Describe() string {
+func (c *Character) Describe() (string, string) {
 	if c.BelongsTo != nil {
 		carry := ""
 		if c.CarryingPlayer {
 			carry = "#"
 		}
-		return fmt.Sprintf("%s%s (%s)", c.Name, carry, c.BelongsTo.Name)
+		return fmt.Sprintf("%s%s", c.Name, carry), c.BelongsTo.Name
 	}
 	if c.IsDead {
-		return fmt.Sprintf("%s (Dead)", c.Name)
+		return fmt.Sprintf("%s (Dead)", c.Name), ""
 	}
-	return c.Name
+	return c.Name, ""
 }
 
 func (c *Character) SetBoardPosition(v logical.Vec) {
