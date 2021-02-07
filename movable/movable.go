@@ -31,6 +31,7 @@ type Attackerable interface {
 	GetAttackRange() int
 	GetAttackFx() *fx.Fx
 	CanAttackUndead() bool
+	GetBoardPosition() logical.Vec
 }
 
 type Corpseable interface {

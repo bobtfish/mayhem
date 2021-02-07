@@ -75,10 +75,6 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 					textBottomColor("No line of sight", render.GetColor(0, 233, 233), ss, batch)
 					screen.OutOfRange = true
 				} else {
-					// Do ranged attack
-					fx := attacker.GetAttackFx()
-					grid.PlaceGameObject(attackPosition, fx)
-
 					return &AnimateRangedAttack{
 						AttackPosition:  attackPosition,
 						PlayerIdx:       screen.PlayerIdx,
@@ -99,26 +95,42 @@ type AnimateRangedAttack struct {
 	PlayerIdx       int
 	MovedCharacters map[movable.Movable]bool
 	Attacker        movable.Attackerable
+	StepIdx         int
+	AnimationSteps  []logical.Vec
 }
 
 func (screen *AnimateRangedAttack) Enter(ctx screeniface.GameCtx) {
+	from := screen.Attacker.GetBoardPosition()
+	to := screen.AttackPosition
+	fmt.Printf("Attack from %d, %d TO %d, %d\n", from.X, from.Y, to.X, to.Y)
+	screen.AnimationSteps = to.Subtract(from).Path()
+	for i, s := range screen.AnimationSteps {
+		screen.AnimationSteps[i] = from.Add(s)
+	}
+	screen.AnimationSteps = append(screen.AnimationSteps, to)
 }
 
 func (screen *AnimateRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
-	// Do ranged attack
-	fx := screen.Attacker.GetAttackFx()
-	grid := ctx.GetGrid()
-	grid.PlaceGameObject(screen.AttackPosition, fx)
+	if screen.StepIdx == len(screen.AnimationSteps) {
+		// Do ranged attack
+		fx := screen.Attacker.GetAttackFx()
+		grid := ctx.GetGrid()
+		grid.PlaceGameObject(screen.AttackPosition, fx)
 
-	return &WaitForFx{
-		Fx: fx,
-		NextScreen: &DoRangedAttack{
-			AttackPosition:  screen.AttackPosition,
-			PlayerIdx:       screen.PlayerIdx,
-			MovedCharacters: screen.MovedCharacters,
-			Attacker:        screen.Attacker,
-		},
+		return &WaitForFx{
+			Fx: fx,
+			NextScreen: &DoRangedAttack{
+				AttackPosition:  screen.AttackPosition,
+				PlayerIdx:       screen.PlayerIdx,
+				MovedCharacters: screen.MovedCharacters,
+				Attacker:        screen.Attacker,
+			},
+		}
 	}
+	step := screen.AnimationSteps[screen.StepIdx]
+	fmt.Printf("Animation step %d, %d\n", step.X, step.Y)
+	screen.StepIdx++
+	return screen
 }
 
 type DoRangedAttack struct {
