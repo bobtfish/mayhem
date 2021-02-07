@@ -239,8 +239,8 @@ func (screen *MoveGroundCharacterScreen) Step(ctx screeniface.GameCtx) screenifa
 	grid := ctx.GetGrid()
 	batch := DrawBoard(ctx)
 	textBottomMulti([]TextWithColor{
-		TextWithColor{Text: "Movement range=", Color: render.GetColor(0, 247, 0)},
-		TextWithColor{Text: fmt.Sprintf("%d", screen.MovementLeft), Color: render.GetColor(237, 237, 0)},
+		{Text: "Movement range=", Color: render.GetColor(0, 247, 0)},
+		{Text: fmt.Sprintf("%d", screen.MovementLeft), Color: render.GetColor(237, 237, 0)},
 	}, ss, batch)
 
 	currentLocation := screen.Character.GetBoardPosition()
@@ -497,9 +497,9 @@ func (screen *MoveFlyingCharacterScreen) Step(ctx screeniface.GameCtx) screenifa
 	batch := DrawBoard(ctx)
 	if screen.DisplayRange {
 		textBottomMulti([]TextWithColor{
-			TextWithColor{Text: "Movement range=", Color: render.GetColor(0, 247, 0)},
-			TextWithColor{Text: fmt.Sprintf("%d", screen.Character.GetMovement()), Color: render.GetColor(237, 237, 0)},
-			TextWithColor{Text: " (flying)", Color: render.GetColor(0, 245, 245)},
+			{Text: "Movement range=", Color: render.GetColor(0, 247, 0)},
+			{Text: fmt.Sprintf("%d", screen.Character.GetMovement()), Color: render.GetColor(237, 237, 0)},
+			{Text: " (flying)", Color: render.GetColor(0, 245, 245)},
 		}, ss, batch)
 	}
 	cursorMoved := screen.WithCursor.MoveCursor(ctx)

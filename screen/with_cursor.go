@@ -63,8 +63,8 @@ func (screen *WithCursor) DrawCursor(ctx screeniface.GameCtx, batch pixel.Target
 		description2 = fmt.Sprintf("(%s)", description2)
 	}
 	textBottomMulti([]TextWithColor{
-		TextWithColor{Text: description1, Color: render.GetColor(0, 246, 246)},
-		TextWithColor{Text: description2, Color: render.GetColor(241, 241, 0)},
+		{Text: description1, Color: render.GetColor(0, 246, 246)},
+		{Text: description2, Color: render.GetColor(241, 241, 0)},
 	}, ss, batch)
 	if screen.ShouldIDrawCursor() || objectAtCursor.IsEmpty() {
 		sd.DrawSpriteColor(cursorSprite(screen.CursorSprite), screen.CursorPosition, cursorColor, batch)

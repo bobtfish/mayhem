@@ -48,9 +48,9 @@ func (screen *DisplaySpellCastScreen) Enter(ctx screeniface.GameCtx) {
 		spell := thisPlayer.Spells[thisPlayer.ChosenSpell]
 		batch := DrawBoard(ctx)
 		textBottomMulti([]TextWithColor{
-			TextWithColor{Text: fmt.Sprintf("%s ", thisPlayer.Name), Color: render.GetColor(255, 255, 0)},
-			TextWithColor{Text: fmt.Sprintf("%s ", spell.GetName()), Color: render.GetColor(0, 242, 0)},
-			TextWithColor{Text: fmt.Sprintf("%d", spell.GetCastRange()), Color: render.GetColor(244, 244, 244)},
+			{Text: fmt.Sprintf("%s ", thisPlayer.Name), Color: render.GetColor(255, 255, 0)},
+			{Text: fmt.Sprintf("%s ", spell.GetName()), Color: render.GetColor(0, 242, 0)},
+			{Text: fmt.Sprintf("%d", spell.GetCastRange()), Color: render.GetColor(244, 244, 244)},
 		}, ss, batch)
 		batch.Draw(win)
 	}
@@ -239,5 +239,4 @@ func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen 
 		NextScreen: nextScreen,
 		Fx:         anim,
 	}
-
 }

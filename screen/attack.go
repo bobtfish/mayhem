@@ -52,8 +52,8 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 	// FIXME - this code is stolen from flying movement, can we consolidate?
 	if screen.DisplayRange {
 		textBottomMulti([]TextWithColor{
-			TextWithColor{Text: "Ranged attack, range=", Color: render.GetColor(0, 246, 0)},
-			TextWithColor{Text: fmt.Sprintf("%d", attackRange), Color: render.GetColor(241, 241, 0)},
+			{Text: "Ranged attack, range=", Color: render.GetColor(0, 246, 0)},
+			{Text: fmt.Sprintf("%d", attackRange), Color: render.GetColor(241, 241, 0)},
 		}, ss, batch)
 	}
 	cursorMoved := screen.WithCursor.MoveCursor(ctx)
