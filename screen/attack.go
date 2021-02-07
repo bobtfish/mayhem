@@ -27,7 +27,6 @@ type RangedCombat struct {
 }
 
 func (screen *RangedCombat) Enter(ctx screeniface.GameCtx) {
-	fmt.Printf("In ranged combat state\n")
 	screen.DisplayRange = true
 	screen.WithCursor.CursorSprite = CursorRangedAttack
 	screen.WithCursor.CursorPosition = screen.Character.GetBoardPosition()
@@ -69,7 +68,6 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 		attackDistance := attackPosition.Distance(characterLocation)
 		if attackDistance > 0 { // You can't ranged attack yourself
 			if attackDistance > attackRange {
-				fmt.Printf("Out of range\n")
 				textBottomColor("Out of range", render.GetColor(247, 247, 0), ss, batch)
 				screen.OutOfRange = true
 			} else {
@@ -81,14 +79,11 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 					fx := attacker.GetAttackFx()
 					grid.PlaceGameObject(attackPosition, fx)
 
-					return &WaitForFx{
-						Fx: fx,
-						NextScreen: &DoRangedAttack{
-							AttackPosition:  attackPosition,
-							PlayerIdx:       screen.PlayerIdx,
-							MovedCharacters: screen.MovedCharacters,
-							Attacker:        attacker,
-						},
+					return &AnimateRangedAttack{
+						AttackPosition:  attackPosition,
+						PlayerIdx:       screen.PlayerIdx,
+						MovedCharacters: screen.MovedCharacters,
+						Attacker:        attacker,
 					}
 				}
 			}
@@ -97,6 +92,33 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 	batch.Draw(win)
 
 	return screen
+}
+
+type AnimateRangedAttack struct {
+	AttackPosition  logical.Vec
+	PlayerIdx       int
+	MovedCharacters map[movable.Movable]bool
+	Attacker        movable.Attackerable
+}
+
+func (screen *AnimateRangedAttack) Enter(ctx screeniface.GameCtx) {
+}
+
+func (screen *AnimateRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
+	// Do ranged attack
+	fx := screen.Attacker.GetAttackFx()
+	grid := ctx.GetGrid()
+	grid.PlaceGameObject(screen.AttackPosition, fx)
+
+	return &WaitForFx{
+		Fx: fx,
+		NextScreen: &DoRangedAttack{
+			AttackPosition:  screen.AttackPosition,
+			PlayerIdx:       screen.PlayerIdx,
+			MovedCharacters: screen.MovedCharacters,
+			Attacker:        screen.Attacker,
+		},
+	}
 }
 
 type DoRangedAttack struct {
