@@ -103,7 +103,7 @@ type AnimateRangedAttack struct {
 	MovedCharacters map[movable.Movable]bool
 	Attacker        movable.Attackerable
 	StepIdx         int
-	AnimationSteps  []AttackAnimation
+	AnimationSteps  []logical.Vec
 }
 
 func GetAttackRenderOffset() logical.Vec {
