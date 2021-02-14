@@ -103,7 +103,7 @@ type AnimateRangedAttack struct {
 	MovedCharacters map[movable.Movable]bool
 	Attacker        movable.Attackerable
 	StepIdx         int
-	AnimationSteps  []logical.Vec
+	AnimationSteps  []AttackAnimation
 }
 
 func GetAttackRenderOffset() logical.Vec {
@@ -111,8 +111,7 @@ func GetAttackRenderOffset() logical.Vec {
 }
 
 func (screen *AnimateRangedAttack) GetFrom() logical.Vec {
-	mult := logical.V(4, 4)
-	return mult.Multiply(screen.Attacker.GetBoardPosition()).Add(GetAttackRenderOffset())
+	return logical.V(render.CharPixels, render.CharPixels).Multiply(screen.Attacker.GetBoardPosition()).Add(GetAttackRenderOffset())
 }
 
 func (screen *AnimateRangedAttack) Enter(ctx screeniface.GameCtx) {
@@ -120,11 +119,18 @@ func (screen *AnimateRangedAttack) Enter(ctx screeniface.GameCtx) {
 	from := mult.Multiply(screen.Attacker.GetBoardPosition())
 	to := mult.Multiply(screen.AttackPosition)
 	fmt.Printf("Attack from %d, %d TO %d, %d\n", from.X, from.Y, to.X, to.Y)
-	screen.AnimationSteps = to.Subtract(from).Path()
-	for i, s := range screen.AnimationSteps {
-		screen.AnimationSteps[i] = from.Add(s)
+	steps := to.Subtract(from).Path()
+	screen.AnimationSteps = make([]AttackAnimation, 0)
+	for _, s := range steps {
+		screen.AnimationSteps = append(screen.AnimationSteps, AttackAnimation{
+			From: screen.GetFrom(),
+			To:   logical.V(render.CharPixels/4, render.CharPixels/4).Multiply(from.Add(s)).Add(GetAttackRenderOffset()),
+		})
 	}
-	screen.AnimationSteps = append(screen.AnimationSteps, to)
+	screen.AnimationSteps = append(screen.AnimationSteps, AttackAnimation{
+		From: screen.GetFrom(),
+		To:   logical.V(render.CharPixels/4, render.CharPixels/4).Multiply(to).Add(GetAttackRenderOffset()),
+	})
 }
 
 func (screen *AnimateRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -145,12 +151,10 @@ func (screen *AnimateRangedAttack) Step(ctx screeniface.GameCtx) screeniface.Gam
 		}
 	}
 	step := screen.AnimationSteps[screen.StepIdx]
-	fmt.Printf("Animation step %d, %d\n", step.X, step.Y)
 	imd := imdraw.New(nil)
 	imd.Color = colornames.Blueviolet
 	imd.EndShape = imdraw.RoundEndShape
-	mult := logical.V(render.CharPixels/4, render.CharPixels/4)
-	imd.Push(logical.V(render.CharPixels, render.CharPixels).Multiply(screen.Attacker.GetBoardPosition()).Add(GetAttackRenderOffset()).ToPixelVec(), mult.Multiply(step).Add(GetAttackRenderOffset()).ToPixelVec())
+	imd.Push(step.From.ToPixelVec(), step.To.ToPixelVec())
 	imd.Line(8)
 	imd.Draw(ctx.GetWindow())
 	screen.StepIdx++
