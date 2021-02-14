@@ -3,7 +3,9 @@ package screen
 import (
 	"fmt"
 
+	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
+	"golang.org/x/image/colornames"
 
 	"github.com/bobtfish/mayhem/character"
 	"github.com/bobtfish/mayhem/game"
@@ -90,18 +92,33 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 	return screen
 }
 
+type AttackAnimation struct {
+	From logical.Vec
+	To   logical.Vec
+}
+
 type AnimateRangedAttack struct {
 	AttackPosition  logical.Vec
 	PlayerIdx       int
 	MovedCharacters map[movable.Movable]bool
 	Attacker        movable.Attackerable
 	StepIdx         int
-	AnimationSteps  []logical.Vec
+	AnimationSteps  []AttackAnimation
+}
+
+func GetAttackRenderOffset() logical.Vec {
+	return render.GameBoardV().Add(render.MainScreenV()).Add(logical.V(render.CharPixels/2, -render.CharPixels/2))
+}
+
+func (screen *AnimateRangedAttack) GetFrom() logical.Vec {
+	mult := logical.V(4, 4)
+	return mult.Multiply(screen.Attacker.GetBoardPosition()).Add(GetAttackRenderOffset())
 }
 
 func (screen *AnimateRangedAttack) Enter(ctx screeniface.GameCtx) {
-	from := screen.Attacker.GetBoardPosition()
-	to := screen.AttackPosition
+	mult := logical.V(4, 4)
+	from := mult.Multiply(screen.Attacker.GetBoardPosition())
+	to := mult.Multiply(screen.AttackPosition)
 	fmt.Printf("Attack from %d, %d TO %d, %d\n", from.X, from.Y, to.X, to.Y)
 	screen.AnimationSteps = to.Subtract(from).Path()
 	for i, s := range screen.AnimationSteps {
@@ -129,6 +146,13 @@ func (screen *AnimateRangedAttack) Step(ctx screeniface.GameCtx) screeniface.Gam
 	}
 	step := screen.AnimationSteps[screen.StepIdx]
 	fmt.Printf("Animation step %d, %d\n", step.X, step.Y)
+	imd := imdraw.New(nil)
+	imd.Color = colornames.Blueviolet
+	imd.EndShape = imdraw.RoundEndShape
+	mult := logical.V(render.CharPixels/4, render.CharPixels/4)
+	imd.Push(logical.V(render.CharPixels, render.CharPixels).Multiply(screen.Attacker.GetBoardPosition()).Add(GetAttackRenderOffset()).ToPixelVec(), mult.Multiply(step).Add(GetAttackRenderOffset()).ToPixelVec())
+	imd.Line(8)
+	imd.Draw(ctx.GetWindow())
 	screen.StepIdx++
 	return screen
 }
