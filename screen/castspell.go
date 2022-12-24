@@ -91,7 +91,7 @@ type TargetSpellScreen struct {
 func (screen *TargetSpellScreen) Enter(ctx screeniface.GameCtx) {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
-	textBottomColor("", render.ColorWhite(), ss, win) // clear bottom bar
+	textBottom("", render.ColorWhite(), ss, win) // clear bottom bar
 }
 
 func (screen *TargetSpellScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -115,12 +115,12 @@ func (screen *TargetSpellScreen) Step(ctx screeniface.GameCtx) screeniface.GameS
 	if win.JustPressed(pixelgl.KeyS) {
 		target := screen.WithCursor.CursorPosition
 		if spell.GetCastRange() < target.Distance(thisPlayer.BoardPosition) {
-			textBottomColor("Out of range", render.GetColor(0, 249, 249), ss, batch)
+			textBottom("Out of range", render.GetColor(0, 249, 249), ss, batch)
 			fmt.Printf("Out of range! Spell cast range %d but distance to target is %d\n", spell.GetCastRange(), target.Distance(thisPlayer.BoardPosition))
 			screen.MessageShown = true
 		} else {
 			if spell.NeedsLineOfSight() && !grid.HaveLineOfSight(thisPlayer.BoardPosition, target) {
-				textBottomColor("No line of sight", render.GetColor(0, 233, 233), ss, batch)
+				textBottom("No line of sight", render.GetColor(0, 233, 233), ss, batch)
 				screen.MessageShown = true
 			} else {
 				grid := ctx.GetGrid()
@@ -215,11 +215,11 @@ func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen 
 	if !screen.CastBefore {
 		if (canCastMore && castsRemaining > 0) || success {
 			fmt.Printf("Spell Succeeds\n")
-			textBottomColor("Spell Succeeds", render.ColorWhite(), ss, batch)
+			textBottom("Spell Succeeds", render.ColorWhite(), ss, batch)
 			ctx.AdjustLawRating(spell.GetLawRating())
 		} else {
 			fmt.Printf("Spell failed\n")
-			textBottomColor("Spell Failed", render.GetColor(255, 0, 255), ss, batch)
+			textBottom("Spell Failed", render.GetColor(255, 0, 255), ss, batch)
 		}
 	}
 	batch.Draw(win)

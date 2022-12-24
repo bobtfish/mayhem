@@ -23,7 +23,7 @@ func (screen *HelpScreenMenu) Enter(ctx screeniface.GameCtx) {
 	td.DrawText("5. Mounts", logical.V(9, 3), render.ColorWhite(), win)
 	td.DrawText("6. Victory", logical.V(9, 2), render.ColorWhite(), win)
 
-	textBottomColor("Press Keys 1-6 or 0 to return", render.ColorWhite(), ss, win)
+	textBottom("Press Keys 1-6 or 0 to return", render.ColorWhite(), ss, win)
 }
 
 func (screen *HelpScreenMenu) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -69,7 +69,7 @@ func (screen *HelpScreenKeys) Enter(ctx screeniface.GameCtx) {
 	td.DrawText("1-8 - Highlight creations of", logical.V(0, 2), render.ColorWhite(), win)
 	td.DrawText("      player # 1-8", logical.V(0, 1), render.ColorWhite(), win)
 	td.DrawText("0 - End turn", logical.V(0, 0), render.ColorWhite(), win)
-	textBottomColor("   Press any key to continue", render.ColorWhite(), ss, win)
+	textBottom("   Press any key to continue", render.ColorWhite(), ss, win)
 }
 
 func (screen *HelpScreenKeys) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -96,7 +96,7 @@ func (screen *HelpScreenSpells) Enter(ctx screeniface.GameCtx) {
 	td.DrawText("Illusions always succeed but", logical.V(0, 3), render.ColorWhite(), win)
 	td.DrawText("can be disbelieved by others.", logical.V(0, 2), render.ColorWhite(), win)
 	td.DrawText("   ^=law *=chaos -=neutral", logical.V(0, 0), render.ColorWhite(), win)
-	textBottomColor("   Press any key to continue", render.ColorWhite(), ss, win)
+	textBottom("   Press any key to continue", render.ColorWhite(), ss, win)
 }
 
 func (screen *HelpScreenSpells) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -123,7 +123,7 @@ func (screen *HelpScreenCombat) Enter(ctx screeniface.GameCtx) {
 	td.DrawText("If adjacent next turn you may", logical.V(0, 3), render.ColorWhite(), win)
 	td.DrawText("remain engaged or may be able", logical.V(0, 2), render.ColorWhite(), win)
 	td.DrawText("to break away.", logical.V(0, 1), render.ColorWhite(), win)
-	textBottomColor("   Press any key to continue", render.ColorWhite(), ss, win)
+	textBottom("   Press any key to continue", render.ColorWhite(), ss, win)
 }
 
 func (screen *HelpScreenCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -152,7 +152,7 @@ func (screen *HelpScreenCombatRanged) Enter(ctx screeniface.GameCtx) {
 	td.DrawText("direction keys, press S to", logical.V(0, 2), render.ColorWhite(), win)
 	td.DrawText("fire. Target must be in line", logical.V(0, 1), render.ColorWhite(), win)
 	td.DrawText("of sight.", logical.V(0, 0), render.ColorWhite(), win)
-	textBottomColor("   Press any key to continue", render.ColorWhite(), ss, win)
+	textBottom("   Press any key to continue", render.ColorWhite(), ss, win)
 }
 
 func (screen *HelpScreenCombatRanged) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -179,7 +179,7 @@ func (screen *HelpScreenUndead) Enter(ctx screeniface.GameCtx) {
 	td.DrawText("The raise dead spell will", logical.V(0, 2), render.ColorWhite(), win)
 	td.DrawText("turn a corpse into an undead", logical.V(0, 1), render.ColorWhite(), win)
 	td.DrawText("creature.", logical.V(0, 0), render.ColorWhite(), win)
-	textBottomColor("   Press any key to continue", render.ColorWhite(), ss, win)
+	textBottom("   Press any key to continue", render.ColorWhite(), ss, win)
 }
 
 func (screen *HelpScreenUndead) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -208,7 +208,7 @@ func (screen *HelpScreenMounts) Enter(ctx screeniface.GameCtx) {
 	td.DrawText("and your wizard cannot be", logical.V(0, 2), render.ColorWhite(), win)
 	td.DrawText("killed unless their mount is", logical.V(0, 1), render.ColorWhite(), win)
 	td.DrawText("killed first.", logical.V(0, 0), render.ColorWhite(), win)
-	textBottomColor("   Press any key to continue", render.ColorWhite(), ss, win)
+	textBottom("   Press any key to continue", render.ColorWhite(), ss, win)
 }
 
 func (screen *HelpScreenMounts) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -233,7 +233,7 @@ func (screen *HelpScreenVictory) Enter(ctx screeniface.GameCtx) {
 	td.DrawText("When a player is killed, all", logical.V(0, 4), render.ColorWhite(), win)
 	td.DrawText("of their creations will also", logical.V(0, 3), render.ColorWhite(), win)
 	td.DrawText("vanish.", logical.V(0, 2), render.ColorWhite(), win)
-	textBottomColor("   Press any key to continue", render.ColorWhite(), ss, win)
+	textBottom("   Press any key to continue", render.ColorWhite(), ss, win)
 }
 
 func (screen *HelpScreenVictory) Step(ctx screeniface.GameCtx) screeniface.GameScreen {

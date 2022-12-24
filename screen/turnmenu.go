@@ -23,7 +23,7 @@ func (screen *ExamineOneSpellScreen) Enter(ctx screeniface.GameCtx) {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
-	textBottomColor("   Press any key to continue", render.ColorWhite(), ss, win)
+	textBottom("   Press any key to continue", render.ColorWhite(), ss, win)
 	td := TextDrawer(ss)
 
 	rating := screen.Spell.GetLawRating()
@@ -34,10 +34,10 @@ func (screen *ExamineOneSpellScreen) Enter(ctx screeniface.GameCtx) {
 	if rating < 0 {
 		name = fmt.Sprintf("%s (Chaos %d)", name, -rating)
 	}
-	td.DrawTextColor(name, logical.V(3, 9), render.ColorWhite(), win)
+	td.DrawText(name, logical.V(3, 9), render.ColorWhite(), win)
 	desc := screen.Spell.GetDescriptionArray(ctx.GetLawRating())
 	for i, line := range desc {
-		td.DrawTextColor(line, logical.V(3, 7-i), render.ColorWhite(), win)
+		td.DrawText(line, logical.V(3, 7-i), render.ColorWhite(), win)
 	}
 }
 
@@ -59,16 +59,16 @@ func (screen *SpellListScreen) Enter(ctx screeniface.GameCtx) {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
-	textBottomColor("Press 0 to return to main menu", render.ColorWhite(), ss, win)
+	textBottom("Press 0 to return to main menu", render.ColorWhite(), ss, win)
 	td := TextDrawer(ss)
-	td.DrawTextColor(fmt.Sprintf("%s's spells", screen.Player.Name), logical.V(0, 9), render.ColorWhite(), win)
+	td.DrawText(fmt.Sprintf("%s's spells", screen.Player.Name), logical.V(0, 9), render.ColorWhite(), win)
 	for i := 0; i < len(screen.Player.Spells); i++ {
 		mod := i % 2
 		if mod == 1 {
 			mod = 14
 		}
 		spell := screen.Player.Spells[i]
-		td.DrawTextColor(
+		td.DrawText(
 			fmt.Sprintf("%s%s%s", intToChar(i), spelliface.LawRatingSymbol(spell), spell.GetName()),
 			logical.V(mod, 8-(i/2)),
 			spells.CastingChanceColor(spell.GetCastingChance(ctx.GetLawRating())),
@@ -145,7 +145,7 @@ type IsIllusionScreen struct {
 func (screen *IsIllusionScreen) Enter(ctx screeniface.GameCtx) {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
-	textBottomColor("Illusion? (Press Y or N)", render.ColorWhite(), ss, win)
+	textBottom("Illusion? (Press Y or N)", render.ColorWhite(), ss, win)
 	screen.Player.CastIllusion = false
 }
 
@@ -171,14 +171,14 @@ func (screen *TurnMenuScreen) Enter(ctx screeniface.GameCtx) {
 	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	fmt.Printf("index %d\n", screen.PlayerIdx)
-	textBottomColor("      Press Keys 1 to 4", render.ColorWhite(), ss, win)
+	textBottom("      Press Keys 1 to 4", render.ColorWhite(), ss, win)
 	td := TextDrawer(ss)
-	td.DrawTextColor(players[screen.PlayerIdx].Name, logical.V(3, 7), render.ColorWhite(), win)
-	td.DrawTextColor(lawRatingText(ctx.GetLawRating()), logical.V(3, 6), render.ColorWhite(), win)
-	td.DrawTextColor("1. Examine Spells", logical.V(3, 5), render.ColorWhite(), win)
-	td.DrawTextColor("2. Select Spell", logical.V(3, 4), render.ColorWhite(), win)
-	td.DrawTextColor("3. Examine Board", logical.V(3, 3), render.ColorWhite(), win)
-	td.DrawTextColor("4. Continue With Game", logical.V(3, 2), render.ColorWhite(), win)
+	td.DrawText(players[screen.PlayerIdx].Name, logical.V(3, 7), render.ColorWhite(), win)
+	td.DrawText(lawRatingText(ctx.GetLawRating()), logical.V(3, 6), render.ColorWhite(), win)
+	td.DrawText("1. Examine Spells", logical.V(3, 5), render.ColorWhite(), win)
+	td.DrawText("2. Select Spell", logical.V(3, 4), render.ColorWhite(), win)
+	td.DrawText("3. Examine Board", logical.V(3, 3), render.ColorWhite(), win)
+	td.DrawText("4. Continue With Game", logical.V(3, 2), render.ColorWhite(), win)
 }
 
 func lawRatingText(r int) string {

@@ -20,7 +20,7 @@ func (screen *WinnerScreen) Enter(ctx screeniface.GameCtx) {
 	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)
-	td.DrawTextColor("  WE HAVE A WINNER", logical.V(0, 9), render.ColorWhite(), win)
+	td.DrawText("  WE HAVE A WINNER", logical.V(0, 9), render.ColorWhite(), win)
 
 	var winner *player.Player
 	for i := 0; i < len(screen.Players); i++ {
@@ -30,7 +30,7 @@ func (screen *WinnerScreen) Enter(ctx screeniface.GameCtx) {
 		}
 	}
 	spaceLen := 16 - len(winner.Name)/2
-	td.DrawTextColor(fmt.Sprintf("%s%s", strings.Repeat(" ", spaceLen), winner.Name), logical.V(0, 8), render.ColorWhite(), win)
+	td.DrawText(fmt.Sprintf("%s%s", strings.Repeat(" ", spaceLen), winner.Name), logical.V(0, 8), render.ColorWhite(), win)
 }
 
 func (screen *WinnerScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
