@@ -1,5 +1,9 @@
 Bug / missing feature list:
 
+Bugs
+  - Magic wood is broken
+  - second game has player 3+ and never finishes player selection
+
   Visual / animation:
    Press number to flash characters of one player
    Flash characters of one player at start of move turn
