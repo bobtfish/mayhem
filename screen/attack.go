@@ -321,6 +321,7 @@ func (screen *DoAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	defenceRating := defender.(movable.Attackable).GetDefence() + rand.Intn(9)
 	attacker := getAttacker(grid.GetGameObject(screen.AttackerV), screen.IsDismount)
 	attackRating := attacker.(movable.Attackerable).GetCombat() + rand.Intn(9)
+	attackerMovement := attacker.(movable.Movable).GetMovement()
 
 	fmt.Printf("Attack rating %d defence rating %d\n", attackRating, defenceRating)
 	if attackRating > defenceRating {
@@ -329,7 +330,7 @@ func (screen *DoAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 			return newScreen
 		}
 
-		if canMoveOnto {
+		if canMoveOnto && attackerMovement > 0 {
 			doCharacterMove(screen.AttackerV, screen.DefenderV, grid, screen.IsDismount)
 			screen.AttackerV = screen.DefenderV
 		}
