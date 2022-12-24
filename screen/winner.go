@@ -7,6 +7,7 @@ import (
 	"github.com/bobtfish/mayhem/game"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
+	"github.com/bobtfish/mayhem/render"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
@@ -19,7 +20,7 @@ func (screen *WinnerScreen) Enter(ctx screeniface.GameCtx) {
 	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)
-	td.DrawText("  WE HAVE A WINNER", logical.V(0, 9), win)
+	td.DrawTextColor("  WE HAVE A WINNER", logical.V(0, 9), render.ColorWhite(), win)
 
 	var winner *player.Player
 	for i := 0; i < len(screen.Players); i++ {
@@ -29,7 +30,7 @@ func (screen *WinnerScreen) Enter(ctx screeniface.GameCtx) {
 		}
 	}
 	spaceLen := 16 - len(winner.Name)/2
-	td.DrawText(fmt.Sprintf("%s%s", strings.Repeat(" ", spaceLen), winner.Name), logical.V(0, 8), win)
+	td.DrawTextColor(fmt.Sprintf("%s%s", strings.Repeat(" ", spaceLen), winner.Name), logical.V(0, 8), render.ColorWhite(), win)
 }
 
 func (screen *WinnerScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {

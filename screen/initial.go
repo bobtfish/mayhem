@@ -6,6 +6,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/bobtfish/mayhem/logical"
+	"github.com/bobtfish/mayhem/render"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 )
 
@@ -19,11 +20,11 @@ func (screen *InitialScreen) Enter(ctx screeniface.GameCtx) {
 	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	td := TextDrawer(ss)
-	td.DrawText("  MAYHEM - Remake of Chaos", logical.V(0, 9), win)
-	td.DrawText("         By bobtfish", logical.V(0, 8), win)
-	td.DrawText("How many wizards?", logical.V(0, 6), win)
-	td.DrawText("(Press 2 to 8)", logical.V(0, 5), win)
-	textBottom("       Press H for help", ss, win)
+	td.DrawTextColor("  MAYHEM - Remake of Chaos", logical.V(0, 9), render.ColorWhite(), win)
+	td.DrawTextColor("         By bobtfish", logical.V(0, 8), render.ColorWhite(), win)
+	td.DrawTextColor("How many wizards?", logical.V(0, 6), render.ColorWhite(), win)
+	td.DrawTextColor("(Press 2 to 8)", logical.V(0, 5), render.ColorWhite(), win)
+	textBottomColor("       Press H for help", render.ColorWhite(), ss, win)
 }
 
 func (screen *InitialScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -36,10 +37,10 @@ func (screen *InitialScreen) Step(ctx screeniface.GameCtx) screeniface.GameScree
 	c := captureNumKey(win)
 	if c >= 2 && c <= 8 {
 		td := TextDrawer(ss)
-		td.DrawText(fmt.Sprintf("%d", c), logical.V(18, 6), win)
-		td.DrawText("Level of computer wizards?", logical.V(0, 3), win)
-		td.DrawText("(Press 1 to 8)", logical.V(0, 2), win)
-		textBottom("", ss, win)
+		td.DrawTextColor(fmt.Sprintf("%d", c), logical.V(18, 6), render.ColorWhite(), win)
+		td.DrawTextColor("Level of computer wizards?", logical.V(0, 3), render.ColorWhite(), win)
+		td.DrawTextColor("(Press 1 to 8)", logical.V(0, 2), render.ColorWhite(), win)
+		textBottomColor("", render.ColorWhite(), ss, win)
 		return &ComputerDifficultyScreen{WizardCount: c}
 	}
 	return screen
@@ -49,8 +50,8 @@ func (screen *ComputerDifficultyScreen) Enter(ctx screeniface.GameCtx) {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
 	td := TextDrawer(ss)
-	td.DrawText("Level of computer wizards?", logical.V(0, 3), win)
-	td.DrawText("(Press 1 to 8)", logical.V(0, 2), win)
+	td.DrawTextColor("Level of computer wizards?", logical.V(0, 3), render.ColorWhite(), win)
+	td.DrawTextColor("(Press 1 to 8)", logical.V(0, 2), render.ColorWhite(), win)
 }
 
 func (screen *ComputerDifficultyScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -58,7 +59,7 @@ func (screen *ComputerDifficultyScreen) Step(ctx screeniface.GameCtx) screenifac
 	win := ctx.GetWindow()
 	c := captureNumKey(win)
 	if c >= 1 && c <= 8 {
-		TextDrawer(ss).DrawText(fmt.Sprintf("%d", c), logical.V(27, 3), win)
+		TextDrawer(ss).DrawTextColor(fmt.Sprintf("%d", c), logical.V(27, 3), render.ColorWhite(), win)
 		return &PlayerNameScreen{
 			PlayersScreen: PlayersScreen{
 				WizardCount:        screen.WizardCount,

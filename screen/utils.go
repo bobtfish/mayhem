@@ -170,16 +170,10 @@ func drawMainBorder(win pixel.Target, sd render.SpriteDrawer) {
 	batch.Draw(win)
 }
 
-func textBottom(text string, ss pixel.Picture, target pixel.Target) {
+func textBottom(text string, col color.Color, ss pixel.Picture, target pixel.Target) {
 	td := render.NewTextDrawer(ss)
-	td.DrawText(text, logical.ZeroVec(), target)
-	td.DrawText(strings.Repeat(" ", 32-len(text)), logical.V(len(text), 0), target)
-}
-
-func textBottomColor(text string, col color.Color, ss pixel.Picture, target pixel.Target) {
-	td := render.NewTextDrawer(ss)
-	td.DrawTextColor(text, logical.ZeroVec(), col, target)
-	td.DrawText(strings.Repeat(" ", 32-len(text)), logical.V(len(text), 0), target)
+	td.DrawText(text, logical.ZeroVec(), col, target)
+	td.DrawText(strings.Repeat(" ", 32-len(text)), logical.V(len(text), 0), col, target)
 }
 
 type TextWithColor struct {
@@ -191,8 +185,8 @@ func textBottomMulti(texts []TextWithColor, ss pixel.Picture, target pixel.Targe
 	var idx int
 	td := render.NewTextDrawer(ss)
 	for _, t := range texts {
-		td.DrawTextColor(t.Text, logical.V(idx, 0), t.Color, target)
+		td.DrawText(t.Text, logical.V(idx, 0), t.Color, target)
 		idx += len(t.Text)
 	}
-	td.DrawText(strings.Repeat(" ", 32-idx), logical.V(idx, 0), target)
+	td.DrawText(strings.Repeat(" ", 32-idx), logical.V(idx, 0), render.ColorWhite(), target)
 }

@@ -120,3 +120,7 @@ func GetColor(r, g, b int) color.Color {
 	}
 	return pixel.RGB(float64(r)/255, float64(g)/255, float64(b)/255)
 }
+
+func ColorWhite() color.Color {
+	return GetColor(255, 255, 255)
+}

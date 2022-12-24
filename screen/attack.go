@@ -70,11 +70,11 @@ func (screen *RangedCombat) Step(ctx screeniface.GameCtx) screeniface.GameScreen
 		attackDistance := attackPosition.Distance(characterLocation)
 		if attackDistance > 0 { // You can't ranged attack yourself
 			if attackDistance > attackRange {
-				textBottomColor("Out of range", render.GetColor(247, 247, 0), ss, batch)
+				textBottom("Out of range", render.GetColor(247, 247, 0), ss, batch)
 				screen.OutOfRange = true
 			} else {
 				if !grid.HaveLineOfSight(characterLocation, attackPosition) {
-					textBottomColor("No line of sight", render.GetColor(0, 233, 233), ss, batch)
+					textBottom("No line of sight", render.GetColor(0, 233, 233), ss, batch)
 					screen.OutOfRange = true
 				} else {
 					return &AnimateRangedAttack{
@@ -196,7 +196,7 @@ func (screen *DoRangedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScre
 					}
 				}
 			} else {
-				textBottomColor("Undead - Cannot be attacked", render.GetColor(0, 244, 244), ss, win)
+				textBottom("Undead - Cannot be attacked", render.GetColor(0, 244, 244), ss, win)
 				needPause = true
 			}
 		}
@@ -223,7 +223,7 @@ func (screen *EngagedAttack) Enter(ctx screeniface.GameCtx) {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
 	fmt.Printf("In engaged attack state\n")
-	textBottomColor("Engaged to enemy", render.GetColor(247, 247, 0), ss, win)
+	textBottom("Engaged to enemy", render.GetColor(247, 247, 0), ss, win)
 }
 
 func (screen *EngagedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -231,7 +231,7 @@ func (screen *EngagedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScree
 	ss := ctx.GetSpriteSheet()
 	batch := DrawBoard(ctx)
 	if screen.ClearMsg {
-		textBottom("", ss, batch)
+		textBottom("", render.ColorWhite(), ss, batch)
 	}
 
 	direction := captureDirectionKey(win)
@@ -248,7 +248,7 @@ func (screen *EngagedAttack) Step(ctx screeniface.GameCtx) screeniface.GameScree
 		}
 		if as.IllegalUndeadAttack {
 			screen.ClearMsg = false
-			textBottomColor("Undead - Cannot be attacked", render.GetColor(0, 244, 244), ss, win)
+			textBottom("Undead - Cannot be attacked", render.GetColor(0, 244, 244), ss, win)
 		}
 	}
 

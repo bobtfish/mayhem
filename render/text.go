@@ -9,15 +9,11 @@ import (
 
 var textMap map[string]logical.Vec
 
-func (sd SpriteDrawer) DrawTextColor(text string, win logical.Vec, color color.Color, target pixel.Target) {
+func (sd SpriteDrawer) DrawText(text string, win logical.Vec, color color.Color, target pixel.Target) {
 	for _, c := range text {
 		sd.GetSprite(textMap[string(c)]).DrawColorMask(target, sd.GetSpriteMatrix(win), color)
 		win.X++
 	}
-}
-
-func (sd SpriteDrawer) DrawText(text string, win logical.Vec, target pixel.Target) {
-	sd.DrawTextColor(text, win, GetColor(255, 255, 255), target)
 }
 
 func init() {

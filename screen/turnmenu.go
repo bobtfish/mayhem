@@ -8,6 +8,7 @@ import (
 	"github.com/bobtfish/mayhem/game"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
+	"github.com/bobtfish/mayhem/render"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
 	"github.com/bobtfish/mayhem/spells"
 	spelliface "github.com/bobtfish/mayhem/spells/iface"
@@ -22,7 +23,7 @@ func (screen *ExamineOneSpellScreen) Enter(ctx screeniface.GameCtx) {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
-	textBottom("   Press any key to continue", ss, win)
+	textBottomColor("   Press any key to continue", render.ColorWhite(), ss, win)
 	td := TextDrawer(ss)
 
 	rating := screen.Spell.GetLawRating()
@@ -33,10 +34,10 @@ func (screen *ExamineOneSpellScreen) Enter(ctx screeniface.GameCtx) {
 	if rating < 0 {
 		name = fmt.Sprintf("%s (Chaos %d)", name, -rating)
 	}
-	td.DrawText(name, logical.V(3, 9), win)
+	td.DrawTextColor(name, logical.V(3, 9), render.ColorWhite(), win)
 	desc := screen.Spell.GetDescriptionArray(ctx.GetLawRating())
 	for i, line := range desc {
-		td.DrawText(line, logical.V(3, 7-i), win)
+		td.DrawTextColor(line, logical.V(3, 7-i), render.ColorWhite(), win)
 	}
 }
 
@@ -58,9 +59,9 @@ func (screen *SpellListScreen) Enter(ctx screeniface.GameCtx) {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
-	textBottom("Press 0 to return to main menu", ss, win)
+	textBottomColor("Press 0 to return to main menu", render.ColorWhite(), ss, win)
 	td := TextDrawer(ss)
-	td.DrawText(fmt.Sprintf("%s's spells", screen.Player.Name), logical.V(0, 9), win)
+	td.DrawTextColor(fmt.Sprintf("%s's spells", screen.Player.Name), logical.V(0, 9), render.ColorWhite(), win)
 	for i := 0; i < len(screen.Player.Spells); i++ {
 		mod := i % 2
 		if mod == 1 {
@@ -144,7 +145,7 @@ type IsIllusionScreen struct {
 func (screen *IsIllusionScreen) Enter(ctx screeniface.GameCtx) {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
-	textBottom("Illusion? (Press Y or N)", ss, win)
+	textBottomColor("Illusion? (Press Y or N)", render.ColorWhite(), ss, win)
 	screen.Player.CastIllusion = false
 }
 
@@ -170,14 +171,14 @@ func (screen *TurnMenuScreen) Enter(ctx screeniface.GameCtx) {
 	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	fmt.Printf("index %d\n", screen.PlayerIdx)
-	textBottom("      Press Keys 1 to 4", ss, win)
+	textBottomColor("      Press Keys 1 to 4", render.ColorWhite(), ss, win)
 	td := TextDrawer(ss)
-	td.DrawText(players[screen.PlayerIdx].Name, logical.V(3, 7), win)
-	td.DrawText(lawRatingText(ctx.GetLawRating()), logical.V(3, 6), win)
-	td.DrawText("1. Examine Spells", logical.V(3, 5), win)
-	td.DrawText("2. Select Spell", logical.V(3, 4), win)
-	td.DrawText("3. Examine Board", logical.V(3, 3), win)
-	td.DrawText("4. Continue With Game", logical.V(3, 2), win)
+	td.DrawTextColor(players[screen.PlayerIdx].Name, logical.V(3, 7), render.ColorWhite(), win)
+	td.DrawTextColor(lawRatingText(ctx.GetLawRating()), logical.V(3, 6), render.ColorWhite(), win)
+	td.DrawTextColor("1. Examine Spells", logical.V(3, 5), render.ColorWhite(), win)
+	td.DrawTextColor("2. Select Spell", logical.V(3, 4), render.ColorWhite(), win)
+	td.DrawTextColor("3. Examine Board", logical.V(3, 3), render.ColorWhite(), win)
+	td.DrawTextColor("4. Continue With Game", logical.V(3, 2), render.ColorWhite(), win)
 }
 
 func lawRatingText(r int) string {

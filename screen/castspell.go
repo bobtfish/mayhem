@@ -91,7 +91,7 @@ type TargetSpellScreen struct {
 func (screen *TargetSpellScreen) Enter(ctx screeniface.GameCtx) {
 	win := ctx.GetWindow()
 	ss := ctx.GetSpriteSheet()
-	textBottom("", ss, win) // clear bottom bar
+	textBottomColor("", render.ColorWhite(), ss, win) // clear bottom bar
 }
 
 func (screen *TargetSpellScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
@@ -215,7 +215,7 @@ func (screen *DoSpellCast) Step(ctx screeniface.GameCtx) screeniface.GameScreen 
 	if !screen.CastBefore {
 		if (canCastMore && castsRemaining > 0) || success {
 			fmt.Printf("Spell Succeeds\n")
-			textBottom("Spell Succeeds", ss, batch)
+			textBottomColor("Spell Succeeds", render.ColorWhite(), ss, batch)
 			ctx.AdjustLawRating(spell.GetLawRating())
 		} else {
 			fmt.Printf("Spell failed\n")
