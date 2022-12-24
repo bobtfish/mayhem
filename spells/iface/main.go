@@ -63,7 +63,7 @@ func ChooseSpells() []Spell {
 	}
 
 	for i := 0; i < len(AllSpells); i++ {
-		if AllSpells[i].GetName() == "Elf" {
+		if AllSpells[i].GetName() == "Magic Wood" {
 			spells[1] = AllSpells[i]
 		}
 	}

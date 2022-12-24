@@ -391,14 +391,14 @@ func DoAttackMaybe(from, to logical.Vec, playerIdx int, ctx screeniface.GameCtx,
 					},
 				}
 			}
-			// Does belong to this player, see if it's mountable, if so we can move to it
-			_, isPlayer := grid.GetGameObject(from).(*player.Player)
-			if isPlayer || isDismount { // We're moving the player, lets see if target is something we can mount
-				fmt.Printf("Moving player, check for mount\n")
-				if ob.IsMount() {
-					fmt.Printf("  Is mount\n")
-					return AttackStatus{NotEmpty: true, IsMount: true}
-				}
+		}
+		// Does belong to this player, see if it's mountable, if so we can move to it
+		_, isPlayer := grid.GetGameObject(from).(*player.Player)
+		if isPlayer || isDismount { // We're moving the player, lets see if target is something we can mount
+			fmt.Printf("Moving player, check for mount\n")
+			if ob.IsMount() {
+				fmt.Printf("  Is mount\n")
+				return AttackStatus{NotEmpty: true, IsMount: true}
 			}
 		}
 		return AttackStatus{NotEmpty: true}
