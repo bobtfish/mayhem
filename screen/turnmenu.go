@@ -171,14 +171,14 @@ func (screen *TurnMenuScreen) Enter(ctx screeniface.GameCtx) {
 	ss := ctx.GetSpriteSheet()
 	ClearScreen(ss, win)
 	fmt.Printf("index %d\n", screen.PlayerIdx)
-	textBottom("      Press Keys 1 to 4", render.ColorWhite(), ss, win)
+	textBottom("      Press Keys 1 to 4", render.ColorYellow(), ss, win)
 	td := TextDrawer(ss)
-	td.DrawText(players[screen.PlayerIdx].Name, logical.V(3, 7), render.ColorWhite(), win)
+	td.DrawText(players[screen.PlayerIdx].Name, logical.V(3, 7), render.ColorYellow(), win)
 	td.DrawText(lawRatingText(ctx.GetLawRating()), logical.V(3, 6), render.ColorWhite(), win)
-	td.DrawText("1. Examine Spells", logical.V(3, 5), render.ColorWhite(), win)
-	td.DrawText("2. Select Spell", logical.V(3, 4), render.ColorWhite(), win)
-	td.DrawText("3. Examine Board", logical.V(3, 3), render.ColorWhite(), win)
-	td.DrawText("4. Continue With Game", logical.V(3, 2), render.ColorWhite(), win)
+	td.DrawText("1. Examine Spells", logical.V(3, 5), render.ColorCyan(), win)
+	td.DrawText("2. Select Spell", logical.V(3, 4), render.ColorCyan(), win)
+	td.DrawText("3. Examine Board", logical.V(3, 3), render.ColorCyan(), win)
+	td.DrawText("4. Continue With Game", logical.V(3, 2), render.ColorCyan(), win)
 }
 
 func lawRatingText(r int) string {
