@@ -1,9 +1,5 @@
 Bug / missing feature list:
 
-Bugs
-  - second game has player 3+ and never finishes player selection
-  - When we have multiple players (8) then some are killed select spell screen allows selections for dead players
-
   Visual / animation:
    Press number to flash characters of one player
    Flash characters of one player at start of move turn

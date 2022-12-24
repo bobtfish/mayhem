@@ -34,6 +34,10 @@ func (gw *Window) GetPlayers() []*player.Player {
 	return gw.Players
 }
 
+func (gw *Window) ResetPlayers() {
+	gw.Players = make([]*player.Player, 0)
+}
+
 func (gw *Window) GetGrid() *grid.GameGrid {
 	return gw.Grid
 }

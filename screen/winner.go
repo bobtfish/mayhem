@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/bobtfish/mayhem/game"
 	"github.com/bobtfish/mayhem/logical"
 	"github.com/bobtfish/mayhem/player"
 	screeniface "github.com/bobtfish/mayhem/screen/iface"
@@ -34,6 +35,7 @@ func (screen *WinnerScreen) Enter(ctx screeniface.GameCtx) {
 func (screen *WinnerScreen) Step(ctx screeniface.GameCtx) screeniface.GameScreen {
 	win := ctx.GetWindow()
 	if win.Typed() != "" {
+		ctx.(*game.Window).ResetPlayers()
 		return &InitialScreen{}
 	}
 	return screen
